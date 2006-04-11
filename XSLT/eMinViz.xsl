@@ -11,9 +11,7 @@
 <xsl:import href="structure.xsl"/>
 <xsl:import href="dictionary.xsl"/>
 <xsl:import href="metadata.xsl"/>
-<xsl:import href="parameterList.xsl"/>
 <xsl:import href="parameter.xsl"/>
-<xsl:import href="propertyList.xsl"/>
 <xsl:import href="property.xsl"/>
 <xsl:import href="bandList.xsl"/>
 <xsl:import href="formula.xsl"/>
@@ -63,8 +61,13 @@
   </xsl:choose>
 </xsl:param>
 
+<!-- Global variable - do we want jmol output or not? -->
+  <xsl:param name="Jmol">
+   <xsl:value-of select="boolean(//cml:molecule)"/>
+  </xsl:param>
 
-<xsl:output method="xml" version="1.0" encoding="UTF-8" 
+
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" 
     omit-xml-declaration="no" standalone="yes"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -82,14 +85,21 @@
         <style type="text/css">
           <xsl:call-template name="css-style"/>
         </style>
-        <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
+        <xsl:if test="$Jmol!='false'">
+          <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
+        </xsl:if>
 
         <script type="text/javascript">
           <xsl:call-template name="mainJavascript"/>
         </script>
       </head>
 
-      <body onload="jmolXInitialize(&quot;http://www.eminerals.org/jmol&quot;)">
+      <body>
+        <xsl:if test="$Jmol!='false'">
+         <xsl:attribute name="onload">
+           <xsl:text>jmolXInitialize(&quot;http://www.eminerals.org/jmol&quot;)</xsl:text>
+         </xsl:attribute>
+        </xsl:if>
  
         <div id="head"><div class="bigTitle">
            <xsl:value-of select="$prog"/>
@@ -99,21 +109,37 @@
 <!-- Generate body of document -->
         <div id="maindisplay">
           <div class="innerMain">
-            <xsl:variable name="uid" select="generate-id()"/>
+            <xsl:call-template name="top.level.section">
+              <xsl:with-param name="uid" select="'initialMetadata'"/>
+              <xsl:with-param name="title" select="'Simulation Metadata'"/>
+              <xsl:with-param name="templates" select="/cml:cml/cml:metadataList[position()=1]"/>
+            </xsl:call-template>
+            <xsl:call-template name="top.level.section">
+              <xsl:with-param name="uid" select="'inputParams'"/>
+              <xsl:with-param name="title" select="'Input Parameters'"/>
+              <xsl:with-param name="templates" select="/cml:cml/cml:parameterList[position()=1]"/>
+            </xsl:call-template>
+            <xsl:call-template name="top.level.section">
+              <xsl:with-param name="uid" select="'initialState'"/>
+              <xsl:with-param name="title" select="'Initial State of System'"/>
+              <xsl:with-param name="templates" select="/cml:cml/cml:module[@title='Initial System']"/>
+            </xsl:call-template> <!--
+            <xsl:call-template name="top.level.section">
+              <xsl:with-param name="uid" select="'mainBody'"/>
+              <xsl:with-param name="title" select="'Main body of simulation'"/>
+              <xsl:with-param name="templates" select="/cml:cml/cml:module"/>
+            </xsl:call-template> -->
+            <xsl:call-template name="top.level.section">
+              <xsl:with-param name="uid" select="'finalState'"/>
+              <xsl:with-param name="title" select="'Final State of simulation'"/>
+              <xsl:with-param name="templates" select="/cml:cml/cml:module[@title='Finalization']"/>
+            </xsl:call-template>
+            <xsl:variable name="uid" select="'summaryInfo'"/>
             <br/>
             <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle">
-              <xsl:text>Main body of simulation</xsl:text>
-            </div>
-            <div class="sublevel" id="{$uid}">
-              <xsl:apply-templates select="*"/>
-	    </div>
-            <br/>
-            <xsl:variable name="uid2" select="generate-id()"/>
-            <br/>
-            <div onclick="js:togglemenu(&quot;{$uid2}&quot;)" class="divisionTitle">
               <xsl:text>Summary Information</xsl:text>
             </div>
-            <div class="sublevel" id="{$uid2}">
+            <div class="sublevel" id="{$uid}">
               <xsl:call-template name="summary"/>
 	    </div>
             <br/>
@@ -137,6 +163,20 @@
       </body>
     </html>
 
+  </xsl:template>
+
+  <xsl:template name="top.level.section">
+    <xsl:param name="uid"/>
+    <xsl:param name="title"/>
+    <xsl:param name="templates"/>
+    <br/>
+    <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle">
+      <xsl:value-of select="$title"/>
+    </div>
+    <div class="sublevel" id="{$uid}">
+       <xsl:apply-templates select="$templates"/>
+    </div>
+    <br/>
   </xsl:template>
 
   <xsl:template name="css-style">
