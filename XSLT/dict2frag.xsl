@@ -8,7 +8,7 @@
         >
 
   <xsl:template name="addDict">
-    <xsl:apply-templates select="document('siestaDict.xml')/stm:dictionary/stm:entry">
+    <xsl:apply-templates select="document(concat($prog,'Dict.xml'))/stm:dictionary/stm:entry">
       <!-- need translate below to prevent separating upper & lower case entries -->
       <xsl:sort data-type="text" order="ascending" 
 		select="translate(@term,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
