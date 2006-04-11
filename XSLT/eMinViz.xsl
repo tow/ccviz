@@ -123,12 +123,12 @@
               <xsl:with-param name="uid" select="'initialState'"/>
               <xsl:with-param name="title" select="'Initial State of System'"/>
               <xsl:with-param name="templates" select="/cml:cml/cml:module[@title='Initial System']"/>
-            </xsl:call-template> <!--
+            </xsl:call-template>
             <xsl:call-template name="top.level.section">
               <xsl:with-param name="uid" select="'mainBody'"/>
               <xsl:with-param name="title" select="'Main body of simulation'"/>
               <xsl:with-param name="templates" select="/cml:cml/cml:module"/>
-            </xsl:call-template> -->
+            </xsl:call-template>
             <xsl:call-template name="top.level.section">
               <xsl:with-param name="uid" select="'finalState'"/>
               <xsl:with-param name="title" select="'Final State of simulation'"/>
@@ -136,7 +136,7 @@
             </xsl:call-template>
             <xsl:variable name="uid" select="'summaryInfo'"/>
             <br/>
-            <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle">
+            <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle clickableDiv">
               <xsl:text>Summary Information</xsl:text>
             </div>
             <div class="sublevel" id="{$uid}">
@@ -170,7 +170,7 @@
     <xsl:param name="title"/>
     <xsl:param name="templates"/>
     <br/>
-    <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle">
+    <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle clickableDiv">
       <xsl:value-of select="$title"/>
     </div>
     <div class="sublevel" id="{$uid}">
@@ -243,11 +243,7 @@
                     padding: 2px;
                     font-size: xx-large;
                   }
-	.divisionTitle 
-                  { color: #ffffff; 
-                    background: #4682B4; 
-                    font-weight: bold; 
-                    font-size: x-large;
+	.divisionTitle {
                   }
         .listTitle
                   {
@@ -265,19 +261,29 @@
 	.eigen    { text-align: right; padding-left: 7px; padding-right: 7px; }
 	.band     { vertical-align: text-top; }
 	.toplevel { display: block; font-weight: 400; margin-bottom: 0; }
-        .moduletitle { color: #ffffff;
-                       background: #4682B4;
-                       font-weight: bold;
-                       cursor: pointer;
-                       font-size: x-large;
+        .clickableDiv {color: #ffffff;
+                    background: #4682B4;
+                    font-weight: bold;
+                    font-size: x-large;
+                    border-width-top: 0px;
+                    border-width-left: 0px;
+                    border-width-right: 5px;
+                    border-width-bottom: 5px;
+                    border-color: #7dB7FF;
+                    border-style: solid;
+                    }
+        .clickableDiv:hover {
+                    color: #9999ff; 
+                    }
+        .moduletitle {
+                    padding: 5px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
                      }
-        .steptitle   { color: #ffffff;
-                       background: #4682B4;
-                       font-weight: bold;
-                       cursor: pointer;
-                       font-size: x-large; 
-                       margin-top: 10px; 
-                       margin-bottom: 10px; 
+        .steptitle   {
+                    padding: 5px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
                      }
         .switch      { color: #ffffff;
                        background: #4682B4;

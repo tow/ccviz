@@ -16,16 +16,14 @@
          <xsl:call-template name="step"/>
       </xsl:when>
       <xsl:otherwise>
-         <hr />
          <div>
-           <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="moduletitle">
+           <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="moduletitle clickableDiv">
              <xsl:value-of select="@title"/>
            </div>
          </div>
          <div class="sublevel" id="{$uid}">
            <xsl:apply-templates select="*"/>
          </div>
-         <hr />
        </xsl:otherwise>
      </xsl:choose>
   </xsl:template>
@@ -103,7 +101,7 @@
       </xsl:when> <!-- child step -->
       <xsl:otherwise>
         <div>
-          <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="steptitle">
+          <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="steptitle clickableDiv">
             <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
           </div>
         </div>
