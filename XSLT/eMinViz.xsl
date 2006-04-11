@@ -109,44 +109,53 @@
 <!-- Generate body of document -->
         <div id="maindisplay">
           <div class="innerMain">
-            <xsl:call-template name="top.level.section">
-              <xsl:with-param name="uid" select="'initialMetadata'"/>
-              <xsl:with-param name="title" select="'Simulation Metadata'"/>
-              <xsl:with-param name="templates" select="/cml:cml/cml:metadataList[position()=1]"/>
-            </xsl:call-template>
-            <xsl:call-template name="top.level.section">
-              <xsl:with-param name="uid" select="'inputParams'"/>
-              <xsl:with-param name="title" select="'Input Parameters'"/>
-              <xsl:with-param name="templates" select="/cml:cml/cml:parameterList[position()=1]"/>
-            </xsl:call-template>
-            <xsl:call-template name="top.level.section">
-              <xsl:with-param name="uid" select="'initialState'"/>
-              <xsl:with-param name="title" select="'Initial State of System'"/>
-              <xsl:with-param name="templates" select="/cml:cml/cml:module[@title='Initial System']"/>
-            </xsl:call-template>
-            <xsl:call-template name="top.level.section">
-              <xsl:with-param name="uid" select="'mainBody'"/>
-              <xsl:with-param name="title" select="'Main body of simulation'"/>
-              <xsl:with-param name="templates" select="/cml:cml/cml:module"/>
-            </xsl:call-template>
-            <xsl:call-template name="top.level.section">
-              <xsl:with-param name="uid" select="'finalState'"/>
-              <xsl:with-param name="title" select="'Final State of simulation'"/>
-              <xsl:with-param name="templates" select="/cml:cml/cml:module[@title='Finalization']"/>
-            </xsl:call-template>
-            <xsl:variable name="uid" select="'summaryInfo'"/>
+
+            <br/><div onclick="js:togglemenu(&quot;initialMetadata&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Initial Metadata'"/>
+            </div>
+            <div class="sublevel" id="initialMetadata">
+              <xsl:apply-templates select="/cml:cml/cml:metadataList[position()=1]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;inputParams&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Input Parameters'"/>
+            </div>
+            <div class="sublevel" id="inputParams">
+              <xsl:apply-templates select="/cml:cml/cml:parameterList[position()=1]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;initialState&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Input State of System'"/>
+            </div>
+            <div class="sublevel" id="initialState">
+              <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']" mode="noTitle"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;mainBody&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Main Body of Simulation'"/>
+            </div>
+            <div class="sublevel" id="mainBody">
+              <xsl:apply-templates select="/cml:cml/cml:module[(@title!='Initial System' and @title!='Finalization') or not(@title)]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;finalState&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Final State of System'"/>
+            </div>
+            <div class="sublevel" id="finalState">
+              <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']" mode="noTitle"/>
+            </div><br/>
+
             <br/>
-            <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle clickableDiv">
+            <div onclick="js:togglemenu(&quot;summaryInfo&quot;)" class="divisionTitle clickableDiv">
               <xsl:text>Summary Information</xsl:text>
             </div>
-            <div class="sublevel" id="{$uid}">
+            <div class="sublevel" id="summaryInfo">
               <xsl:call-template name="summary"/>
 	    </div>
             <br/>
             <hr/>
           </div>
         </div>
-<!-- -->
 
 <!-- Generate dictionary of document -->
         <div id="dictdisplay">
@@ -169,14 +178,6 @@
     <xsl:param name="uid"/>
     <xsl:param name="title"/>
     <xsl:param name="templates"/>
-    <br/>
-    <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="divisionTitle clickableDiv">
-      <xsl:value-of select="$title"/>
-    </div>
-    <div class="sublevel" id="{$uid}">
-       <xsl:apply-templates select="$templates"/>
-    </div>
-    <br/>
   </xsl:template>
 
   <xsl:template name="css-style">
@@ -265,10 +266,10 @@
                     background: #4682B4;
                     font-weight: bold;
                     font-size: x-large;
-                    border-width-top: 0px;
-                    border-width-left: 0px;
-                    border-width-right: 5px;
-                    border-width-bottom: 5px;
+                    border-top-width: 0px;
+                    border-left-width: 0px;
+                    border-right-width: 5px;
+                    border-bottom-width: 5px;
                     border-color: #7dB7FF;
                     border-style: solid;
                     }

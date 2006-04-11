@@ -18,7 +18,6 @@
   <xsl:template name="summary">
 
     <xsl:call-template name="summaryGraphs"/>
-    <xsl:message terminate="yes"/>
     
     <!-- Finally, add animation -->
     <xsl:if test="count(//cml:molecule) &gt; 0">

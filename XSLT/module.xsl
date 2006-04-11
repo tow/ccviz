@@ -6,8 +6,14 @@
         xmlns="http://www.w3.org/1999/xhtml"
 	>
 
-<xsl:import href="toby_graph.xsl"/>
+  <xsl:import href="toby_graph.xsl"/>
 
+  <xsl:template match="cml:module" mode="noTitle">
+    <xsl:variable name="uid" select="generate-id()"/>
+    <div>
+      <xsl:apply-templates select="*"/>
+    </div>
+  </xsl:template>
 
   <xsl:template match="cml:module">
     <xsl:variable name="uid" select="generate-id()"/>
