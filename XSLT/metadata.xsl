@@ -10,7 +10,7 @@
 
   <xsl:template match="cml:metadataList">
     <xsl:if test="count(cml:metadata)&gt;0">
-      <ul><xsl:apply-templates select="cml:metadata"/></ul>
+      <ul class="metadata"><xsl:apply-templates select="cml:metadata"/></ul>
     </xsl:if>
     <hr/>
   </xsl:template>

@@ -106,6 +106,7 @@
         </xsl:if>
       </xsl:when> <!-- child step -->
       <xsl:otherwise>
+        <xsl:if test="(count(preceding-sibling::cml:module[@role='step'])+1) mod $stepinterval = 0">
         <div>
           <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="steptitle clickableDiv">
             <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
@@ -133,6 +134,7 @@
 	    <div><xsl:copy-of select="$SCFgraph1"/></div>
 	  </xsl:if> -->
         </div>
+        </xsl:if>
       </xsl:otherwise>
     </xsl:choose> 
   </xsl:template>

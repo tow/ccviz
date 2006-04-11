@@ -63,7 +63,19 @@
 
 <!-- Global variable - do we want jmol output or not? -->
   <xsl:param name="Jmol">
-   <xsl:value-of select="boolean(//cml:molecule)"/>
+    <xsl:value-of select="boolean(//cml:molecule)"/>
+  </xsl:param>
+
+<!-- Global variable - how many steps do we want? -->
+  <xsl:param name="stepinterval">
+    <xsl:choose>
+      <xsl:when test="count(cml:cml/cml:module[@role='step']) &gt; 100">
+         10
+      </xsl:when>
+      <xsl:otherwise>
+         1
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:param>
 
 
@@ -121,7 +133,8 @@
               <xsl:value-of select="'Input Parameters'"/>
             </div>
             <div class="sublevel" id="inputParams">
-              <xsl:apply-templates select="/cml:cml/cml:parameterList[position()=1]"/>
+              <xsl:apply-templates select="/cml:cml/cml:parameterList"/>
+            <!--   <xsl:apply-templates select="/cml:cml/cml:parameterList[position()=1]"/> -->
             </div><br/>
 
             <br/><div onclick="js:togglemenu(&quot;initialState&quot;)" class="divisionTitle clickableDiv">
