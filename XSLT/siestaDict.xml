@@ -1,0 +1,605 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="dict2html.xsl" type="text/xsl"?>
+
+<dictionary dictRef="siesta" title="Siesta dictionary" xmlns="http://www.xml-cml.org/schema/stmml">
+
+  <entry id="Eions" term="Eions">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Energy of the ions: Inter-local-pseudopotential repulsion</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="Ena" term="Ena">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Energy of the Neutral Atoms</definition>
+    <description>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="Ekin" term="Ekin">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Kinetic energy of the ions</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+    <entry id="Enl" term="Enl">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Energy due to the non-local contribution of the pseudopotentials.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="Exc" term="Exc">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Exchange-Correlation Energy</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="Etot" term="Etot">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Total energy of the system (Kohn-Sham functional)</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="Eharrs" term="Eharris">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Total energy of the system, calculation using the non-self consistent Harris-Foulkes functional</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+    <entry id="Emad" term="Emad">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Madelung energy</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="DEna" term="DEna">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Non local</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="DUscf" term="DUscf">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition></definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="DUext" term="DUext">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition></definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="E_KS" term="E_KS">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Kohn-Sham total energy</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+    W. Kohn and L. J. Sham. <i>Phys. Rev. A</i>, <b>140</b>, (1965), 1133<br />
+    P. Hohenberg and W. Kohn. <i>Phys. Rev. B</i>, <b>136</b>, (1964), 864<br />
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="E_KS_egg" term="E_KS_egg">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Kohn-Sham total energy with correction for 'eggbox' effect</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      The energy given by E<sup>ks</sup> - E<sup>egg</sup>.  
+      It is the responsiblity of the user to supply the fourier coefficients for the eggbox effect.  
+      The coefficients must be supplied in the fdf file in an fdf block, see the user guide for details. 
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="Ecorrec" term="Ecorrec">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Energy correction?</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="FreeE" term="FreeE">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Free Energy of the system</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+<entry id="dDmax" term="dDmax">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Maximum difference in the density matrix</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      <p>The maximum difference in a given element in the density matrix in two consecutive steps.  
+         The cut-off tolerance is governed by the value of MD.maxCGtol in the fdf file.</p>
+      <p>Maximum value in the difference between elements of the density matrix during the self-consistency iterations.  
+         Self-consistency is achieved when this value is smaller than the tolerance specified.</p>
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+<!-- BASIS SET INFO -->
+  <entry id="atm_label" term="Atomic label">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Label for species.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+        SIESTA requires internally a number to tag each species.
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="iz" term="Atomic number">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Atomic number</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="smass" term="Atomic mass">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Mass of species.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="charge" term="Charge">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Charge on the atom.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+        As defined in <tt>%block PAO.Basis</tt>
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="basistype" term="Basis type">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Type of basis set.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+    <p>
+    Defined using <tt>PAO.BasisType</tt> or <tt>%block PAO.Basis</tt>.  
+    SIESTA uses finite-ranged pseudo-atomic orbitals [1,2].</p> 
+    <p>Acceptable values are split, split Gaussian, nodes, nonodes.
+    Default value: split</p>
+    <p>1. Sankey and Niklewsky. <i>Phys. Rev. B</i>, <b>40</b>, (1989), 3979</p>
+    <p>2. D. Sanchez-Portal, E. Artacho and J. Soler. <i>J. Phys. Chem. Mater. </i>, <b>8</b>, (1996), 3859</p>    
+      </div>
+   </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="l" term="L">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Quantum angular momentum</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  <entry id="cnfigmx" term="Config_max">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Maximum principal quantum number.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+         Array of values, one for each angular momentum, containing, the maximum principal quantum number present for each.
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  <entry id="lambda" term="Lambda">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition></definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  <entry id="lmxkb" term="Lambda">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition></definition>
+    <description>
+    </description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+<!-- E Field -->
+<entry id="efield" term="Electric field">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition></definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Jon Wakelin"/>
+      <metadata name="dc:date" content=""/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  
+<!-- Miguel -->
+  <entry id="E_Fermi" term="Fermi energy">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition> All the electronic states below this energy are occupied, and all the energy levels above it, are empty.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="J.M. Pruneda"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+
+  <entry id="nkpoints" term="Number k-points">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Number of k-vectors used to sample the sample the lattice reciprocal space.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="J.M. Pruneda"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+
+  <entry id="lattice" term="Lattice">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Vectors defining the cell with periodic boundary conditions.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="J.M. Pruneda"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+
+  <entry id="cstress" term="Stress tensor (constrained)">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Constraints imposed over the lattice by the values of the stresses of the system.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="J.M. Pruneda"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  
+<!-- Toby White -->
+  <entry id="dipol" term="Electric dipole">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>A length-three vector describing the electric dipole of the system. Where there charge 	
+		distribution of the system is 
+      <mathml xmlns="http://www.w3.org/1998/Math/MathML">
+        <mi>q</mi><mo>(</mo><mi>r</mi><mo>)</mo>
+      </mathml>
+      , then
+     <mathml xmlns="http://www.w3.org/1998/Math/MathML">
+       <mi>mu</mi><mo>=</mo><mo>int</mo><mo>dd</mo><mi>r</mi><mi>q</mi><mo>(</mo><mi>r</mi><mo>)</mo><mi>r</mi>
+     </mathml>
+    </definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+    <metadataList>
+      <metadata name="dc:creator" content="T. White"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="forces" term="Atomic forces">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>Forces exerted on each atom.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+         An array of size 3 by (number of atoms), which describes the instantaneous forces acting upon each atom.
+      </div>
+    </description>
+    <metadataList>
+      <metadata name="dc:creator" content="T. White"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  
+  <entry id="stress" term="Stress tensor">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>The stress tensor &#932; of a system is a three by three matrix whose elements 
+        	&#932;<sub><i>ij</i></sub> represent the stress on the <i>i</i> plane in the <i>j</i> direction.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+    <metadataList>
+      <metadata name="dc:creator" content="T. White"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  
+  <entry id="pressSol" term="System pressure">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>The isotropic pressure of the system. Equal to the trace of the stress tensor.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+    <metadataList>
+      <metadata name="dc:creator" content="T. White"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+  
+  
+   <entry id="pressMol" term="Molecular pressure">
+    <annotation>
+      <appinfo/>
+    </annotation>
+    <definition>The molecular pressure of the system; equal to the total pressure minus the virial.</definition>
+    <description>
+      <div class="dictDescription" xmlns="http://www.w3.org/1999/xhtml">
+      </div>
+    </description>
+    <metadataList>
+      <metadata name="dc:creator" content="T. White"/>
+      <metadata name="dc:date" content="30-MAR-2004"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+</dictionary>
