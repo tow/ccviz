@@ -398,11 +398,13 @@
 
         if (appNode.hasChildNodes()) {
           var newAppNode = document.createElementNS('http://www.w3.org/1999/xhtml','object');
-          newAppNode.setAttribute('style', "display:none;")
+          newAppNode.setAttribute('style', "display:none;");
+          newAppNode.setAttribute('id', parentId);
           var newMessage = 'Activate Jmol viewer';
         }
         else {
           var newAppNode = jmolXAppletNodeId(sz, thisId, "background white", nameSuffix=thisId);
+          newAppNode.setAttribute('id', parentId);
           var newMessage = 'Deactivate Jmol viewer';
         }
         appNode.parentNode.replaceChild(newAppNode, appNode);
