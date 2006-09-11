@@ -19,7 +19,7 @@
 <!-- band -->
   <xsl:template match="cml:band">
     <xsl:param name="mouseoverString">
-      <xsl:for-each select="str:tokenize(normalize-space(@kpoint),' ')">
+      <xsl:for-each select="str:tokenize(@kpoint,' ')">
         <xsl:value-of select="format-number(., '0.000')"/>
       </xsl:for-each>
       <xsl:text> (</xsl:text>

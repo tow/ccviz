@@ -4,6 +4,8 @@
         xmlns="http://www.w3.org/1999/xhtml"
 	>
 
+<!-- TOHW rewrite this tou just use str:tokenize -->
+
   <xsl:template match="cml:matrix">
     <xsl:param name="rows">
       <xsl:value-of select="@rows"/>
