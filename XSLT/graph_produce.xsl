@@ -6,8 +6,6 @@
         xmlns:g="http://www.uszla.me.uk/xsl/1.0/graph"
         >
 
-<!-- Chunker, for multiple document output support -->
-<xsl:import href="chunker.xsl"/>
 <xsl:import href="toby_graph.xsl"/>
 <xsl:import href="graphfuncs.xsl"/>
 

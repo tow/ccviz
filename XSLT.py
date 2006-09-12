@@ -40,14 +40,15 @@ import mimetypes
 import os
 import sys
 import tempfile
+import time
 import urllib
 
 import subProcess
 import libfinxml
 
 xsltproc = '/usr/bin/xsltproc'
-xsltCommand = xsltproc + ' -o %(output)s %(style)s %(input)s >/dev/null 2>&1'
-defaultStylesheet='http://www.eminerals.org/XSLT/eMinViz.xsl'
+xsltCommand = xsltproc + ' -o %(output)s %(style)s %(input)s >/dev/null'
+defaultStylesheet='http://www.eminerals.org/XSLT/ccViz.xsl'
 
 # Nothing below this line should be altered.
 ############################################
@@ -85,7 +86,7 @@ htmlForm = """
     <form method="get" action="%(thisPage)s" enctype="multipart/form-data" onsubmit="submitForm(this.id)" id="listForm">
       <table>
         <tr><td>XML file address</td><td><input name="xmlIn" value="" type="text"/></td></tr>
-        <tr><td>XSLT stylesheet</td><td><input name="xsltSheet" value="%(xsltDefault)s" type="text"/>(default is eMineralsView)</td></tr>
+        <tr><td>XSLT stylesheet</td><td><input name="xsltSheet" value="%(xsltDefault)s" type="text"/>(leave blank for internal)</td></tr>
         <tr><td><input type="submit" value="SUBMIT"/></td><td><input value="CLEAR" type="reset"/></td></tr>
       </table>
     </form>
@@ -95,7 +96,7 @@ htmlForm = """
     <form method="post" action="%(thisPage)s" enctype="multipart/form-data" onsubmit="submitForm(this.id)" id="putForm">
       <table>
         <tr><td>XML file to upload</td><td><input name="xmlUp" value="" type="file"/></td></tr>
-        <tr><td>XSLT stylesheet</td><td><input name="xsltSheet" value="%(xsltDefault)s" type="text"/>(default is eMineralsView)</td></tr>
+        <tr><td>XSLT stylesheet</td><td><input name="xsltSheet" value="%(xsltDefault)s" type="text"/>(leave blank for internal)</td></tr>
         <tr><td><input value="SUBMIT" type="submit"/></td><td><input value="CLEAR" type="reset"/></td></tr>
       </table>
     </form>
@@ -153,60 +154,69 @@ def errorPage(errorCode, errorString, explanation):
     page.append(footer)
     return page
 
-def cleanString_p(string):
-    # Check string is clean before passing to shell
-    # It must be an SRB filename.
-    # Allowable characters: alnum, '/','-','_','.','+',','
-    okchars = '/-_.+,'
-    for char in string:
-    	if not char.isalnum() and okchars.find(char) == -1:
-	    return False
-    return True
-
 def generate_form():
     page = Page(contentType)
     page.append(header)
-    page.append(htmlForm % {'xsltDefault':defaultStylesheet, 'thisPage':thisPage})
+    page.append(htmlForm % {'xsltDefault':'', 'thisPage':thisPage})
     page.append(footer)
     return page
 
-def transformXML(inputFile, outputFile, stylesheet=defaultStylesheet):
-
-   # thisDir = os.path.dirname(sys.argv[0])
-   # styleSheet = os.path.join(thisDir, 'xslt', 'display.xsl')
+def transformXML(inputFile, outputFile, stylesheet="default"):
 
     xmlFile = urllib.urlopen(inputFile)
-
-    tmpDir = tempfile.mkdtemp()
 
     tfname = os.path.join(tmpDir, 'output.xml')
     tf = open(tfname, 'w')
     libfinxml.finishXMLFile(xmlFile, tf)
     tf.close()
-    process = subProcess.subProcess(xsltCommand % {'xsltproc':xsltproc,
-                                                   'output':outputFile,
-                                                   'style':stylesheet,
-                                                   'input':tfname })
-    done = process.read(300) # 1 minute time out
-    if done == 1:
-        # we timed out.
-        process.kill()
-        errdata = 'xsltproc timeout'
-    else:
-        # we finished (for better or worse) & don't want to retry.
-        outdata = process.outdata
-        errdata = process.errdata
-        del(process)
-    if errdata != '':
-        raise OSError(errdata)
-    sys.stderr.write(xsltCommand % {'xsltproc':xsltproc,
-                                       'output':outputFile,
-                                       'style':stylesheet,
-                                       'input':tfname })
-    sys.stderr.write(outdata)
-    sys.stderr.write(errdata)
-    os.unlink(tfname)
-    os.rmdir(tmpDir)
+    if stylesheet == "default":
+        sys.stderr.write(xsltCommand % {'xsltproc':xsltproc,
+                                        'output':outputFile,
+                                        'style':'',
+                                        'input':tfname })
+        process = subProcess.subProcess(xsltCommand % 
+                                         {'xsltproc':xsltproc,
+                                          'output':outputFile,
+                                          'style':'',
+                                          'input':tfname })
+        done = process.read(300) # 1 minute time out
+        if done == 1:
+            # we timed out.
+            process.kill()
+            errdata = 'xsltproc timeout'
+        else:
+            # we finished (for better or worse) & don't want to retry.
+            outdata = process.outdata
+            errdata = process.errdata
+    process.cleanup()
+    if process.sts != 0 or stylesheet != "default":
+        # we have failed on the document's internal stylesheet, let's try again with the default:
+        stylesheet = defaultStylesheet
+        process = subProcess.subProcess(xsltCommand % 
+                                         {'xsltproc':xsltproc,
+                                          'output':outputFile,
+                                          'style':stylesheet,
+                                          'input':tfname })
+        done = process.read(300) # 1 minute time out
+        if done == 1:
+            # we timed out.
+            process.kill()
+            errdata = 'xsltproc timeout'
+        else:
+            # we finished (for better or worse) & don't want to retry.
+            outdata = process.outdata
+            errdata = process.errdata
+        process.cleanup()
+        if process.sts != 0:
+            raise OSError(errdata)
+        sys.stderr.write(xsltCommand % {'xsltproc':xsltproc,
+                                        'output':outputFile,
+                                        'style':stylesheet,
+                                        'input':tfname })
+        sys.stderr.write(outdata)
+        sys.stderr.write(errdata)
+        os.unlink(tfname)
+        os.rmdir(tmpDir)
 
 def isXML(file):
     retval = os.system('xmllint '+file)

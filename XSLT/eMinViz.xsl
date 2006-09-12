@@ -83,7 +83,7 @@
     omit-xml-declaration="no" standalone="yes"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-    indent="yes" media-type="application/xhtml+xml"/>
+    indent="no" media-type="application/xhtml+xml"/>
 
 
 <!-- MAIN TEMPLATE -->
