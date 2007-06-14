@@ -1,0 +1,3590 @@
+#!/bin/sh
+
+XSLTPROC=/usr/bin/xsltproc
+
+TMPDIR=$(mktemp -p /tmp)
+cat > $TMPDIR/array.xsl << EOF
+<!--===================== ARRAY =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:str="http://exslt.org/strings"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        extension-element-prefixes="str">
+
+  <xsl:template match="cml:array">
+    <xsl:variable name="delimiter">
+      <xsl:choose>
+        <xsl:when test="@delimiter">
+          <xsl:value-of select="@delimiter"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="' '"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <p><br/></p>
+    <table class="prop2">
+      <tr>
+        <xsl:for-each select="str:tokenize(text(),$delimiter)">
+	  <td>
+	    <xsl:choose>
+              <xsl:when test="ceiling(.) = floor(.) and not(contains(.,'.'))">
+	        <xsl:value-of select="."/>
+	      </xsl:when>
+	      <xsl:when test="string(number(.)) != 'NaN'">
+	        <xsl:value-of select="format-number(., '0.0000')"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+	        <xsl:value-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>	        
+	  </td>
+        </xsl:for-each>
+      </tr>
+    </table>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/averageVolume.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0"
+   xmlns:cml="http://www.xml-cml.org/schema"
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+   xmlns:tohw="http://www.uszla.me.uk/xsl/1.0/functions"
+   xmlns:g="http://www.uszla.me.uk/xsl/1.0/graph"
+   extension-element-prefixes="tohw"
+>
+
+<xsl:import href="graphfuncs.xsl"/>
+
+<xsl:output method="xml"/>
+
+<xsl:param name="fileList"/>
+
+<xsl:template match="/">
+  <g:graphSet>
+    <g:pointList>
+      <xsl:apply-templates select="*"/>
+    </g:pointList>
+  </g:graphSet>
+</xsl:template>
+
+<xsl:template match="file">
+  <xsl:element name="point" namespace="http://www.uszla.me.uk/xsl/1.0/graph">
+    <xsl:attribute name="x">
+      <xsl:value-of select="document(.)//cml:parameterList[@title='control parameters']/cml:parameter[@dictRef='dl_poly:pressure']/cml:scalar"/>
+    </xsl:attribute>
+    <xsl:attribute name="y">
+      <xsl:value-of select="sum(document(.)//cml:step/cml:propertyList[@title='instantaneous']/cml:property[@dictRef='dl_poly:volume']/cml:scalar) div count(document(.)//cml:step/cml:propertyList[@title='instantaneous']/cml:property[@dictRef='dl_poly:volume']/cml:scalar)"/>
+    </xsl:attribute>
+  </xsl:element>
+</xsl:template>
+
+
+</xsl:stylesheet>
+
+EOF
+cat > $TMPDIR/bandList.xsl << EOF
+<!--===================== BANDS =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:str="http://exslt.org/strings"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        extension-element-prefixes="str">
+	
+<!-- bandList -->
+  <xsl:template match="cml:bandList">
+    <xsl:if test="title"><H3><xsl:value-of select="@title"/></H3></xsl:if>
+<!--    <H3>Eigenvalues</H3>  -->
+    <table>
+      <xsl:apply-templates select="cml:band"/>
+    </table>
+  </xsl:template>
+  
+<!-- band -->
+  <xsl:template match="cml:band">
+    <xsl:param name="mouseoverString">
+      <xsl:for-each select="str:tokenize(@kpoint,' ')">
+        <xsl:value-of select="format-number(., '0.000')"/>
+      </xsl:for-each>
+      <xsl:text> (</xsl:text>
+      <xsl:value-of select="format-number(@weight, '0.000')"/>
+      <xsl:text>)</xsl:text>
+    </xsl:param>
+
+    <tr>
+      <th align="left">
+	<span>
+	  <xsl:attribute name="title">
+	    <xsl:value-of select="$mouseoverString"/>
+	  </xsl:attribute>
+	  <i>k</i>-point
+	  <xsl:value-of select="position()"/>
+	</span>
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <table>
+	<xsl:for-each select="str:tokenize(normalize-space(.), ' ')">
+	  <xsl:if test="(position()-1) mod 10 = 0">
+           <xsl:variable name="pos" select="position()"/>
+           <tr>
+            <td class="eigen"><xsl:value-of select="../token[$pos+0]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+1]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+2]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+3]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+4]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+5]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+6]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+7]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+8]"/></td>
+            <td class="eigen"><xsl:value-of select="../token[$pos+9]"/></td>
+          </tr>
+         </xsl:if>
+	</xsl:for-each>
+        </table>
+      </td>
+    </tr>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/dict2frag.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:stm="http://www.xml-cml.org/schema/stmml"
+        xmlns="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xsl stm"
+        >
+
+  <xsl:template name="addDict">
+    <xsl:apply-templates select="document(concat($prog,'Dict.xml'))/stm:dictionary/stm:entry">
+      <!-- need translate below to prevent separating upper & lower case entries -->
+      <xsl:sort data-type="text" order="ascending" 
+		select="translate(@term,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+    </xsl:apply-templates> 
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/dict2html.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:stm="http://www.xml-cml.org/schema/stmml"
+        xmlns="http://www.w3.org/1999/xhtml"
+        >
+
+  <xsl:import href="dictcommon.xsl"/>
+
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" 
+    omit-xml-declaration="no" standalone="yes"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    indent="yes" media-type="application/xhtml+xml"/>
+
+  <xsl:template match="/">
+    <html>
+      <head>
+	<title><xsl:value-of select="/stm:dictionary/@title"/></title>
+      </head>
+    <body>
+      <h1><xsl:value-of select="/stm:dictionary/@title"/></h1>
+      <hr></hr>
+      <xsl:apply-templates select="/stm:dictionary/stm:entry">
+	<!-- need translate below to prevent separating upper & lower case entries -->
+        <xsl:sort data-type="text" order="ascending" 
+		  select="translate(@term,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+      </xsl:apply-templates>
+    </body>
+  </html>
+</xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/dict2xsl.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:stm="http://www.xml-cml.org/schema/stmml"
+        xmlns="http://www.w3.org/1999/xhtml"
+        >
+
+  <xsl:import href="dictcommon.xsl"/>
+
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" 
+    omit-xml-declaration="no" standalone="yes"
+    indent="yes" media-type="text/xsl"/>
+
+  <xsl:template match="/">
+    <xsl:element name="xsl:stylesheet" namespace="http://www.w3.org/1999/XSL/Transform">
+      <xsl:attribute name="version">1.0</xsl:attribute>
+ <!--      <xsl:attribute name="xmlns">http://www.w3.org/1999/xhtml</xsl:attribute> -->
+      <xsl:element name="xsl:template" namespace="http://www.w3.org/1999/XSL/Transform">
+	<xsl:attribute name="name">addDict</xsl:attribute>
+	<xsl:apply-templates select="//stm:entry">
+	  <!-- need translate below to prevent separating upper & lower case entries -->
+	  <xsl:sort data-type="text" order="ascending" 
+		    select="translate(@term,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+	</xsl:apply-templates>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/dictcommon.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:stm="http://www.xml-cml.org/schema/stmml"
+        xmlns="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xsl stm"
+        >
+
+  <!-- For each entry in the dictionary -->
+  <xsl:template match="stm:entry">
+    <div class="dictAnchor">
+      <a>
+	<xsl:attribute name="name">
+	  <xsl:value-of select="@id"/>
+	</xsl:attribute>
+      </a>
+    </div>
+    <div class="dictEntry"><xsl:value-of select="@term"/><xsl:text>:</xsl:text></div>
+    <xsl:if test="stm:definition">
+      <xsl:choose>
+	<xsl:when test="//text()='definition to be supplied'">
+	  <p><font color="blue"><xsl:value-of select="stm:definition"/></font></p>
+	</xsl:when>
+	<xsl:otherwise>
+	  <div class="dictDefinition"><xsl:value-of select="stm:definition"/></div>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:if test="stm:description">
+      <xsl:copy-of select="stm:description/node()"/>
+    </xsl:if>
+    <hr/>
+  </xsl:template>
+  
+  
+  <!-- for each description just copy everything -->
+  <!-- REM do the same for MathML stuff          -->
+<!--  <xsl:template match="stm:description/@*|node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+  </xsl:template> -->
+
+
+  
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/dictionary.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--===================== DICTIONARY =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:stm="http://www.xml-cml.org/schema/stmml"
+        xmlns="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xsl stm"
+	>
+  
+  <!-- GET DICTIONARY REFERENCE FOR USE WITHIN THE HTML OUTPUT -->	
+  <xsl:template name="get.dictionary.reference.html">
+    <!-- if dictionary reference is given try to resolve it -->
+    <xsl:param name="dictRef" select="' '"/>
+    <xsl:param name="title" select="' '"/>
+    <xsl:choose>
+      <xsl:when test="$dictRef">
+          <xsl:call-template name="resolve.dictionary.id.html">
+	    <xsl:with-param name="dictionary" select="document(concat(substring-before($dictRef, ':'), 'Dict.xml'))"/>
+	    <xsl:with-param name="entry" select="substring-after(@dictRef, ':')"/>
+	  </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="not($dictRef) and $title">                
+        <span>
+	  <i><xsl:value-of select="$title"/></i>
+	</span>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+
+<!-- RESOLVE DICTIONARY ID FOR THE HTML OUTPUT -->
+  <xsl:template name="resolve.dictionary.id.html">
+    <xsl:param name="dictionary"/>
+    <xsl:param name="entry"/>
+    <xsl:variable name="title">
+      <xsl:choose>
+        <xsl:when test="@title">
+	  <xsl:value-of select="@title"/>
+	</xsl:when>
+	<xsl:otherwise>
+          <xsl:text>Unknown</xsl:text>  
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:choose>
+    <!-- If dictionary exists use it-->  
+      <xsl:when test="$dictionary/stm:dictionary/stm:entry[@id =  $entry]">
+        <xsl:apply-templates select="$dictionary/stm:dictionary/stm:entry[@id = $entry]" mode="htmlOutput">
+          <xsl:with-param name="entry" select="$entry"/>
+	  <xsl:with-param name="title" select="$title"/>
+        </xsl:apply-templates>
+      </xsl:when>
+    <!-- If dictionary does NOT exist use entry name and flag a warning -->  
+      <xsl:otherwise>
+        <xsl:choose>
+        <xsl:when test="$title = 'Unknown'">
+          <xsl:value-of select="$entry"/>            <!-- 2nd failing that use @dictRef -->
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="$title"/>            <!-- 1st preferentially use @title -->
+	</xsl:otherwise>
+      </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+  <!-- GET DICTIONARY ENTRY FOR HTML OUTPUT -->	
+  <xsl:template match="stm:entry" mode="htmlOutput">
+    <xsl:param name="entry"/>
+    <xsl:param name="title"/>
+    <xsl:variable name="dictTitle">
+      <xsl:choose>
+        <xsl:when test="$title = 'Unknown'">
+          <xsl:choose>
+	    <xsl:when test="@term">
+	      <xsl:value-of select="@term"/>             <!-- 2nd otherwise use @term -->
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="$entry"/>            <!-- 3rd failing that use @dictRef -->
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="$title"/>                  <!-- 1st preferentially use @title -->
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>  
+    <span>
+      <xsl:attribute name="onmouseover">document.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
+      <xsl:value-of select="$dictTitle"/>
+    </span>
+  </xsl:template>
+  
+  
+  
+  
+<!-- GRAPH -->
+  <!-- GET DICTIONARY REFERENCE FOR USE WITHIN THE GRAPH OUTPUT -->	
+  <xsl:template name="get.dictionary.reference.graph">
+    <!-- if dictionary reference is given try to resolve it -->
+    <xsl:param name="dictRef"/>
+    <xsl:choose>
+      <xsl:when test="$dictRef">
+	<xsl:call-template name="resolve.dictionary.id.graph">
+	  <xsl:with-param name="dictionary" 
+	     select="document(concat(substring-before($dictRef, ':'), 'Dict.xml'))"/>
+	  <xsl:with-param name="entry" select="substring-after($dictRef, ':')"/>
+	</xsl:call-template>
+      </xsl:when>
+      <!-- else try to use the title attribute and flag a warning -->
+      <xsl:when test="@title">
+	<xsl:text>No dictionary reference given</xsl:text>
+      </xsl:when>
+      <!-- otherwise just write 'unknown' and flag a warning -->
+      <xsl:otherwise>
+	<xsl:text>No dictionary reference or title given</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  
+  <!-- RESOLVE DICTIONARY ID FOR THE GRAPH OUTPUT-->	
+  <xsl:template name="resolve.dictionary.id.graph">
+    <xsl:param name="dictionary"/>
+    <xsl:param name="entry"/>
+    <xsl:choose>
+      
+      <!-- If dictionary exists use it-->  
+      <xsl:when test="$dictionary/dictionary">
+
+        <!-- If entry found then use it -->
+	<xsl:if test="$dictionary/dictionary/entry[@id =  $entry]">
+	  <xsl:apply-templates select="$dictionary/dictionary/entry[@id =  $entry]" mode="graphOutput">
+	    <xsl:with-param name="entry" select="$entry"/>
+	  </xsl:apply-templates>
+	</xsl:if>
+	
+	<!--  If entry NOT found then use entry name and flag a warning  -->
+	<xsl:if test="not($dictionary/dictionary/entry[@id =  $entry])">
+	  <xsl:text>Entry </xsl:text><xsl:value-of select="$entry"/>
+	  <xsl:text> not found in the dictionary</xsl:text>
+	</xsl:if>
+      </xsl:when>
+      
+      <!-- If dictionary does NOT exist use entry name and flag a warning -->  
+      <xsl:otherwise>
+	<xsl:value-of select="$dictionary"/><xsl:text> dictionary not found.</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+  <!-- GET DICTIONARY ENTRY FOR GRAPH OUTPUT -->
+  <xsl:template match="entry" mode="graphOutput">
+    <xsl:param name="entry"/>
+
+    <xsl:value-of select="definition"/>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/display.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xsl"
+        >
+
+<!-- CML -->
+<xsl:import href="structure.xsl"/>
+<xsl:import href="dictionary.xsl"/>
+<xsl:import href="metadata.xsl"/>
+<xsl:import href="parameter.xsl"/>
+<xsl:import href="property.xsl"/>
+<xsl:import href="bandList.xsl"/>
+<xsl:import href="formula.xsl"/>
+<xsl:import href="units.xsl"/>
+
+<!-- CMLComp -->
+<xsl:import href="module.xsl"/>
+<xsl:import href="lattice.xsl"/>
+
+<!-- STMML -->
+<xsl:import href="scalar.xsl"/>
+<xsl:import href="array.xsl"/> 
+<xsl:import href="matrix.xsl"/>
+<xsl:import href="table.xsl"/>
+
+<!-- Dictionary -->
+<xsl:import href="dict2frag.xsl"/>
+<xsl:import href="dictcommon.xsl"/>
+
+<!-- Special templates -->
+<xsl:import href="summary.xsl"/>
+<xsl:import href="rdf.xsl"/>
+
+<xsl:strip-space elements="*"/>
+
+<xsl:template match="text()"/>
+
+<!-- Global Variable holding the program name -->
+<xsl:param name="prog">
+  <xsl:choose>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']">
+     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
+    </xsl:when>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']">
+     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
+    </xsl:when>
+    <!-- <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
+    <xsl:message> Three </xsl:message>
+     <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
+    </xsl:when> -->
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content = 'DL_POLY version 3.06 / March 2006'">
+      <xsl:text>DL_POLY</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>Program</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:param>
+
+<!-- Global variable - do we want jmol output or not? -->
+  <xsl:param name="Jmol">
+    <xsl:value-of select="boolean(//cml:molecule)"/>
+  </xsl:param>
+
+<!-- Global variable - how many steps do we want? -->
+  <xsl:param name="stepinterval">
+    <xsl:choose>
+      <xsl:when test="count(cml:cml/cml:module[@role='step']) &gt; 100">
+         10
+      </xsl:when>
+      <xsl:otherwise>
+         1
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+
+
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" 
+    omit-xml-declaration="no" standalone="yes"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    indent="no" media-type="application/xhtml+xml"/>
+
+
+<!-- MAIN TEMPLATE -->
+  <xsl:template match="/">
+    <html>
+      <head>
+	<title>
+	  <xsl:value-of select="$prog"/>
+	  <xsl:text> Output</xsl:text>
+	</title>
+        <style type="text/css">
+          <xsl:call-template name="css-style"/>
+        </style>
+        <xsl:if test="$Jmol!='false'">
+          <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
+        </xsl:if>
+
+        <script type="text/javascript">
+          <xsl:call-template name="mainJavascript"/>
+        </script>
+      </head>
+
+      <body>
+        <xsl:if test="$Jmol!='false'">
+         <xsl:attribute name="onload">
+           <xsl:text>jmolXInitialize(&quot;http://www.eminerals.org/jmol&quot;)</xsl:text>
+         </xsl:attribute>
+        </xsl:if>
+ 
+        <div id="head"><div class="bigTitle">
+           <xsl:value-of select="$prog"/>
+           <xsl:text> Output</xsl:text>
+        </div></div>
+
+<!-- Generate body of document -->
+        <div id="maindisplay">
+          <div class="innerMain">
+
+            <br/><div onclick="js:togglemenu(&quot;initialMetadata&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Initial Metadata'"/>
+            </div>
+            <div class="sublevel" id="initialMetadata">
+              <xsl:apply-templates select="/cml:cml/cml:metadataList[position()=1]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;inputParams&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Input Parameters'"/>
+            </div>
+            <div class="sublevel" id="inputParams">
+              <xsl:apply-templates select="/cml:cml/cml:parameterList"/>
+            <!--   <xsl:apply-templates select="/cml:cml/cml:parameterList[position()=1]"/> -->
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;initialState&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Input State of System'"/>
+            </div>
+            <div class="sublevel" id="initialState">
+              <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']" mode="noTitle"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;mainBody&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Main Body of Simulation'"/>
+            </div>
+            <div class="sublevel" id="mainBody">
+              <xsl:apply-templates select="/cml:cml/cml:module[(@title!='Initial System' and @title!='Finalization') or not(@title)]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;finalState&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Final State of System'"/>
+            </div>
+            <div class="sublevel" id="finalState">
+              <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']" mode="noTitle"/>
+            </div><br/>
+
+            <br/>
+            <div onclick="js:togglemenu(&quot;summaryInfo&quot;)" class="divisionTitle clickableDiv">
+              <xsl:text>Summary Information</xsl:text>
+            </div>
+            <div class="sublevel" id="summaryInfo">
+              <xsl:call-template name="summary"/>
+	    </div>
+            <br/>
+            <hr/>
+          </div>
+        </div>
+
+<!-- Generate dictionary of document -->
+        <div id="dictdisplay">
+          <div class="innerDict">
+            <xsl:call-template name="addDict"/>
+          </div>
+        </div>
+<!-- -->
+
+        <div id="foot">
+          <i>Created by Toby White, Jon Wakelin,  &amp; Richard Bruin </i>
+        </div>
+
+      </body>
+    </html>
+
+  </xsl:template>
+
+  <xsl:template name="top.level.section">
+    <xsl:param name="uid"/>
+    <xsl:param name="title"/>
+    <xsl:param name="templates"/>
+  </xsl:template>
+
+  <xsl:template name="css-style">
+    <xsl:text>
+      <![CDATA[
+        html       {
+                     height:100%;
+                     max-height:100%;
+                     padding:0;
+                     margin:0;
+                     border:0;
+                     background:#fff;
+                     overflow: hidden;
+                   }
+        body       {
+                     font-family: serif;
+                     background: #ffffff;
+                     height:100%;
+                     max-height:100%;
+                     overflow:hidden;
+                     padding:0;
+                     margin:0;
+                     border:0;
+                   }
+        table      { text-align: center; 
+		     border-collapse: collapse; 
+		     }
+	table.prop { 
+	  	     text-align: right; 
+	             border-collapse: collapse; 
+	             border-left: hidden; 
+		     border-right: hidden;
+		     border-top: 1px solid Gray; 
+		     border-bottom: 1px solid Gray; 
+		     }
+        table.structure { background: #ffffff; }
+
+        .step       { 
+                      border: 1px solid Gray;
+                    }
+        th.step     {
+                      background: #aa2222;
+                    }
+        td.step     {
+                      font-family: monospace;
+                      background: #cc9999;
+                    }
+        td.stepnum { background: #ffffff; ; }
+
+        .coords { border: 1px solid Gray;}
+
+	.graph     {
+                     text-align: left;
+                   }
+	
+	th        { font-weight: bold; }
+	td        { padding-left: 7px; padding-right: 7px;}
+	.bigTitle 
+                  {
+                    color: #ffffff; 
+                    background: Navy;    
+                    font-weight: bold; 
+                    margin: 0px; 
+                    padding: 2px;
+                    font-size: xx-large;
+                  }
+	.divisionTitle {
+                  }
+        .listTitle
+                  {
+                    font-weight: 900;
+                    font-size: x-large;
+                    margin-top: 2.5ex;
+                    margin-bottom: 2.5ex;
+                  }
+	.clickable { 
+                    text-decoration: underline;
+                    color: #ffffff; 
+                    background: #4682B4; 
+                    cursor: pointer; 
+                   }
+	.eigen    { text-align: right; padding-left: 7px; padding-right: 7px; }
+	.band     { vertical-align: text-top; }
+	.toplevel { display: block; font-weight: 400; margin-bottom: 0; }
+        .clickableDiv {color: #ffffff;
+                    background: #4682B4;
+                    font-weight: bold;
+                    font-size: x-large;
+                    border-top-width: 0px;
+                    border-left-width: 0px;
+                    border-right-width: 5px;
+                    border-bottom-width: 5px;
+                    border-color: #7dB7FF;
+                    border-style: solid;
+                    }
+        .clickableDiv:hover {
+                    color: #9999ff; 
+                    }
+        .moduletitle {
+                    padding: 5px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                     }
+        .steptitle   {
+                    padding: 5px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                     }
+        .switch      { color: #ffffff;
+                       background: #4682B4;
+                       font-weight: bold;
+                       cursor: pointer;
+                       display: inline;
+                       font-size: medium; }
+	.sublevel { display: none; font-weight: normal; margin-left: 20px; margin-top: 0; line-height: 14px; }
+        .paramname {color: #0000ff; }
+        .paramvalue {color: #ff0000; }
+        #head        {
+                       position:absolute; margin:0; top:0; left:0; display:block; width:100%; height:50px; z-index:5; color:#fff; background: Navy;
+                     }
+        #foot        {
+                       position:absolute; margin:0; bottom:0; left:0; display:block; width:100%; height:25px; background:rgb(233,238,242); font-size:0.8em; z-index:5; text-align:right; color:rgb(157,78,84);
+                     }
+        #maindisplay {
+                       position:absolute;
+                       left:0;
+                       top:50px;
+                       bottom:25px;
+                       z-index: 4;
+                       width:80%;
+                       overflow:auto;
+                     }
+        #dictdisplay {
+                       position:absolute;
+                       left:80%;
+                       top:50px;
+                       bottom:25px;
+                       z-index: 4;
+                       width:20%;
+                       overflow:auto;
+                     }
+        * html #maindisplay, * html #dictdisplay {
+                       height:100%;
+                       top:0;
+                       bottom:0;
+                       border-top:50px solid #fff;
+                       border-bottom:25px solid #fff;}
+        .innerMain  {
+                       display:block;
+                       padding:0 10px 10px 10px;
+                    }
+        .innerDict {
+                       display:block;
+                       padding:0 10px 10px 10px;
+                       padding-bottom:300%;
+                    }
+
+        .dictEntry  { 
+                       font-family: sans-serif;
+                       font-weight: bold;
+                       font-size: medium;
+                    }
+        .dictDefinition { 
+                       font-family: serif;
+                       font-weight: normal;
+                       font-size: small; 
+                         }
+        .dictDescription { 
+                       font-family: serif;
+                       font-weight: normal;
+                       font-size: small; 
+                       font-style: italic;
+                         }
+
+      ]]>
+    </xsl:text>
+  </xsl:template>
+
+  <xsl:template name="mainJavascript">
+    <xsl:text>
+      //<![CDATA[
+      function togglemenu(submenu) { 
+        if (document.getElementById(submenu).style.display == "none") {
+          document.getElementById(submenu).style.display = "block";
+        }
+        else {
+          document.getElementById(submenu).style.display = "none";
+         }
+      }
+
+      function toggleButton(button, submenu) { 
+        if (document.getElementById(submenu).style.display == "none") {
+          document.getElementById(submenu).style.display = "block";
+          button.setAttribute('value', 'Hide');
+        }
+        else {
+          document.getElementById(submenu).style.display = "none";
+          button.setAttribute('value', 'Show');
+         }
+      }
+
+      function toggleJmol(sz, inputNode, thisId, parentId) {
+        // Grab object node to be created.
+        var appNode = document.getElementById(parentId);
+
+        if (appNode.hasChildNodes()) {
+          var newAppNode = document.createElementNS('http://www.w3.org/1999/xhtml','object');
+          newAppNode.setAttribute('style', "display:none;");
+          newAppNode.setAttribute('id', parentId);
+          var newMessage = 'Activate Jmol viewer';
+        }
+        else {
+          var newAppNode = jmolXAppletNodeId(sz, thisId, "background white", nameSuffix=thisId);
+          newAppNode.setAttribute('id', parentId);
+          var newMessage = 'Deactivate Jmol viewer';
+        }
+        appNode.parentNode.replaceChild(newAppNode, appNode);
+        inputNode.setAttribute('value', newMessage);
+      }
+
+      //]]>
+    </xsl:text>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/eMinViz.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xsl"
+        >
+
+<!-- CML -->
+<xsl:import href="structure.xsl"/>
+<xsl:import href="dictionary.xsl"/>
+<xsl:import href="metadata.xsl"/>
+<xsl:import href="parameter.xsl"/>
+<xsl:import href="property.xsl"/>
+<xsl:import href="bandList.xsl"/>
+<xsl:import href="formula.xsl"/>
+<xsl:import href="units.xsl"/>
+
+<!-- CMLComp -->
+<xsl:import href="module.xsl"/>
+<xsl:import href="lattice.xsl"/>
+
+<!-- STMML -->
+<xsl:import href="scalar.xsl"/>
+<xsl:import href="array.xsl"/> 
+<xsl:import href="matrix.xsl"/>
+<xsl:import href="table.xsl"/>
+
+<!-- Dictionary -->
+<xsl:import href="dict2frag.xsl"/>
+<xsl:import href="dictcommon.xsl"/>
+
+<!-- Special templates -->
+<xsl:import href="summary.xsl"/>
+<xsl:import href="rdf.xsl"/>
+
+<xsl:strip-space elements="*"/>
+
+<xsl:template match="text()"/>
+
+<!-- Global Variable holding the program name -->
+<xsl:param name="prog">
+  <xsl:choose>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']">
+     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
+    </xsl:when>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']">
+     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
+    </xsl:when>
+    <!-- <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
+    <xsl:message> Three </xsl:message>
+     <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
+    </xsl:when> -->
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content = 'DL_POLY version 3.06 / March 2006'">
+      <xsl:text>DL_POLY</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:text>Program</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:param>
+
+<!-- Global variable - do we want jmol output or not? -->
+  <xsl:param name="Jmol">
+    <xsl:value-of select="boolean(//cml:molecule)"/>
+  </xsl:param>
+
+<!-- Global variable - how many steps do we want? -->
+  <xsl:param name="stepinterval">
+    <xsl:choose>
+      <xsl:when test="count(cml:cml/cml:module[@role='step']) &gt; 100">
+         10
+      </xsl:when>
+      <xsl:otherwise>
+         1
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+
+
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" 
+    omit-xml-declaration="no" standalone="yes"
+    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+    indent="no" media-type="application/xhtml+xml"/>
+
+
+<!-- MAIN TEMPLATE -->
+  <xsl:template match="/">
+    <html>
+      <head>
+	<title>
+	  <xsl:value-of select="$prog"/>
+	  <xsl:text> Output</xsl:text>
+	</title>
+        <style type="text/css">
+          <xsl:call-template name="css-style"/>
+        </style>
+        <xsl:if test="$Jmol!='false'">
+          <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
+        </xsl:if>
+
+        <script type="text/javascript">
+          <xsl:call-template name="mainJavascript"/>
+        </script>
+      </head>
+
+      <body>
+        <xsl:if test="$Jmol!='false'">
+         <xsl:attribute name="onload">
+           <xsl:text>jmolXInitialize(&quot;http://www.eminerals.org/jmol&quot;)</xsl:text>
+         </xsl:attribute>
+        </xsl:if>
+ 
+        <div id="head"><div class="bigTitle">
+           <xsl:value-of select="$prog"/>
+           <xsl:text> Output</xsl:text>
+        </div></div>
+
+<!-- Generate body of document -->
+        <div id="maindisplay">
+          <div class="innerMain">
+
+            <br/><div onclick="js:togglemenu(&quot;initialMetadata&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Initial Metadata'"/>
+            </div>
+            <div class="sublevel" id="initialMetadata">
+              <xsl:apply-templates select="/cml:cml/cml:metadataList[position()=1]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;inputParams&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Input Parameters'"/>
+            </div>
+            <div class="sublevel" id="inputParams">
+              <xsl:apply-templates select="/cml:cml/cml:parameterList"/>
+            <!--   <xsl:apply-templates select="/cml:cml/cml:parameterList[position()=1]"/> -->
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;initialState&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Input State of System'"/>
+            </div>
+            <div class="sublevel" id="initialState">
+              <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']" mode="noTitle"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;mainBody&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Main Body of Simulation'"/>
+            </div>
+            <div class="sublevel" id="mainBody">
+              <xsl:apply-templates select="/cml:cml/cml:module[(@title!='Initial System' and @title!='Finalization') or not(@title)]"/>
+            </div><br/>
+
+            <br/><div onclick="js:togglemenu(&quot;finalState&quot;)" class="divisionTitle clickableDiv">
+              <xsl:value-of select="'Final State of System'"/>
+            </div>
+            <div class="sublevel" id="finalState">
+              <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']" mode="noTitle"/>
+            </div><br/>
+
+            <br/>
+            <div onclick="js:togglemenu(&quot;summaryInfo&quot;)" class="divisionTitle clickableDiv">
+              <xsl:text>Summary Information</xsl:text>
+            </div>
+            <div class="sublevel" id="summaryInfo">
+              <xsl:call-template name="summary"/>
+	    </div>
+            <br/>
+            <hr/>
+          </div>
+        </div>
+
+<!-- Generate dictionary of document -->
+        <div id="dictdisplay">
+          <div class="innerDict">
+            <xsl:call-template name="addDict"/>
+          </div>
+        </div>
+<!-- -->
+
+        <div id="foot">
+          <i>Created by Toby White, Jon Wakelin,  &amp; Richard Bruin </i>
+        </div>
+
+      </body>
+    </html>
+
+  </xsl:template>
+
+  <xsl:template name="top.level.section">
+    <xsl:param name="uid"/>
+    <xsl:param name="title"/>
+    <xsl:param name="templates"/>
+  </xsl:template>
+
+  <xsl:template name="css-style">
+    <xsl:text>
+      <![CDATA[
+        html       {
+                     height:100%;
+                     max-height:100%;
+                     padding:0;
+                     margin:0;
+                     border:0;
+                     background:#fff;
+                     overflow: hidden;
+                   }
+        body       {
+                     font-family: serif;
+                     background: #ffffff;
+                     height:100%;
+                     max-height:100%;
+                     overflow:hidden;
+                     padding:0;
+                     margin:0;
+                     border:0;
+                   }
+        table      { text-align: center; 
+		     border-collapse: collapse; 
+		     }
+	table.prop { 
+	  	     text-align: right; 
+	             border-collapse: collapse; 
+	             border-left: hidden; 
+		     border-right: hidden;
+		     border-top: 1px solid Gray; 
+		     border-bottom: 1px solid Gray; 
+		     }
+        table.structure { background: #ffffff; }
+
+        .step       { 
+                      border: 1px solid Gray;
+                    }
+        th.step     {
+                      background: #aa2222;
+                    }
+        td.step     {
+                      font-family: monospace;
+                      background: #cc9999;
+                    }
+        td.stepnum { background: #ffffff; ; }
+
+        .coords { border: 1px solid Gray;}
+
+	.graph     {
+                     text-align: left;
+                   }
+	
+	th        { font-weight: bold; }
+	td        { padding-left: 7px; padding-right: 7px;}
+	.bigTitle 
+                  {
+                    color: #ffffff; 
+                    background: Navy;    
+                    font-weight: bold; 
+                    margin: 0px; 
+                    padding: 2px;
+                    font-size: xx-large;
+                  }
+	.divisionTitle {
+                  }
+        .listTitle
+                  {
+                    font-weight: 900;
+                    font-size: x-large;
+                    margin-top: 2.5ex;
+                    margin-bottom: 2.5ex;
+                  }
+	.clickable { 
+                    text-decoration: underline;
+                    color: #ffffff; 
+                    background: #4682B4; 
+                    cursor: pointer; 
+                   }
+	.eigen    { text-align: right; padding-left: 7px; padding-right: 7px; }
+	.band     { vertical-align: text-top; }
+	.toplevel { display: block; font-weight: 400; margin-bottom: 0; }
+        .clickableDiv {color: #ffffff;
+                    background: #4682B4;
+                    font-weight: bold;
+                    font-size: x-large;
+                    border-top-width: 0px;
+                    border-left-width: 0px;
+                    border-right-width: 5px;
+                    border-bottom-width: 5px;
+                    border-color: #7dB7FF;
+                    border-style: solid;
+                    }
+        .clickableDiv:hover {
+                    color: #9999ff; 
+                    }
+        .moduletitle {
+                    padding: 5px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                     }
+        .steptitle   {
+                    padding: 5px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                     }
+        .switch      { color: #ffffff;
+                       background: #4682B4;
+                       font-weight: bold;
+                       cursor: pointer;
+                       display: inline;
+                       font-size: medium; }
+	.sublevel { display: none; font-weight: normal; margin-left: 20px; margin-top: 0; line-height: 14px; }
+        .paramname {color: #0000ff; }
+        .paramvalue {color: #ff0000; }
+        #head        {
+                       position:absolute; margin:0; top:0; left:0; display:block; width:100%; height:50px; z-index:5; color:#fff; background: Navy;
+                     }
+        #foot        {
+                       position:absolute; margin:0; bottom:0; left:0; display:block; width:100%; height:25px; background:rgb(233,238,242); font-size:0.8em; z-index:5; text-align:right; color:rgb(157,78,84);
+                     }
+        #maindisplay {
+                       position:absolute;
+                       left:0;
+                       top:50px;
+                       bottom:25px;
+                       z-index: 4;
+                       width:80%;
+                       overflow:auto;
+                     }
+        #dictdisplay {
+                       position:absolute;
+                       left:80%;
+                       top:50px;
+                       bottom:25px;
+                       z-index: 4;
+                       width:20%;
+                       overflow:auto;
+                     }
+        * html #maindisplay, * html #dictdisplay {
+                       height:100%;
+                       top:0;
+                       bottom:0;
+                       border-top:50px solid #fff;
+                       border-bottom:25px solid #fff;}
+        .innerMain  {
+                       display:block;
+                       padding:0 10px 10px 10px;
+                    }
+        .innerDict {
+                       display:block;
+                       padding:0 10px 10px 10px;
+                       padding-bottom:300%;
+                    }
+
+        .dictEntry  { 
+                       font-family: sans-serif;
+                       font-weight: bold;
+                       font-size: medium;
+                    }
+        .dictDefinition { 
+                       font-family: serif;
+                       font-weight: normal;
+                       font-size: small; 
+                         }
+        .dictDescription { 
+                       font-family: serif;
+                       font-weight: normal;
+                       font-size: small; 
+                       font-style: italic;
+                         }
+
+      ]]>
+    </xsl:text>
+  </xsl:template>
+
+  <xsl:template name="mainJavascript">
+    <xsl:text>
+      //<![CDATA[
+      function togglemenu(submenu) { 
+        if (document.getElementById(submenu).style.display == "none") {
+          document.getElementById(submenu).style.display = "block";
+        }
+        else {
+          document.getElementById(submenu).style.display = "none";
+         }
+      }
+
+      function toggleButton(button, submenu) { 
+        if (document.getElementById(submenu).style.display == "none") {
+          document.getElementById(submenu).style.display = "block";
+          button.setAttribute('value', 'Hide');
+        }
+        else {
+          document.getElementById(submenu).style.display = "none";
+          button.setAttribute('value', 'Show');
+         }
+      }
+
+      function toggleJmol(sz, inputNode, thisId, parentId) {
+        // Grab object node to be created.
+        var appNode = document.getElementById(parentId);
+
+        if (appNode.hasChildNodes()) {
+          var newAppNode = document.createElementNS('http://www.w3.org/1999/xhtml','object');
+          newAppNode.setAttribute('style', "display:none;");
+          newAppNode.setAttribute('id', parentId);
+          var newMessage = 'Activate Jmol viewer';
+        }
+        else {
+          var newAppNode = jmolXAppletNodeId(sz, thisId, "background white", nameSuffix=thisId);
+          newAppNode.setAttribute('id', parentId);
+          var newMessage = 'Deactivate Jmol viewer';
+        }
+        appNode.parentNode.replaceChild(newAppNode, appNode);
+        inputNode.setAttribute('value', newMessage);
+      }
+
+      //]]>
+    </xsl:text>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/formula.xsl << EOF
+<xsl:stylesheet 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  version="1.0">
+
+  <xsl:template match="formula">
+    <P/>
+    <H3>Formula</H3>
+    <xsl:call-template name="format.form">
+      <xsl:with-param name="formula" select="normalize-space(.)"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+
+  <xsl:template name="format.form">
+    <xsl:param name="formula"/>
+    <xsl:if test="not($formula = '')">
+      <xsl:variable name="substring" select="substring-before($formula,' ')"/>
+      <xsl:variable name="remainder" select="substring-after($formula,' ')"/>
+      <!-- Is variable a number or a string? -->
+      <xsl:choose>
+        <xsl:when test="string(number($substring)) = 'NaN'">      
+          <xsl:value-of select="$substring"/>
+        </xsl:when>
+        <xsl:when test="string(number($substring)) != 'NaN' and $substring != 1">
+          <SUB><xsl:value-of select="$substring"/></SUB>
+        </xsl:when>
+      </xsl:choose>
+      <!-- on final iteration this will be processed instead -->
+      <xsl:if test="substring-after($formula,' ') = ''">
+        <xsl:choose>
+        <xsl:when test="string(number($formula)) = 'NaN'">      
+          <xsl:value-of select="$formula"/>
+        </xsl:when>
+        <xsl:when test="string(number($formula)) != 'NaN' and $formula != 1">
+          <SUB><xsl:value-of select="$formula"/></SUB>
+        </xsl:when>
+      </xsl:choose>
+      </xsl:if>
+      <!-- Recurse -->
+      <xsl:call-template name="format.form">
+        <xsl:with-param name="formula" select="$remainder"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+  
+  </xsl:stylesheet>
+  
+EOF
+cat > $TMPDIR/graph_bits.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0"
+	xmlns="http://www.uszla.me.uk/xsl/1.0/graph"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+	xmlns:g="http://www.uszla.me.uk/xsl/1.0/graph"
+        xmlns:exsl="http://exslt.org/common"
+        extension-element-prefixes="exsl"
+        >
+
+ <xsl:template name="drawGraphOf">
+    <xsl:param name="subTree" select="/cml:cml"/>
+    <xsl:param name="stepType"/>
+    <xsl:param name="propertyName"/>
+    <xsl:param name="title" select="$propertyName"/>
+    <xsl:param name="xAxisTitle" select="'Step'"/>
+    <xsl:param name="yAxisTitle" select="''"/>
+    <xsl:variable name="pointList">
+      <g:pointList>
+        <xsl:for-each select="$subTree/cml:module[@dictRef=$stepType]">
+          <xsl:variable name="x" select="@serial"/>
+          <xsl:variable name="y" select="cml:propertyList/cml:property[@dictRef=$propertyName]/cml:scalar"/>
+          <g:point x="{$x}" y="{$y}"/>
+        </xsl:for-each>
+      </g:pointList>
+    </xsl:variable>
+    <xsl:call-template name="drawGraph">
+      <xsl:with-param name="title" select="$title"/>
+      <xsl:with-param name="xAxisTitle" select="$xAxisTitle"/>
+      <xsl:with-param name="yAxisTitle" select="$yAxisTitle"/>
+      <xsl:with-param name="pointSet" select="exsl:node-set($pointList)"/>
+    </xsl:call-template>
+  </xsl:template>
+
+
+  <xsl:template name="selectNestedGraphNodes">
+    <xsl:param name="nodes"/>
+    <xsl:param name="propertyName"/>
+    <g:pointList>
+      <!-- for each step, if the property exists, then add its value to the pointList -->
+      <xsl:for-each select="$nodes">
+        <xsl:if test="cml:propertyList/cml:property[@dictRef=$propertyName]">
+          <xsl:variable name="x">
+	    <xsl:choose>
+	      <xsl:when test="@serial">
+	        <xsl:value-of select="@serial"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+	        <xsl:value-of select="position()"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:variable>
+          <xsl:variable name="y" select="cml:propertyList/cml:property[@dictRef=$propertyName]/cml:scalar"/>
+          <g:point x="{$x}" y="{$y}"/>
+	</xsl:if>
+      </xsl:for-each>
+    </g:pointList>
+  </xsl:template> 
+
+  <xsl:template name="selectRDFPoints">
+    <!-- FIXME subject to change as we refine RDF XML format - this is bloody fragile -->
+    <xsl:param name="nodes"/>
+    <g:pointList>
+      <xsl:for-each select="$nodes">
+        <xsl:if test="@title='grid'">
+          <xsl:variable name="pos" select="position()"/>
+          <xsl:variable name="x" select="cml:scalar/text()"/>
+          <xsl:variable name="y" select="../cml:property[position() = ($pos + 1)]/cml:scalar/text()"/>
+          <g:point x="{$x}" y="{$y}"/>
+	</xsl:if>
+      </xsl:for-each>
+    </g:pointList>
+  </xsl:template>
+
+  <xsl:template name="selectPointsFromNodes">
+    <xsl:param name="nodes"/>
+    <xsl:param name="propertyNames"/>
+    <g:pointList>
+      <!-- for each step, if the property exists, then add its value to the pointList -->
+      <xsl:for-each select="$nodes">
+        <xsl:variable name="x">
+          <xsl:choose>
+	    <xsl:when test="@serial">
+	      <xsl:value-of select="@serial"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="position()"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:variable>
+        <xsl:variable name="here" select="."/>
+        <xsl:for-each select="$propertyNames">
+          <xsl:variable name="propertyName" select="."/>
+          <g:group dictRef="{$propertyName}">
+            <xsl:if test="$here/cml:propertyList/cml:property[@dictRef=$propertyName]">
+              <xsl:variable name="y" select="$here/cml:propertyList/cml:property[@dictRef=$propertyName]/cml:scalar"/>
+              <g:point x="{$x}" y="{$y}"/>
+	    </xsl:if>
+	  </g:group>
+	</xsl:for-each>
+      </xsl:for-each>
+    </g:pointList>
+  </xsl:template> 
+
+  <xsl:template name="selectedPointsFromList">
+    <xsl:param name="pointList"/>
+    <xsl:param name="dictRef"/>
+    <g:pointList>
+      <xsl:for-each select="$pointList/g:pointList/g:group[@dictRef=$dictRef]">
+        <xsl:copy-of select="g:point"/>
+      </xsl:for-each>
+    </g:pointList>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/graph_produce.xsl << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsl:stylesheet version="1.0"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:g="http://www.uszla.me.uk/xsl/1.0/graph"
+        >
+
+<xsl:import href="toby_graph.xsl"/>
+<xsl:import href="graphfuncs.xsl"/>
+
+<xsl:output method="xml" encoding="utf-8" indent="yes"/>
+
+<xsl:param name="graphTitle" select="default"/>
+<xsl:param name="xAxisTitle" select="default"/>
+<xsl:param name="yAxisTitle" select="default"/>
+
+<!-- MAIN TEMPLATE -->
+  <xsl:template match="/">
+    <xsl:apply-templates select="*"/>
+  </xsl:template>
+
+  <xsl:template match="g:graphSet">
+
+    <xsl:call-template name="drawGraph">
+      <xsl:with-param name="graphTitle" select="$graphTitle"/>
+      <xsl:with-param name="xAxisTitle" select="$xAxisTitle"/>
+      <xsl:with-param name="yAxisTitle" select="$yAxisTitle"/>
+      <xsl:with-param name="pointSet" select="."/>
+    </xsl:call-template>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/graphfuncs.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:func="http://exslt.org/functions"
+	xmlns:exsl="http://exslt.org/common"
+        xmlns:tohw="http://www.uszla.me.uk/xsl/1.0/functions"
+        xmlns:tohw_="http://www.uszla.me.uk/xsl/1.0/functions"
+        xmlns:g="http://www.uszla.me.uk/xsl/1.0/graph"
+        extension-element-prefixes="func exsl tohw"
+	version="1.0">
+
+<!--    <func:function name="tohw:min">
+      <xsl:param name="values"/>
+      <xsl:param name="current" select="$values[1]"/>
+      <xsl:if test="count($values) = 0">
+        <xsl:message terminate="yes">
+tohw:min requires more than zero values
+        </xsl:message>
+      </xsl:if>
+      <xsl:variable name="newcurrent">
+	<xsl:choose>
+	  <xsl:when test="$values[1] &lt; $current">
+	    <xsl:value-of select="$values[1]"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="$current"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <func:result>
+	<xsl:choose>
+	  <xsl:when test="count($values) = 1">
+	    <xsl:value-of select="$newcurrent"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="tohw:min($values[position()!=1], $newcurrent)"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </func:result>
+    </func:function>
+
+    <func:function name="tohw:max">
+      <xsl:param name="values"/>
+      <xsl:param name="current" select="$values[1]"/>
+      <xsl:if test="count($values) = 0">
+        <xsl:message terminate="yes">
+tohw:max requires more than zero values
+        </xsl:message>
+      </xsl:if>
+      <xsl:variable name="newcurrent">
+	<xsl:choose>
+	  <xsl:when test="$values[1] &gt; $current">
+	    <xsl:value-of select="$values[1]"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="$current"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <func:result>
+	<xsl:choose>
+	  <xsl:when test="count($values) = 1">
+	    <xsl:value-of select="$newcurrent"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="tohw:max($values[position()!=1], $newcurrent)"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </func:result>
+    </func:function>
+-->	
+
+  <func:function name="tohw:intpow">
+    <xsl:param name="x"/>
+    <xsl:param name="y"/>
+    <xsl:if test="$y != floor(number($y))">
+      <xsl:message terminate="yes">
+tohw:intpow requires an integer power
+      </xsl:message>
+    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$y = 0">
+	<func:result select="1"/>
+      </xsl:when>
+      <xsl:when test="$y = 1">
+	<func:result select="$x"/>
+      </xsl:when>
+      <xsl:when test="$y &lt; 0">
+	<func:result select="1 div tohw:intpow($x,-1 * $y)"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<func:result select="$x * tohw:intpow($x, $y - 1)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </func:function>
+
+  <func:function name="tohw:floorlog10">
+    <xsl:param name="x"/>
+    <xsl:variable name="stringLog">
+      <xsl:choose>
+	<xsl:when test="$x = 0.0">
+          0	  
+	</xsl:when>
+	<xsl:when test="contains(string($x), 'e')">
+	  <!-- non-conformant xpath implementation -->
+	  <xsl:value-of select="substring-after(string($x),'e')"/>
+	</xsl:when>
+	<xsl:when test="contains(string($x),'E')">
+	  <!-- non-conformant xpath implementation -->
+	  <xsl:value-of select="substring-after(string($x),'E')"/>
+	</xsl:when>
+	<xsl:when test="$x &gt;= 1">
+	  <xsl:choose>
+	    <xsl:when test="contains($x, '.')">
+	      <xsl:value-of select="string-length(substring-before(string($x),'.'))"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="string-length($x)"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:when>
+	<xsl:when test="$x &lt;= -1">
+	  <xsl:choose>
+	    <xsl:when test="contains($x, '.')">
+	      <xsl:value-of select="string-length(substring-before(string($x),'.')) - 1"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="string-length($x) - 1"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="-1 * tohw:floorlog10(1 div $x)"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="contains($stringLog,'+')">
+	<func:result select="number(substring-after($stringLog,'+'))-1"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<func:result select="number($stringLog)-1"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </func:function>
+
+  <xsl:template name="tohw:addUp">
+    <!-- Generate an (inclusive) list of 0*$size, 1*$size, ..., $endIter*$size -->
+    <xsl:param name="size"/>
+    <xsl:param name="iterator" select="0"/>
+    <xsl:param name="endIter"/>
+    <number value="{$iterator * $size}"/>
+    <xsl:if test="$iterator &lt; $endIter">
+      <xsl:call-template name="tohw:addUp">
+	<xsl:with-param name="size" select="$size"/>
+	<xsl:with-param name="iterator" select="$iterator+1"/>
+	<xsl:with-param name="endIter" select="$endIter"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <func:function name="tohw:launderFP">
+    <xsl:param name="x"/>
+    <xsl:variable name="n">
+      <xsl:choose>
+	<xsl:when test="contains(string($x), 'e')">
+	  <xsl:value-of select="number(substring-before(string($x),'e'))"/>
+	</xsl:when>
+	<xsl:when test="contains(string($x),'E')">
+	  <xsl:value-of select="number(substring-before(string($x),'E'))"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="number($x)"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="p1">
+      <xsl:choose>
+	<xsl:when test="contains(string($x), 'e')">
+	  <xsl:value-of select="substring-after(string($x),'e')"/>
+	</xsl:when>
+	<xsl:when test="contains(string($x),'E')">
+	  <xsl:value-of select="substring-after(string($x),'E')"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="0"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="p">
+      <xsl:choose>
+	<xsl:when test="contains($p1,'+')">
+	  <xsl:value-of select="number(substring-after($p1,'+'))"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="number($p1)"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <func:result select="number($n)*tohw:intpow(10,$p)"/>
+  </func:function>
+
+  <xsl:template name="g:tickValues">
+    <xsl:param name="minV"/>
+    <xsl:param name="maxV"/>
+    <xsl:param name="numTicks" select="4"/>
+    <xsl:variable name="range" select="$maxV - $minV"/>
+    <xsl:variable name="sectionSize" select="$range div ($numTicks + 1)"/>
+    <xsl:variable name="ticks">
+      <xsl:call-template name="tohw:addUp">
+	<xsl:with-param name="size" select="$sectionSize"/>
+	<xsl:with-param name="endIter" select="$numTicks+1"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <g:tickList>
+      <xsl:for-each select="exsl:node-set($ticks)/number/@value">
+	<g:tick value="{. + $minV}"/>
+      </xsl:for-each>
+    </g:tickList>
+  </xsl:template>
+
+  <xsl:template name="launderTree">
+    <xsl:param name="tree"/>
+    <xsl:for-each select="$tree/node()">
+      <xsl:choose>
+	<xsl:when test="local-name()='point' and namespace-uri()='http://www.uszla.me.uk/xsl/1.0/graph'">
+	  <g:point x="{tohw:launderFP(@x)}" y="{tohw:launderFP(@y)}"/>
+	</xsl:when>
+	<xsl:when test="count(./child::node()) &gt; 0">
+	  <xsl:element namespace="{namespace-uri()}" name="{local-name()}">
+	    <xsl:call-template name="launderTree">
+	      <xsl:with-param name="tree" select="."/>
+	    </xsl:call-template>
+	  </xsl:element>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:copy-of select="."/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/lattice.xsl << EOF
+<!--===================== LATTICE =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns:str="http://exslt.org/strings"
+        xmlns="http://www.w3.org/1999/xhtml"
+        extension-element-prefixes="str"
+        >
+
+<!-- cmlCore:crystal -->  
+  <xsl:template match="cml:crystal">
+    <p/>
+    <div class="listTitle">Lattice Parameters: <xsl:value-of select="@title"/></div>
+    <xsl:variable name="lenUnits">
+      <xsl:choose>
+        <xsl:when test="cml:scalar">Ang</xsl:when>
+        <xsl:when test="cml:cellParameter">
+          <xsl:choose>
+            <xsl:when test="cml:cellParameter[@parameterType='length']/@units">
+              <xsl:value-of select="cml:cellParameter[@parameterType='length']/@units"/>
+            </xsl:when>
+            <xsl:otherwise>Ang</xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="angUnits">
+      <xsl:choose>
+        <xsl:when test="cml:scalar">degrees</xsl:when>
+        <xsl:when test="cml:cellParameter">
+          <xsl:choose>
+            <xsl:when test="cml:cellParameter[@parameterType='angle']/@units">
+              <xsl:value-of select="cml:cellParameter[@parameterType='angle']/@units"/>
+            </xsl:when>
+            <xsl:otherwise>degrees</xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+               
+    <table>
+      <tr> 
+        <th colspan="3">Lattice Modules (<xsl:value-of select="$lenUnits"/>)</th>
+      </tr>
+      <tr>
+        <xsl:choose>
+          <xsl:when test="cml:scalar">
+            <td><xsl:value-of select="cml:scalar[position() = 1]"/></td>
+            <td><xsl:value-of select="cml:scalar[position() = 2]"/></td>
+            <td><xsl:value-of select="cml:scalar[position() = 3]"/></td>
+          </xsl:when>
+          <xsl:when test="cml:cellParameter">
+            <xsl:variable name="cellParameters" value="str:tokenize(cml:cellParameter[@parameterType='length']/text())"/>
+            <td><xsl:value-of select="str:tokenize(cml:cellParameter[@parameterType='length'])[1]"/></td>       
+            <td><xsl:value-of select="str:tokenize(cml:cellParameter[@parameterType='length'])[2]"/></td>       
+            <td><xsl:value-of select="str:tokenize(cml:cellParameter[@parameterType='length'])[3]"/></td>       
+          </xsl:when>
+        </xsl:choose>
+      </tr>  
+      <tr>
+        <th colspan="3">Lattice Angles (<xsl:value-of select="$angUnits"/>)</th>
+      </tr>
+      <tr>
+        <xsl:choose>
+          <xsl:when test="cml:scalar">
+            <td><xsl:value-of select="cml:scalar[position() = 4]"/></td>
+            <td><xsl:value-of select="cml:scalar[position() = 5]"/></td>
+            <td><xsl:value-of select="cml:scalar[position() = 6]"/></td>
+          </xsl:when>
+          <xsl:when test="cml:cellParameter">
+            <td><xsl:value-of select="str:tokenize(cml:cellParameter[@parameterType='angle'])[1]"/></td>       
+            <td><xsl:value-of select="str:tokenize(cml:cellParameter[@parameterType='angle'])[2]"/></td>       
+            <td><xsl:value-of select="str:tokenize(cml:cellParameter[@parameterType='angle'])[3]"/></td>       
+          </xsl:when>
+        </xsl:choose>
+      </tr>
+    </table>
+  </xsl:template>
+
+  <xsl:template match="cml:lattice">
+    <p/>
+    <div class="listTitle">Lattice Parameters</div>
+    <table>
+      <tr><th colspan="3">Lattice Vectors</th></tr>
+      <xsl:for-each select="cml:latticeVector">
+        <tr>
+          <td><xsl:value-of select="str:tokenize(text())[1]"/></td>
+          <td><xsl:value-of select="str:tokenize(text())[2]"/></td>
+          <td><xsl:value-of select="str:tokenize(text())[3]"/></td>
+        </tr>
+      </xsl:for-each>
+    </table>
+  </xsl:template>
+  
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/matrix.xsl << EOF
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+	>
+
+<!-- TOHW rewrite this tou just use str:tokenize -->
+
+  <xsl:template match="cml:matrix">
+    <xsl:param name="rows">
+      <xsl:value-of select="@rows"/>
+    </xsl:param>
+    <xsl:param name="cols">
+      <xsl:value-of select="@columns"/>
+    </xsl:param>
+    <xsl:variable name="dataString" select="concat(normalize-space(.),' ')"/>
+    <table class="prop">
+      <tr>
+	<th colspan="{$cols}">
+	  <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="value" select="@value"/>
+          </xsl:call-template>
+	  <xsl:text> (</xsl:text>
+	  <xsl:value-of select="@units"/>
+	  <xsl:text>) </xsl:text>
+  	</th>
+      </tr>
+
+      <xsl:call-template name="rows-for-loop">
+        <xsl:with-param name="i" select="1"/>
+        <xsl:with-param name="increment" select="1"/>
+        <xsl:with-param name="testValue" select="$rows"/>
+        <xsl:with-param name="innerTestValue" select="$cols"/>
+        <xsl:with-param name="outputString" select="$dataString"/>
+      </xsl:call-template>
+    </table>
+  </xsl:template>
+
+
+  <xsl:template name="rows-for-loop">
+    <!--This template handles the rows of matrices-->
+    <xsl:param name="i" select="0"/>
+    <xsl:param name="increment" select="1"/>
+    <xsl:param name="testValue"/>
+    <xsl:param name="innerTestValue"/>
+    <xsl:param name="outputString" select="''"/>
+    <xsl:variable name="testPassed">
+      <xsl:choose>
+	<xsl:when test="$i &lt;= $testValue">
+	  <xsl:text>true</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:text>false</xsl:text>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="continueString">
+      <xsl:call-template name="modify-string-for-loop">
+	<xsl:with-param name="i" select="1"/>
+	<xsl:with-param name="string" select="$outputString"/>
+	<xsl:with-param name="colsNumber" select="$innerTestValue"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:if test="$testPassed = 'true'">
+      <tr>
+	<xsl:call-template name="cols-for-loop">
+	  <xsl:with-param name="i" select="1"/>
+	  <xsl:with-param name="increment" select="1"/>
+	  <xsl:with-param name="testValue" select="$innerTestValue"/>
+	  <xsl:with-param name="outputString" select="$outputString"/>
+	</xsl:call-template>
+      </tr>
+
+      <xsl:call-template name="rows-for-loop">
+	<xsl:with-param name="i" select="$i + $increment"/>
+	<xsl:with-param name="increment" select="$increment"/>
+	<xsl:with-param name="testValue" select="$testValue"/>
+	<xsl:with-param name="innerTestValue" select="$innerTestValue"/>
+	<xsl:with-param name="outputString" select="$continueString"/>
+      </xsl:call-template>
+    </xsl:if>
+    
+  </xsl:template>
+
+  <xsl:template name="cols-for-loop">
+    <!-- This template handles the columns of the matrices -->
+    <xsl:param name="i" select="0"/>
+    <xsl:param name="increment" select="1"/>
+    <xsl:param name="testValue"/>
+    <xsl:param name="outputString" select="''"/>
+    <xsl:variable name="testPassed">
+      <xsl:choose>
+	<xsl:when test="$i &lt;= $testValue">
+	  <xsl:text>true</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:text>false</xsl:text>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:if test="$testPassed = 'true'">
+      <td>
+	<xsl:value-of select="format-number(substring-before($outputString, ' '), '0.0000')"/>
+      </td>
+
+      <xsl:call-template name="cols-for-loop">
+	<xsl:with-param name="i" select="$i + $increment"/>
+	<xsl:with-param name="increment" select="$increment"/>
+	<xsl:with-param name="testValue" select="$testValue"/>
+	<xsl:with-param name="outputString" select="substring-after($outputString, ' ')"/>
+      </xsl:call-template>
+    </xsl:if>
+    
+  </xsl:template>
+
+  <xsl:template name="modify-string-for-loop">
+    <!--
+      This template modifies the string passed to it, to remove the parts
+      which are removed as part of the inner for loop i.e. the rows-for-loop template
+    -->
+    <xsl:param name="i" select="1"/>
+    <xsl:param name="string" select="''"/>
+    <xsl:param name="colsNumber" select="0"/>
+    <xsl:variable name="testPassed">
+      <xsl:choose>
+	<xsl:when test="$i &lt;= $colsNumber">
+	  <xsl:text>true</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:text>false</xsl:text>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:if test="$testPassed = 'true'">
+      <xsl:call-template name="modify-string-for-loop">
+	<xsl:with-param name="i" select="$i + 1"/>
+	<xsl:with-param name="colsNumber" select="$colsNumber"/>
+	<xsl:with-param name="string" select="substring-after($string, ' ')"/>
+      </xsl:call-template>
+    </xsl:if>
+    <xsl:if test="not($testPassed = 'true')">
+      <xsl:value-of select="$string"/>
+    </xsl:if>
+
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/metadata.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== METADATA =========================-->
+
+<xsl:stylesheet version="1.0" 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        >
+
+  <xsl:template match="cml:metadataList">
+    <xsl:if test="count(cml:metadata)&gt;0">
+      <ul class="metadata"><xsl:apply-templates select="cml:metadata"/></ul>
+    </xsl:if>
+    <hr/>
+  </xsl:template>
+
+  <xsl:template match="cml:metadata">  
+   <xsl:choose>
+    <xsl:when test="parent::cml:metadataList">
+     <li>
+      <xsl:value-of select="@name"/><xsl:text>: </xsl:text>
+      <i><xsl:value-of select="@content"/></i>
+     </li>
+    </xsl:when>
+    <xsl:otherwise>
+     <ul><li>
+      <xsl:value-of select="@name"/><xsl:text>: </xsl:text>
+      <i><xsl:value-of select="@content"/></i>
+     </li></ul>
+    </xsl:otherwise>
+   </xsl:choose>
+  </xsl:template>
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/module.xsl << EOF
+<?xml version="1.0" encoding="utf-8"?>
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+	>
+
+  <xsl:import href="toby_graph.xsl"/>
+
+  <xsl:template match="cml:module" mode="noTitle">
+    <xsl:variable name="uid" select="generate-id()"/>
+    <div>
+      <xsl:apply-templates select="*"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="cml:module">
+    <xsl:variable name="uid" select="generate-id()"/>
+    <xsl:choose>
+      <xsl:when test="@role='step'">
+         <xsl:call-template name="step"/>
+      </xsl:when>
+      <xsl:otherwise>
+         <div>
+           <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="moduletitle clickableDiv">
+             <xsl:value-of select="@title"/>
+           </div>
+         </div>
+         <div class="sublevel" id="{$uid}">
+           <xsl:apply-templates select="*"/>
+         </div>
+       </xsl:otherwise>
+     </xsl:choose>
+  </xsl:template>
+
+<!-- Match Any Step -->
+  <xsl:template name="step">
+    <xsl:variable name="uid" select="generate-id()"/>
+    <xsl:variable name="num">
+      <xsl:choose>
+        <xsl:when test="@serial">
+	  <xsl:value-of select="@serial"/>
+	</xsl:when>
+        <xsl:otherwise>
+	  <xsl:value-of select="count(preceding-sibling::cml:module[@role='step']) + 1"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <!-- If we are in a child step; ie we have direct parent steps;
+           then we don't want (at this stage, anyway) to output lots of
+           crap. Instead, a quick table (and maybe graph) of everything
+           that's going on is fine. -->
+      <xsl:when test="ancestor::cml:module[@role='step']">
+         <xsl:variable name="count">
+          <xsl:number count="cml:module[@role='step']"/>
+        </xsl:variable>
+	<!-- only output the table on the first step. -->
+        <xsl:if test="$count=1">
+	  <xsl:variable name="thisId" select="generate-id()"/>
+          <div class="listTitle"><xsl:value-of select="@dictRef"/> Steps</div>
+          <div>Table <input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$thisId}&quot;)"/></div>
+          <table class="step" style="display:none;" id="{$thisId}">
+            <tr class="step"><th class="step"><xsl:value-of select="@dictRef"/> Step</th>
+	      <xsl:for-each select="cml:propertyList/cml:property">
+	        <xsl:variable name="thisDictRef" select="@dictRef"/>
+		<!-- Only output properties that are there for every SCF step. Should really build up a list here .-->
+                <xsl:if test="count(../../../cml:module[@role='step']/cml:propertyList/cml:property[@dictRef=$thisDictRef]) = (count(../../../cml:module[@role='step'])-1)">
+	          <th class="step">
+	            <xsl:call-template name="get.dictionary.reference.html">
+                      <xsl:with-param name="dictRef" select="@dictRef"/>
+                      <xsl:with-param name="title" select="@title"/>
+                    </xsl:call-template>
+	            <xsl:text>(</xsl:text>
+	            <xsl:value-of select="cml:scalar/@units"/>
+	            <xsl:text>)</xsl:text>
+	          </th>
+		</xsl:if>
+	      </xsl:for-each>
+	    </tr>
+            <xsl:for-each select="../cml:module[@role='step']">
+	      <!-- do not output last step for siesta SCF FIXME -->
+	      <xsl:if test="position() != last()">
+              <tr class="step">
+	        <td class="stepnum">
+                  <xsl:choose>
+                    <xsl:when test="@serial">
+                      <xsl:value-of select="@serial"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:value-of select ="position()"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </td>
+                <xsl:for-each select="cml:propertyList/cml:property/cml:scalar"> 
+	          <xsl:variable name="thisDictRef" select="../@dictRef"/>
+                  <xsl:if test="count(../../../../cml:module[@role='step']/cml:propertyList/cml:property[@dictRef=$thisDictRef]) = (count(../../../../cml:module[@role='step'])-1)">
+	            <td class="step"><xsl:value-of select="."/></td>
+		  </xsl:if>
+                </xsl:for-each>
+	      </tr>
+	      </xsl:if>
+            </xsl:for-each>
+          </table>
+        </xsl:if>
+      </xsl:when> <!-- child step -->
+      <xsl:otherwise>
+        <xsl:if test="(count(preceding-sibling::cml:module[@role='step'])+1) mod $stepinterval = 0">
+        <div>
+          <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="steptitle clickableDiv">
+            <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
+          </div>
+        </div>
+        <div class="sublevel" id="{$uid}">
+          <xsl:apply-templates select="*"/>
+	  <!-- here put graphs of substeps ... -->
+	  <!-- <xsl:if test="@dictRef = 'CG' or dictRef = 'MD'">
+	    <xsl:variable name="SCFnodeSet1">
+	      <xsl:call-template name="selectNestedGraphNodes">
+		<xsl:with-param name="nodes" select="./cml:module[@role='step']"/>
+		<xsl:with-param name="stepType" select="'SCF'"/>
+		<xsl:with-param name="propertyName" select="'siesta:Eharrs'"/>
+	      </xsl:call-template>
+	    </xsl:variable>
+	    <xsl:variable name="SCFgraph1">
+	      <xsl:call-template name="drawGraph">
+		<xsl:with-param name="graphTitle" select="'Harris energy'"/>
+		<xsl:with-param name="xAxisTitle" select="'SCF Step'"/>
+		<xsl:with-param name="yAxisTitle" select="'Energy / eV'"/>
+		<xsl:with-param name="pointSet" select="exsl:node-set($SCFnodeSet1)"/>
+	      </xsl:call-template>
+	    </xsl:variable>
+	    <div><xsl:copy-of select="$SCFgraph1"/></div>
+	  </xsl:if> -->
+        </div>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose> 
+  </xsl:template>
+  
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/parameter.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== PARAMETERS =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+	>
+
+  <xsl:template match="cml:parameter">
+    <xsl:choose>
+    
+    <!-- If single parameter then place in a table -->
+      <xsl:when test="not(parent::cml:parameterList)">
+	<p/>
+        <table>
+	  <tr>
+	    <xsl:if test="@name"><td><xsl:value-of select="@name"/></td></xsl:if>
+	    <xsl:if test="@value"><td><xsl:value-of select="@value"/></td></xsl:if>
+            <xsl:if test="cml:scalar"><xsl:apply-templates select="cml:scalar"/></xsl:if>
+            <xsl:if test="cml:array"><xsl:apply-templates select="cml:array"/></xsl:if>
+	    <xsl:if test="cml:matrix"><xsl:apply-templates select="cml:matrix"/></xsl:if>
+          </tr>
+        </table>
+      </xsl:when>
+
+    <!-- If parameter list then place all properties in a single table -->
+
+      <xsl:otherwise>
+        <tr>
+
+    <!-- The parameter name *should* be in a name attribute - I think
+         sometimes it may come out in title, so we check below. That
+         option will be removed later on, since FoX never does that. -->
+
+          <td align="left" class="paramname">
+            <xsl:choose>
+              <xsl:when test="@name">
+	        <xsl:value-of select="@name"/>
+              </xsl:when>
+              <xsl:when test="@title">
+	        <xsl:value-of select="@title"/>
+              </xsl:when>
+            </xsl:choose> 
+          </td>
+
+    <!-- The parameter value *should* be in a scalar/array/matrix child.
+         Sometimes it is in the value attribue though, so we check below
+         That option will be removed later on since FoX never does that. -->
+
+          <td align="right" class="paramvalue">
+            <xsl:choose>
+              <xsl:when test="@value">
+              <!-- When it is in @value, we can't tell the datatype unless we try: -->
+                <xsl:choose>
+	          <xsl:when test="string(number(@value)) != 'NaN'">
+	            <xsl:value-of select="format-number(@value, '0.0000')"/>
+	          </xsl:when>
+	          <xsl:otherwise>
+	            <xsl:value-of select="@value"/>
+	          </xsl:otherwise>
+	        </xsl:choose>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:if test="cml:scalar"><xsl:apply-templates select="cml:scalar"/></xsl:if>
+                <xsl:if test="cml:array"><xsl:apply-templates select="cml:array"/></xsl:if>
+                <xsl:if test="cml:matrix"><xsl:apply-templates select="cml:matrix"/></xsl:if>
+              </xsl:otherwise>
+            </xsl:choose>
+          </td>
+        </tr>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+    
+  <xsl:template match="cml:parameterList">
+    <xsl:apply-templates select="@title"/>
+    <table><xsl:apply-templates select="*"/></table>
+  </xsl:template>
+  
+<!-- @title List -->
+  <xsl:template match="@title">
+    <div class="listTitle"><xsl:value-of select="."/></div>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/property.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== PROPERTIES =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+	>
+
+
+  <xsl:template match="cml:property">
+    <xsl:choose>
+      <xsl:when test="not(parent::cml:propertyList)">
+        <br/>
+	<table><tr><xsl:call-template name="addProperty"/></tr></table>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="addProperty"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  
+  <xsl:template name="addProperty">
+   <td align="left">
+     <b>
+       <xsl:call-template name="get.dictionary.reference.html">
+         <xsl:with-param name="dictRef" select="@dictRef"/>
+         <xsl:with-param name="title" select="@title"/>
+       </xsl:call-template>
+     </b>
+   </td>
+   <xsl:choose>
+    <!-- Must special-case scalar because units are treated differently -->
+    <xsl:when test="cml:scalar">
+     <xsl:apply-templates select="cml:scalar"/>
+    </xsl:when>
+    <xsl:otherwise>
+     <td align="right">
+      <xsl:choose>
+       <xsl:when test="cml:array">
+        <xsl:apply-templates select="cml:array"/>
+       </xsl:when>
+       <xsl:when test="cml:matrix">
+        <xsl:apply-templates select="cml:matrix"/>
+       </xsl:when>
+       <xsl:when test="cml:table">
+        <xsl:apply-templates select="cml:table"/>
+       </xsl:when>
+      </xsl:choose>
+     </td>
+     <td align="left"><xsl:call-template name="add.units"/><p><br/></p></td>
+    </xsl:otherwise>
+   </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="cml:propertyList">
+   <xsl:apply-templates select="@title"/>
+   <table class="propertyList">
+    <xsl:for-each select="*">
+     <tr><xsl:apply-templates select="."/></tr>
+    </xsl:for-each>
+   </table>
+  </xsl:template>
+  
+<!-- @title List -->
+  <xsl:template match="@title">
+    <div class="listTitle"><xsl:value-of select="."/></div>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/rdf.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== RDF graphs =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:exsl="http://exslt.org/common"
+        extension-element-prefixes="exsl"
+        >
+
+  <xsl:template match="cml:propertyList[@dictRef='dl_poly:rdf']">
+   <div>
+     <p><xsl:text> RDF profiles </xsl:text></p>
+     <table>
+       <xsl:for-each select="cml:propertyList[@title='rdf pair']">
+
+         <xsl:variable name="RDFtitle">
+           <xsl:value-of select="cml:property[@title='atom type 1']"/>
+           <xsl:text>-</xsl:text>
+           <xsl:value-of select="cml:property[@title='atom type 2']"/>
+         </xsl:variable>
+ 
+         <!-- Retrieve all numbers: -->
+         <xsl:variable name="gridpoints" select="cml:propertyList[@title='rdf table']/cml:property"/>
+         <xsl:variable name="RDFGraphPoints">
+           <xsl:call-template name="selectRDFPoints">
+             <xsl:with-param name="nodes" select="exsl:node-set($gridpoints)"/>
+           </xsl:call-template>
+         </xsl:variable> 
+         <!-- draw the graph -->
+         <xsl:variable name="graph">
+           <xsl:call-template name="drawGraph">
+             <xsl:with-param name="graphTitle" select="$RDFtitle"/>
+             <xsl:with-param name="xAxisTitle" select="r"/>
+             <xsl:with-param name="yAxisTitle" select="Occupation"/>
+             <xsl:with-param name="pointSet" select="exsl:node-set($RDFGraphPoints)"/>
+           </xsl:call-template> 
+         </xsl:variable>
+         <div>
+           <!-- output the graph -->
+           <xsl:variable name="graphId" select="generate-id()"/>
+           <tr class="graph">
+             <td class="graph"><xsl:value-of select="$RDFtitle"/>:</td>
+             <td class="graph"><input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;)"/></td><br/>
+             <div style="display:none;" id="{$graphId}"><xsl:copy-of select="$graph"/></div>
+           </tr>
+         </div>
+       </xsl:for-each>
+     </table>
+   </div>
+ </xsl:template>
+
+  
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/scalar.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== SCALAR =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+        >
+
+<!-- scalar List-->
+  <xsl:template match="cml:scalar">
+    <xsl:if test="@dictRef">
+      <br/> 
+      <td align="left">
+        <b>
+          <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="title" select="@title"/>
+          </xsl:call-template>
+        </b>
+      </td>
+    </xsl:if>
+
+   <xsl:variable name="printableOutput">
+     <!-- look for dataType attribute to see how to format -->
+     <!-- except actually at the moment, we format the same
+          way regardless -->
+     <xsl:choose>
+       <xsl:when test="@dataType">
+         <xsl:value-of select="text()"/>
+       </xsl:when>
+       <xsl:otherwise>
+         <xsl:value-of select="text()"/>
+       </xsl:otherwise>
+     </xsl:choose>
+   </xsl:variable>
+    
+    <xsl:choose>
+      <xsl:when test="parent::cml:parameter">
+        <td align="right" class="paramvalue"><xsl:value-of select="$printableOutput"/></td>
+      </xsl:when>
+      <xsl:otherwise>
+      	<td align="right">
+	  <xsl:choose>
+	    <xsl:when test="ceiling(.) = floor(.) and not(contains(.,'.'))">
+	      <xsl:value-of select="."/>
+	    </xsl:when>
+	    <xsl:when test="string(number(.)) != 'NaN'">
+	      <xsl:value-of select="format-number(., '0.0000')"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="."/>
+            </xsl:otherwise>
+          </xsl:choose>	        
+	</td>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="@units">
+      <td align="left"><xsl:text> </xsl:text><i><xsl:value-of select="@units"/></i></td>
+    </xsl:if>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/structure.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== STRUCTURES =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:str="http://exslt.org/strings" 
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xsl str"
+        extension-element-prefixes="str">
+
+  <!-- cmlCore:molecule -->
+  <xsl:template match="cml:molecule">
+    <xsl:param name="natoms" select="count(cml:atomArray/cml:atom)"/>
+    <xsl:param name="num">  
+      <xsl:number level="any"/>
+    </xsl:param>
+<!--    <xsl:param name="moleculePosition">
+      <xsl:value-of select="count(ancestor::cml:step[//cml:molecule]/preceding-sibling::cml:step[//cml:molecule])+1"/>
+    </xsl:param> -->
+
+    <!-- Output an image of the crystal structure for the first step
+	with image coordinates -->
+<!--     <xsl:if test="$moleculePosition = 1">
+    </xsl:if> -->
+
+    <div class="listTitle">Structure</div>
+    <xsl:call-template name="makejmol">
+      <xsl:with-param name="natoms" select="$natoms"/>
+    </xsl:call-template>
+
+    <br /><br />
+    <!-- COORDINATES -->
+    <xsl:call-template name="coords">
+      <xsl:with-param name="num" select="$num"/>
+    </xsl:call-template>
+    
+  </xsl:template>
+  
+  <xsl:template name="makejmol">
+    <xsl:param name="natoms"/>
+    <xsl:param name="num" select="generate-id()"/>
+    <xsl:param name="parentId" select="concat('parent_', $num)"/>
+    <xsl:param name="thisId" select="concat('mol_', $num)"/>
+    <xsl:param name="height">
+      <xsl:choose>
+        <xsl:when test="$natoms &lt; 10">
+          <xsl:value-of select="200"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 10 and $natoms &lt; 50">
+	    <xsl:value-of select="400"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 50">
+	    <xsl:value-of select="600"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:param>
+    <xsl:param name="width">
+      <xsl:choose>
+        <xsl:when test="$natoms &lt; 10">
+          <xsl:value-of select="200"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 10 and $natoms &lt; 50">
+	    <xsl:value-of select="400"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 50">
+	    <xsl:value-of select="600"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:param>
+    <div>
+      <div style="display:none;">
+        <cml:cml id="{$thisId}">
+          <cml:molecule>
+            <!-- <xsl:if test="not(cml:crystal)">
+              <xsl:if test="count(../cml:crystal) = 1">
+                <xsl:copy-of select="../cml:crystal"/>
+              </xsl:if>
+            </xsl:if> -->
+            <xsl:copy-of select="./cml:atomArray"/>
+          </cml:molecule>
+        </cml:cml>
+      </div>
+      <input type="button" value="Activate Jmol viewer" onclick="javascript:toggleJmol([{$width},{$height}], this, &quot;{$thisId}&quot;, &quot;{$parentId}&quot;)"/>
+      <object id="{$parentId}" style="display:none;"/>
+    </div>
+  </xsl:template>
+
+
+  <!-- JMOL MOVIE -->
+  <xsl:template name="movie">
+    <xsl:param name="natoms" select="count(cml:molecule[position()=1]/cml:atomArray/cml:atom)"/>
+    <xsl:param name="height">
+      <xsl:choose>
+        <xsl:when test="$natoms &lt; 10">
+          <xsl:value-of select="200"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 10 and $natoms &lt; 50">
+	    <xsl:value-of select="400"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 50">
+	    <xsl:value-of select="600"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:param>
+    <xsl:param name="width">
+      <xsl:choose>
+        <xsl:when test="$natoms &lt; 10">
+          <xsl:value-of select="200"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 10 and $natoms &lt; 50">
+	    <xsl:value-of select="400"/>
+        </xsl:when>
+        <xsl:when test="$natoms &gt; 50">
+	    <xsl:value-of select="600"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:param>
+    <div class="listTitle">Animation</div>
+    <div>
+      <div style="display:none;">
+        <cml:cml id="animation">
+          <cml:list convention="JMOL-ANIMATION">
+            <xsl:for-each select="//cml:molecule">
+              <cml:molecule id="FRAME{position()}">
+	        <!-- <xsl:if test="not(cml:crystal)">
+	          <xsl:if test="count(../cml:crystal) = 1">
+                    <xsl:copy-of select="../cml:crystal"/>
+                  </xsl:if>
+	        </xsl:if> -->
+                <xsl:copy-of select="./cml:atomArray"/>
+	      </cml:molecule>
+            </xsl:for-each>
+          </cml:list>
+        </cml:cml>
+      </div>
+      <input type="button" value="Activate Jmol viewer" onclick="javascript:toggleJmol([{$width},{$height}], this, &quot;animation&quot;, &quot;parentAnim&quot;)"/>
+      <object id="parentAnim" style="display:none;"/>
+   </div>
+  </xsl:template>
+
+ 
+  <!-- COORDINATES FILE -->
+  <xsl:template name="coords">  
+    <xsl:param name="num"/>
+    <xsl:variable name="id" select="concat('pos_', $num)"/>
+    <!--         <title><xsl:value-of select="$file"/></title> -->
+    <xsl:variable name="uid" select="generate-id()"/>
+    <input type="button" value="View coordinates" onclick="js:togglemenu(&quot;{$uid}&quot;)"/>
+    <div class="sublevel" id="{$uid}">
+      <table class="coords">
+        <tr class="coords">
+          <th class="coords">Atom #</th>
+          <xsl:if test="cml:atomArray/cml:atom/@elementType"><th class="coords">Element</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@x3"><th class="coords">x / &#x00C5;ng</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@y3"><th class="coords">y / &#x00C5;ng</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@z3"><th class="coords">z / &#x00C5;ng</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@xyz3">
+            <th class="coords">x / &#x00C5;ng</th>
+	    <th class="coords">y / &#x00C5;ng</th>
+	    <th class="coords">z / &#x00C5;ng</th>
+          </xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@xFract"><th class="coords">x (Frac)</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@yFract"><th class="coords">y (Frac)</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@zFract"><th class="coords">z (Frac)</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@xyzFract">
+            <th class="coords">x (Frac)</th>
+            <th class="coords">y (Frac)</th>
+	    <th class="coords">z (Frac)</th>
+          </xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@occupancy"><th class="coords">Occ.</th></xsl:if>
+          <xsl:if test="cml:atomArray/cml:atom/@formalCharge"><th class="coords">Charge</th></xsl:if>
+        </tr>
+        <xsl:for-each select="cml:atomArray/cml:atom">
+	  <tr class="coords">
+	    <td class="coords"><xsl:value-of select="position()"/></td>
+            <xsl:if test="@elementType"><td class="coords"><xsl:value-of select="@elementType"/></td></xsl:if>
+	    <xsl:if test="@x3"><td class="coords"><xsl:value-of select="format-number(@x3, '###0.000')"/></td></xsl:if>
+            <xsl:if test="@y3"><td class="coords"><xsl:value-of select="format-number(@y3, '###0.000')"/></td></xsl:if>
+            <xsl:if test="@z3"><td class="coords"><xsl:value-of select="format-number(@z3, '###0.000')"/></td></xsl:if>
+	    <xsl:if test="@xyz3">
+	      <xsl:for-each select="str:tokenize(@xyz3,' ')">
+	        <!--  <TD><xsl:value-of select="format-number(., '###0.000')"/></TD> -->
+                <td class="coords"><xsl:value-of select="."/> </td>
+	      </xsl:for-each>
+	    </xsl:if>
+	    <xsl:if test="@xFract"><td class="coords"><xsl:value-of select="format-number(@xFract, '###0.000')"/></td></xsl:if>
+	    <xsl:if test="@yFract"><td class="coords"><xsl:value-of select="format-number(@yFract, '###0.000')"/></td></xsl:if>
+	    <xsl:if test="@zFract"><td class="coords"><xsl:value-of select="format-number(@zFract, '###0.000')"/></td></xsl:if>
+	    <xsl:if test="@xyzFract">
+	      <xsl:for-each select="str:tokenize(@xyz3,' ')">
+	        <!-- <TD><xsl:value-of select="format-number(., '###0.000')"/></TD> -->
+                <td class="coords"><xsl:value-of select="."/> </td>
+	      </xsl:for-each>
+	    </xsl:if>
+	    <xsl:if test="@formalCharge"><td class="coords"><xsl:value-of select="format-number(@formalCharge, ' ##;-##')"/></td></xsl:if>
+  	  </tr>
+        </xsl:for-each>
+      </table>
+    </div>
+    <script type="text/javascript">
+      //
+      var divnode=document.getElementById(&quot;<xsl:value-of select="$id"/>&quot;)
+      //
+    </script>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/summary.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:func="http://exslt.org/functions"
+        xmlns:exsl="http://exslt.org/common"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        extension-element-prefixes="func exsl"
+        >
+
+<xsl:import href="toby_graph.xsl"/>
+<xsl:import href="summarygraphs.xsl"/>
+ 
+<!-- Summary information at end of html output. 
+     Including graphs of relevant properties 
+     and animation of simulation progression -->
+
+  <xsl:template name="summary">
+
+    <xsl:call-template name="summaryGraphs"/>
+    
+    <!-- Finally, add animation -->
+    <xsl:if test="count(//cml:molecule) &gt; 0">
+      <xsl:call-template name="movie"/>
+    </xsl:if>    
+    
+  </xsl:template>
+  
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/summarygraphs.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:exsl="http://exslt.org/common"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        extension-element-prefixes="exsl"
+        >
+
+  <xsl:import href="graph_bits.xsl"/>
+  
+<!-- 
+This is generally the most time-consuming part of the XSLT process
+for a DLPOLY run, because there are lots of properties output all at
+lots of timesteps. This could be ameliorated if DLPOLY output fewer
+properties.
+
+Particularly what takes time is the selectNestedGraphNodes template,
+which runs through the file, pulling out values at each step for 
+each property we will graph. It is conceivable that it might be 
+faster to run through the file once, pull out all properties in
+which we are interested, put that in a great big node-set, and then
+comb through the in-memory smaller node-set for each graph. This
+is what summaryGraphs2 below does. However, on testing, this is
+actually slower.
+-->
+
+  <xsl:template name="summaryGraphs">
+    <div class="listTitle">Graphs by timestep</div>
+    <table class="graph">
+    <xsl:variable name="steps" select="/cml:cml/cml:module[@role='step']"/>
+
+    <!-- find all properties that are output in both first and last steps: -->
+    <xsl:variable name="properties">
+      <xsl:for-each select="$steps[position()=1]/cml:propertyList/cml:property">
+        <xsl:variable name="dictRef" select="@dictRef"/>
+        <xsl:if test="$steps[position()=last()]/cml:propertyList/cml:property[@dictRef=$dictRef]">
+          <xsl:copy-of select="."/>
+	</xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+
+    <!-- for each of said properties ... -->
+    <xsl:for-each select="exsl:node-set($properties)/cml:property">
+      <!-- check dataType -->
+      <xsl:if test="cml:scalar/@dataType = 'xsd:integer' or cml:scalar/@dataType = 'xsd:decimal' or cml:scalar/@dataType = 'xsd:float' or cml:scalar/@dataType = 'xsd:double'">
+        <xsl:variable name="units" select="cml:scalar/@units"/>
+        <!-- lookup units somewhere -->
+        <xsl:variable name="dictName">
+          <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="title" select="@title"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <!-- pull out all the x & y values -->
+        <xsl:variable name="graphNodeSet">
+          <xsl:call-template name="selectNestedGraphNodes">
+            <xsl:with-param name="nodes" select="exsl:node-set($steps)"/>
+            <xsl:with-param name="propertyName" select="@dictRef"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <!-- draw the graph -->
+        <xsl:variable name="graph">
+          <xsl:call-template name="drawGraph">
+            <xsl:with-param name="graphTitle" select="$dictName"/>
+            <xsl:with-param name="xAxisTitle" select="'Step'"/>
+            <xsl:with-param name="yAxisTitle" select="$units"/>
+            <xsl:with-param name="pointSet" select="exsl:node-set($graphNodeSet)"/>
+          </xsl:call-template> 
+        </xsl:variable>
+        <!-- output the graph -->
+        <xsl:variable name="graphId" select="generate-id()"/>
+        <tr class="graph">
+          <td class="graph"><xsl:value-of select="$dictName"/>:</td>
+          <td class="graph"><input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;)"/></td><br/>
+          <div style="display:none;" id="{$graphId}"><xsl:copy-of select="$graph"/></div>
+        </tr>
+      </xsl:if>
+    </xsl:for-each>
+  </table>
+  </xsl:template>
+
+  <xsl:template name="summaryGraphs2">
+    <div class="listTitle">Graphs by timestep</div>
+    <table class="graph">
+    <xsl:variable name="steps" select="/cml:cml/cml:module[@role='step']"/>
+
+    <!-- find all properties that are output in both first and last steps: -->
+    <xsl:variable name="properties">
+      <xsl:for-each select="$steps[position()=1]/cml:propertyList/cml:property">
+        <xsl:variable name="dictRef" select="@dictRef"/>
+        <xsl:if test="$steps[position()=last()]/cml:propertyList/cml:property[@dictRef=$dictRef]">
+          <xsl:copy-of select="."/>
+	</xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+
+    <xsl:variable name="allPoints">
+      <xsl:call-template name="selectPointsFromNodes">
+        <xsl:with-param name="nodes" select="exsl:node-set($steps)"/>
+        <xsl:with-param name="propertyNames" select="exsl:node-set($properties)/cml:property/@dictRef"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <!-- for each of said properties ... -->
+    <xsl:for-each select="exsl:node-set($properties)/cml:property">
+        <xsl:variable name="units" select="cml:scalar/@units"/>
+        <!-- lookup units somewhere -->
+        <xsl:variable name="dictName">
+          <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="title" select="@title"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="graphNodeSet">
+          <xsl:call-template name="selectedPointsFromList">
+            <xsl:with-param name="pointList" select="exsl:node-set($allPoints)"/>
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+	  </xsl:call-template>
+	</xsl:variable> 
+        <!-- draw the graph -->
+        <xsl:variable name="graph">
+          <xsl:call-template name="drawGraph">
+            <xsl:with-param name="graphTitle" select="$dictName"/>
+            <xsl:with-param name="xAxisTitle" select="'Step'"/>
+            <xsl:with-param name="yAxisTitle" select="$units"/>
+            <xsl:with-param name="pointSet" select="exsl:node-set($graphNodeSet)"/>
+          </xsl:call-template> 
+        </xsl:variable>
+        <!-- output the graph -->
+        <xsl:variable name="graphId" select="generate-id()"/>
+        <tr class="graph">
+          <td class="graph"><xsl:value-of select="$dictName"/>:</td>
+          <td class="graph"><input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;)"/></td><br/>
+          <div style="display:none;" id="{$graphId}"><xsl:copy-of select="$graph"/></div>
+        </tr>
+    </xsl:for-each>
+  </table>
+  </xsl:template>
+
+</xsl:stylesheet>
+  
+EOF
+cat > $TMPDIR/table.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== TABLE =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:str="http://exslt.org/strings"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+        extension-element-prefixes="str">
+
+  <xsl:template match="cml:table">
+    <table>
+      <xsl:for-each select="cml:array">
+        <xsl:choose>
+          <xsl:when test="position() = 1">
+	    <tr>
+	      <th>Atom</th>
+              <xsl:for-each select="str:tokenize(.)">
+                <th><xsl:value-of select="."/></th>
+	      </xsl:for-each>
+	    </tr>
+          </xsl:when>
+	  <xsl:otherwise>
+            <tr>
+	      <td><xsl:value-of select="@ref"/></td>
+              <xsl:for-each select="str:tokenize(.)">
+                <td><xsl:value-of select="format-number(., ' 0.000')"/></td>
+	      </xsl:for-each>
+	    </tr>
+	  </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </table>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/toby_graph.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 
+     Copyright (c) 2005 Toby White <tow21@cam.ac.uk>
+
+     Permission is hereby granted, free of charge, to any person obtaining 
+     a copy of this software and associated documentation files (the 
+     "Software"), to deal in the Software without restriction, including 
+     without limitation the rights to use, copy, modify, merge, publish, 
+     distribute, sublicense, and/or sell copies of the Software, and to 
+     permit persons to whom the Software is furnished to do so, subject to 
+     the following conditions:
+
+     The above copyright notice and this permission notice shall be 
+      included in all copies or substantial portions of the Software.
+
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+     IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+--> 
+
+
+<xsl:stylesheet
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:exsl="http://exslt.org/common"
+        xmlns:math="http://exslt.org/math"
+        xmlns:tohw="http://www.uszla.me.uk/xsl/1.0/functions"
+        xmlns:g="http://www.uszla.me.uk/xsl/1.0/graph"
+        xmlns="http://www.w3.org/2000/svg"
+        extension-element-prefixes="exsl math tohw"
+        version="1.0">
+
+  <xsl:import href="graphfuncs.xsl"/>
+
+  <!-- Aid to visualizing geometry:
+
+       In SVG coordinates;
+
+
+       .________________________________________________________.
+       |                                                        |
+       |                                                        |
+       |                                                        |
+       |                                                        |
+       |                                                        |
+       |                                                        |
+       |                                                        | 
+       |                                                        | 
+       |                                                        |
+       |                                                        |
+       |                                                        |
+       |                                                        |
+       .________________________________________________________.
+
+-->
+
+
+
+
+  <xsl:template name="drawGraph">
+
+    <xsl:param name="canvasX" select="600"/>
+    <xsl:param name="canvasY" select="500"/>
+
+    <xsl:param name="pointSet"/>
+    <xsl:param name="paramSet" select="'None'"/>
+
+    <xsl:param name="xAxisTitle" select="default"/>
+    <xsl:param name="yAxisTitle" select="default"/>
+    <xsl:param name="graphTitle" select="default"/>
+
+    <!-- Convert floating point numbers to Xpath-compliant numbers. -->
+
+    <xsl:variable name="cleanPointSet">
+      <xsl:call-template name="launderTree">
+        <xsl:with-param name="tree" select="exsl:node-set($pointSet)"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:call-template name="drawCleanGraph">
+      <xsl:with-param name="canvasX" select="$canvasX"/>
+      <xsl:with-param name="canvasY" select="$canvasY"/>
+      <xsl:with-param name="pointSet" select="exsl:node-set($cleanPointSet)"/>
+      <xsl:with-param name="xAxisTitle" select="$xAxisTitle"/>
+      <xsl:with-param name="yAxisTitle" select="$yAxisTitle"/>
+      <xsl:with-param name="graphTitle" select="$graphTitle"/>
+    </xsl:call-template>
+
+  </xsl:template>
+
+  <xsl:template name="drawCleanGraph">
+
+    <!-- Interface to the function; 
+	 canvasX:
+         canvasY:     size of output graphic in x & y directions.
+	              (The size of the actual graph will be smaller, in 
+                      order to fit in all the text round the edges.)
+	 pointSet:     The data from which the graph will be 
+                       generated. The format of pointSet is
+                       described in README.
+         paramSet:     A set of parameters for the graph. If not
+	               supplied, then a (hopefully reasonable)
+		       default is calculated below in default-geometry.
+		       The format of paramSet is also described in README.
+         xAxisTitle: 
+         yAxisTitle:   Labels for the x & y axes. These may also be
+                       specified in paramSet, but specifying this parameter
+                       overrides any paramSet specification.
+         graphTitle:   Graph title. This may also be specified in paramSet.                 
+                       Again, specifying this parameter overrides any
+                       paramSet specification.
+   -->
+    <!-- Input parameters -->
+
+    <xsl:param name="canvasX" select="600"/>
+    <xsl:param name="canvasY" select="500"/>
+
+    <xsl:param name="pointSet"/>
+    <xsl:param name="paramSet" select="'None'"/>
+
+    <xsl:param name="xAxisTitle" select="default"/>
+    <xsl:param name="yAxisTitle" select="default"/>
+    <xsl:param name="graphTitle" select="default"/>
+
+    <!-- Calculate dependent variables -->
+
+    <!-- Work out the min and max X and Y data values 
+         Note necessity of number() call to trim whitespace-->
+    <xsl:variable name="minX" select="math:min($pointSet/g:pointList/g:point/@x)"/>
+    <xsl:variable name="maxX" select="math:max($pointSet/g:pointList/g:point/@x)"/>
+    <xsl:variable name="minY" select="math:min($pointSet/g:pointList/g:point/@y)"/>
+    <xsl:variable name="maxY" select="math:max($pointSet/g:pointList/g:point/@y)"/>
+
+    <!-- Work out the range of x and y axis values -->
+    <xsl:variable name="rangeX" select="$maxX - $minX"/>
+    <xsl:variable name="rangeY" select="$maxY - $minY"/>
+    <!-- Calculate default graph parameters -->
+    <xsl:variable name="gp">
+      <xsl:choose>
+	<xsl:when test="$paramSet!='None'">
+	  <xsl:value-of select="exsl:node-set($paramSet)"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:call-template name="g:default-geometry">
+	    <xsl:with-param name="xAxisTitle" select="$xAxisTitle"/>
+	    <xsl:with-param name="yAxisTitle" select="$yAxisTitle"/>
+	    <xsl:with-param name="canvasX" select="$canvasX"/>
+	    <xsl:with-param name="canvasY" select="$canvasY"/>
+	    <xsl:with-param name="minX" select="$minX"/>
+	    <xsl:with-param name="maxX" select="$maxX"/>
+	    <xsl:with-param name="minY" select="$minY"/>
+	    <xsl:with-param name="maxY" select="$maxY"/>
+	  </xsl:call-template>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <!-- Range of graph -->
+    <xsl:variable name="floorX"        select="exsl:node-set($gp)/g:range/@floorX"/>
+    <xsl:variable name="ceilingX"      select="exsl:node-set($gp)/g:range/@ceilingX"/>
+    <xsl:variable name="floorY"        select="exsl:node-set($gp)/g:range/@floorY"/>
+    <xsl:variable name="ceilingY"      select="exsl:node-set($gp)/g:range/@ceilingY"/>
+    <xsl:variable name="graphRangeX"   select="exsl:node-set($gp)/g:range/@graphRangeX"/>
+    <xsl:variable name="graphRangeY"   select="exsl:node-set($gp)/g:range/@graphRangeY"/>
+
+    <!-- Details of axes -->
+       
+    <!-- Positions of graph feature on canvas -->
+    <xsl:variable name="scaleX"       select="exsl:node-set($gp)/g:positions/@scaleX"/>
+    <xsl:variable name="scaleY"       select="exsl:node-set($gp)/g:positions/@scaleY"/>
+    <xsl:variable name="canvasRangeX" select="exsl:node-set($gp)/g:positions/@canvasRangeX"/>
+    <xsl:variable name="canvasRangeY" select="exsl:node-set($gp)/g:positions/@canvasRangeY"/>
+    <xsl:variable name="padLeft"      select="exsl:node-set($gp)/g:positions/@padLeft"/>
+    <xsl:variable name="padRight"     select="exsl:node-set($gp)/g:positions/@padRight"/>
+    <xsl:variable name="padTop"       select="exsl:node-set($gp)/g:positions/@padTop"/>
+    <xsl:variable name="padBottom"    select="exsl:node-set($gp)/g:positions/@padBottom"/>
+
+      <svg zoomAndPan="magnify" width="{$canvasX}" height="{$canvasY}">
+
+<!-- css formatting is not used currently, since it is not
+     supported by a sufficiently wide range of user agents.
+     (most irritatingly, ksvg; but also inkscape)
+     This means lots of duplicated formatting in the svg itself.
+     Once ksvg2 is available, I intend to reintroduce the css. -->
+<!-- 	<defs>
+	  <style type="text/css">
+	    <xsl:text>
+	      <![CDATA[
+            	.xAxisLabels {
+			text-anchor: middle;
+			fill: #000000;
+			font-size: 12px;
+			font-weight: normal;
+	    	}
+	    	.yAxisLabels {
+			text-anchor: end;
+			fill: #000000;
+			font-size: 12px;
+			font-weight: normal;
+		}
+	    	.line0 {
+			fill: none;
+			stroke: #ff0000;
+			stroke-width: 1px;
+	    	}
+	    	.line1 {
+			fill: none;
+			stroke: #ff0000;
+			stroke-width: 1px;
+	    	}
+	    	.line2 {
+			fill: none;
+			stroke: #00ff00;
+			stroke-width: 1px;
+	    	}
+	    	.line3 {
+			fill: none;
+			stroke: #0000ff;
+			stroke-width: 1px;
+	    	}
+	    	.line4 {
+			fill: none;
+			stroke: #ffff00;
+			stroke-width: 1px;
+	    	}
+	    	.line5 {
+			fill: none;
+			stroke: #ff00ff;
+			stroke-width: 1px;
+	    	}
+	    	.line6 {
+			fill: none;
+			stroke: #00ffff;
+			stroke-width: 1px;
+	    	}
+	    	.line7 {
+			fill: none;
+			stroke: #330000;
+			stroke-width: 1px;
+	    	}
+	    	.line8 {
+			fill: none;
+			stroke: #003300;
+			stroke-width: 1px;
+	    	}
+	    	.line9 {
+			fill: none;
+			stroke: #000033;
+			stroke-width: 1px;
+	    	}
+	    	.line10 {
+			fill: none;
+			stroke: #333300;
+			stroke-width: 1px;
+	    	}
+	    	.background {
+			fill: #ff00ff;
+			stroke: #000000;
+			stroke-width: 1px;
+	    	}
+	    	.tick {
+			stroke: #000000;
+			stroke-width: 1px;
+	    	}
+	    	.axes {
+			stroke: #000000;
+			stroke-width: 3px;
+	    	}
+	    	.graphTitle {
+			text-anchor: middle;
+			fill: #000000;
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.axisTitle {
+			text-anchor: middle;
+			fill: #000000;
+			font-size: 12px;
+			font-weight: bold;
+	    	}
+	      ]]>
+	    </xsl:text>
+	  </style>
+	</defs> -->
+	
+	<!-- Make the graph's title -->
+	<text class="graphTitle" x="{$padLeft + ($canvasRangeX div 2) }" y="24" font-szie="24px" font-weight="bold" text-anchor="middle">
+	  <xsl:value-of select="$graphTitle"/>
+	</text>
+	
+	<!-- Draw canvas for graph -->
+	<rect x="{$padLeft}" y="{$padTop}" width="{$canvasRangeX}" height="{$canvasRangeY}" class="background" fill="#fff0ff"/>
+
+	<!-- Draw the axes and add ticks -->
+
+	<!-- x axes: -->
+	<xsl:for-each select="exsl:node-set($gp)/g:axis[@type='x']">
+	  <xsl:variable name="xpos1" select="@xAxisPos"/>
+	  <xsl:variable name="xpos2" select="@xAxisPos2"/>
+	  <xsl:variable name="xpos2b" select="@xAxisPos2b"/>
+	  <xsl:variable name="xpos3" select="@xAxisPos3"/>
+	  <line stroke="black"  stroke-width="3px" class="axes" x1="{$padLeft}" y1="{$xpos1}" x2="{$padLeft + $canvasRangeX}" y2="{$xpos1}"/>
+	  <xsl:for-each select="g:tickList/g:tick">
+	    <xsl:variable name="xTickPos" select="$scaleX * (@value - $floorX) + $padLeft"/>
+            <text class="xAxisLabels" x="{$xTickPos}" y="{$xpos2b}" text-anchor="middle" font-size="12px" font-weight="normal">
+	      <xsl:value-of select="@value"/>
+            </text>
+            <line stroke="black" stroke-width="1px" class="tick" x1="{$xTickPos}" y1="{$xpos1}" x2="{$xTickPos}" y2="{$xpos2}"/>
+	  </xsl:for-each>
+	  <text class="axisTitle" x="{$padLeft + $canvasRangeX div 2}" y="{$xpos3}" font-size="12px" font-weight="bold">
+	    <xsl:value-of select="@title"/>
+	  </text>
+	</xsl:for-each>
+	<!-- y axis: -->
+	<xsl:for-each select="exsl:node-set($gp)/g:axis[@type='y']">
+	  <xsl:variable name="ypos1" select="@yAxisPos"/>
+	  <xsl:variable name="ypos2" select="@yAxisPos2"/>
+	  <xsl:variable name="ypos3" select="@yAxisPos3"/>
+	  <line stroke="black"  stroke-width="3px" class="axes" x1="{$ypos1}" y1="{$padTop}" x2="{$ypos1}" y2="{$padTop + $canvasRangeY}"/>
+	  <xsl:for-each select="g:tickList/g:tick">
+	    <xsl:variable name="yTickPos" select="$scaleY * ($ceilingY - @value) + $padTop"/>
+            <text class="xAxisLabels" x="{$ypos2}" y="{$yTickPos}" text-anchor="end" font-size="12px" font-weight="normal">
+	      <xsl:value-of select="@value"/>
+            </text>
+            <line stroke="black" stroke-width="1px" class="tick" x1="{$ypos1}" y1="{$yTickPos}" x2="{$ypos2}" y2="{$yTickPos}"/>
+	  </xsl:for-each>
+	  <text class="axisTitle" x="0" y="0" font-size="12px" font-weight="bold" transform="translate({$ypos3},{$padTop + $canvasRangeY div 2}) rotate(-90)">
+	    <xsl:value-of select="@title"/>
+	  </text>
+	</xsl:for-each>
+
+	<!-- iterate over all graphs that must be drawn: -->
+	<xsl:for-each select="$pointSet/g:pointList">
+
+	  <!-- Draw points on graph -->
+          <xsl:for-each select="g:point">
+	    <xsl:variable name="xScaled" select="$scaleX * (@x - $floorX) + $padLeft"/>
+	    <xsl:variable name="yScaled" select="$scaleY * ($ceilingY - @y) + $padTop"/>
+            <circle r="2" cx="{$xScaled}" cy="{$yScaled}"/>
+	  </xsl:for-each>
+	  
+	  <!-- Draw lines between points -->
+          <polyline fill="none" stroke="red" stroke-width="1">
+            <xsl:attribute name="class">
+              <xsl:value-of select="concat('line', 1)"/>
+            </xsl:attribute>
+            <xsl:attribute name="points">
+              <xsl:for-each select="g:point"> 
+		<xsl:variable name="xScaled" select="$scaleX * (@x - $floorX) + $padLeft"/>
+		<xsl:variable name="yScaled" select="$scaleY * ($ceilingY - @y) + $padTop"/>
+		<xsl:value-of select="$xScaled"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="$yScaled"/>
+		<xsl:text> </xsl:text>
+              </xsl:for-each>
+          </xsl:attribute>
+          </polyline>
+	</xsl:for-each>
+	
+	<!-- Transform coords into the scale of the graph -->
+	<g transform="translate({$padLeft},{$canvasY - $padTop}) scale({$scaleX},{-1 * $scaleY}) translate({-1*$floorX},{-1*$floorY})">
+	  
+	</g>
+	
+      </svg>
+      
+  </xsl:template>
+
+
+  <xsl:template name="g:default-geometry">
+    <!-- Calculate necessary variables for plot positions -->
+    <xsl:param name="xAxisTitle"/>
+    <xsl:param name="yAxisTitle"/>
+    <xsl:param name="canvasX"/>
+    <xsl:param name="canvasY"/>
+    <xsl:param name="minX"/>
+    <xsl:param name="maxX"/>
+    <xsl:param name="minY"/>
+    <xsl:param name="maxY"/>
+
+    <!-- Work out the range of x and y axis values -->
+    <xsl:variable name="rangeX" select="$maxX - $minX"/>
+    <xsl:variable name="rangeY" select="$maxY - $minY"/>
+
+    <!-- Round the range values to something useable -->
+    <xsl:variable name="floorX">
+      <xsl:choose>
+	<xsl:when test="$rangeX &gt; 0">
+	  <xsl:value-of select="floor($minX div tohw:intpow(10,tohw:floorlog10($rangeX)))*tohw:intpow(10,tohw:floorlog10($rangeX))"/>
+	</xsl:when>
+	<xsl:when test="$minX != 0">
+	  <xsl:variable name="fakeMinX" select="0.9 * $minX"/>
+	  <xsl:variable name="fakeRangeX" select="0.2 * $minX"/>
+	  <xsl:value-of select="floor($fakeMinX div tohw:intpow(10,tohw:floorlog10($fakeRangeX)))*tohw:intpow(10,tohw:floorlog10($fakeRangeX))"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  -1.0
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="ceilingX">
+      <xsl:choose>
+	<xsl:when test="$rangeX &gt; 0">
+	  <xsl:value-of select="ceiling($maxX div tohw:intpow(10,tohw:floorlog10($rangeX)))*tohw:intpow(10,tohw:floorlog10($rangeX))"/>
+	</xsl:when>
+	<xsl:when test="$minX != 0">
+	  <xsl:variable name="fakeMaxX" select="1.1 * $minX"/>
+	  <xsl:variable name="fakeRangeX" select="0.2 * $minX"/>
+	  <xsl:value-of select="ceiling($fakeMaxX div tohw:intpow(10,tohw:floorlog10($fakeRangeX)))*tohw:intpow(10,tohw:floorlog10($fakeRangeX))"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  1.0
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="floorY">
+      <xsl:choose>
+	<xsl:when test="$rangeY &gt; 0">
+	  <xsl:value-of select="floor($minY div tohw:intpow(10,tohw:floorlog10($rangeY)))*tohw:intpow(10,tohw:floorlog10($rangeY))"/>
+	</xsl:when>
+	<xsl:when test="$minY != 0">
+	  <xsl:variable name="fakeMinY" select="0.9 * $minY"/>
+	  <xsl:variable name="fakeRangeY" select="0.2 * $minY"/>
+	  <xsl:value-of select="floor($fakeMinY div tohw:intpow(10,tohw:floorlog10($fakeRangeY)))*tohw:intpow(10,tohw:floorlog10($fakeRangeY))"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  -1.0
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="ceilingY">
+      <xsl:choose>
+	<xsl:when test="$rangeY &gt; 0">
+	  <xsl:value-of select="ceiling($maxY div tohw:intpow(10,tohw:floorlog10($rangeY)))*tohw:intpow(10,tohw:floorlog10($rangeY))"/>
+	</xsl:when>
+	<xsl:when test="$minY != 0">
+	  <xsl:variable name="fakeMaxY" select="1.1 * $minY"/>
+	  <xsl:variable name="fakeRangeY" select="0.2 * $minY"/>
+	  <xsl:value-of select="ceiling($fakeMaxY div tohw:intpow(10,tohw:floorlog10($fakeRangeY)))*tohw:intpow(10,tohw:floorlog10($fakeRangeY))"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  1.0
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+      <!-- Get the range of values covered on the axes -->
+    <xsl:variable name="graphRangeX" select="$ceilingX - $floorX"/>
+    <xsl:variable name="graphRangeY" select="$ceilingY - $floorY"/>
+    
+    <!-- Work out axis types -->
+    <xsl:variable name="xAxisType">
+      <xsl:choose>
+	  <xsl:when test="$floorY &gt;= 0">
+	    <!-- The data is all positive - draw x axis at the bottom -->
+	    <xsl:value-of select="'bottom'"/>
+	  </xsl:when>
+	  <xsl:when test="$ceilingY &lt;= 0">
+	    <!-- the data is all negative - draw the x axis at the top -->
+	    <xsl:value-of select="'top'"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <!-- The data crosses the x axis, find the nominal height of y=0 -->
+	    <xsl:value-of select="'middle'"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="yAxisType">
+      <xsl:choose>
+	  <xsl:when test="$floorX &gt;= 0">
+	    <!-- The data is all positive - draw y axis at the left -->
+	    <xsl:value-of select="'left'"/>
+	  </xsl:when>
+	  <xsl:when test="$ceilingX &lt;= 0">
+	    <!-- the data is all negative - draw the y axis at the right -->
+	    <xsl:value-of select="'right'"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <!-- The data crosses the x axis, find the nominal height of y=0 -->
+	    <xsl:value-of select="'middle'"/>
+	  </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <!-- We can now calculate the offsets necessary to fit the ticklabels in: -->
+
+    <xsl:variable name="maxyStringLength">
+      <xsl:choose>
+	<xsl:when test="string-length($ceilingY) &gt; string-length($floorY)">
+	  <xsl:value-of select="string-length($ceilingY)"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="string-length($floorY)"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <!-- Work out the padding of the graph within the canvas -->
+    <!-- We assume each character of the yAxis label is 20px wide  - we probably ought to query this -->
+    <!-- We also force a minimum padding of 10px -->
+    <xsl:variable name="padLeft">
+      <xsl:choose>
+	<xsl:when test="$yAxisType='left' or $yAxisType='both'">
+	  <xsl:value-of select="40 + (10 * $maxyStringLength)"/>
+	</xsl:when>
+	<xsl:when test="$yAxisType='right' or $yAxisType='middle'">
+	  <xsl:value-of select="10"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="padRight">
+      <xsl:choose>
+	<xsl:when test="$yAxisType='left' or $yAxisType='middle'">
+	  <xsl:value-of select="10"/>
+	</xsl:when>
+	<xsl:when test="$yAxisType='right' or $yAxisType='both'">
+	  <xsl:value-of select="40 + (20 * $maxyStringLength)"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- And we assume (for the moment) a constant y offset -->
+    <xsl:variable name="padTop"    select="75"/>
+    <xsl:variable name="padBottom" select="75"/>
+
+    <xsl:variable name="canvasRangeX" select="$canvasX - $padLeft - $padRight"/>
+    <xsl:variable name="canvasRangeY" select="$canvasY - $padTop - $padBottom"/>
+
+    <!-- Calculate graph scaling -->
+    <xsl:variable name="scaleX" select="$canvasRangeX div $graphRangeX"/>
+    <xsl:variable name="scaleY" select="$canvasRangeY div $graphRangeY"/>
+
+    <!-- Calculate positions of paddings and axes on global grid-->
+    <!-- x axis -->
+    <!-- ?AxisPos is the coordinate (in pixel space) where the axis will be drawn.
+         ?AxisPos2 is the coordinate where the ticklabel will be drawn -->
+    <xsl:variable name="xAxisPos">
+      <xsl:choose>
+	<xsl:when test="$xAxisType = 'bottom'">
+	  <xsl:value-of select="$padTop + $canvasRangeY"/>
+	</xsl:when>
+	<xsl:when test="$xAxisType = 'top'">
+	  <xsl:value-of select="$padTop"/>
+	</xsl:when>
+	<xsl:when test="$xAxisType = 'middle'">
+	  <xsl:value-of select="$padTop + $ceilingY * $scaleY"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- where should ticks extend to -->
+    <xsl:variable name="xAxisPos2">
+      <xsl:choose>
+	<xsl:when test="$xAxisType = 'bottom' or $xAxisType = 'middle'">
+	  <xsl:value-of select="$xAxisPos + 5"/>
+	</xsl:when>
+	<xsl:when test="$xAxisType = 'top'">
+	  <xsl:value-of select="$xAxisPos - 5"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- where should ticklabels be written -->
+    <xsl:variable name="xAxisPos2b">
+      <xsl:choose>
+        <xsl:when test="$xAxisType = 'bottom' or $xAxisType = 'middle'">
+          <xsl:value-of select="$xAxisPos2 + 10"/>
+        </xsl:when>
+        <xsl:when test="$xAxisType = 'top'">
+          <xsl:value-of select="$xAxisPos2"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- where should we write the axis title -->
+    <xsl:variable name="xAxisPos3">
+      <xsl:choose>
+	<xsl:when test="$xAxisType = 'bottom' or $xAxisType = 'middle'">
+	  <xsl:value-of select="$xAxisPos + 30"/>
+	</xsl:when>
+	<xsl:when test="$xAxisType = 'top'">
+	  <xsl:value-of select="$xAxisPos - 20"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- y axis -->
+    <xsl:variable name="yAxisPos">
+      <xsl:choose>
+	<xsl:when test="$yAxisType = 'left'">
+	  <xsl:value-of select="$padLeft"/>
+	</xsl:when>
+	<xsl:when test="$yAxisType = 'right'">
+	  <xsl:value-of select="$padLeft + $canvasRangeX"/>
+	</xsl:when>
+	<xsl:when test="$yAxisType = 'middle'">
+	  <xsl:value-of select="$padLeft + $floorY * $scaleY"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="yAxisPos2">
+      <xsl:choose>
+	<xsl:when test="$yAxisType = 'left' or $xAxisType = 'middle'">
+	  <xsl:value-of select="$yAxisPos - 5"/>
+	</xsl:when>
+	<xsl:when test="$yAxisType = 'right'">
+	  <xsl:value-of select="$yAxisPos + 5"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <!-- where should we write the axis title -->
+    <xsl:variable name="yAxisPos3">
+      <xsl:choose>
+	<xsl:when test="$yAxisType = 'left' or $xAxisType = 'middle'">
+	  <xsl:value-of select="$yAxisPos - 20 - 10 * string-length($xAxisTitle)"/>
+	</xsl:when>
+	<xsl:when test="$yAxisType = 'right'">
+	  <xsl:value-of select="$yAxisPos + 20"/>
+	</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+
+    <g:range 
+           floorX     ="{$floorX}" 
+           ceilingX   ="{$ceilingX}" 
+           floorY     ="{$floorY}"
+           ceilingY   ="{$ceilingY}"
+           graphRangeX="{$graphRangeX}"
+           graphRangeY="{$graphRangeY}"
+    />
+    
+    <g:axis 
+           type="x"
+           title="{$xAxisTitle}"
+           xAxisPos   ="{$xAxisPos}"
+           xAxisPos2  ="{$xAxisPos2}"
+           xAxisPos2b ="{$xAxisPos2b}"
+           xAxisPos3  ="{$xAxisPos3}">
+      <xsl:call-template name="g:tickValues">
+	<xsl:with-param name="minV" select="$floorX"/>
+	<xsl:with-param name="maxV" select="$ceilingX"/>
+	<xsl:with-param name="numTicks" select="3"/>
+      </xsl:call-template>
+    </g:axis>
+    <g:axis 
+           type="y"
+           title="{$yAxisTitle}"
+           yAxisPos   ="{$yAxisPos}"
+           yAxisPos2  ="{$yAxisPos2}"
+           yAxisPos3  ="{$yAxisPos3}">
+      <xsl:call-template name="g:tickValues">
+	<xsl:with-param name="minV" select="$floorY"/>
+	<xsl:with-param name="maxV" select="$ceilingY"/>
+	<xsl:with-param name="numTicks" select="4"/>
+      </xsl:call-template>
+    </g:axis>
+
+    <g:positions
+      scaleX      ="{$scaleX}"
+      scaleY      ="{$scaleY}"
+      canvasRangeX="{$canvasRangeX}"
+      canvasRangeY="{$canvasRangeY}"
+      padLeft     ="{$padLeft}"
+      padRight    ="{$padRight}"
+      padTop      ="{$padTop}"
+      padBottom   ="{$padBottom}"
+    />
+    
+  </xsl:template>
+ 
+
+</xsl:stylesheet>
+EOF
+cat > $TMPDIR/units.xsl << EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--===================== @units =========================-->
+
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+	>
+
+  <xsl:template name="add.units">
+    <xsl:choose>
+      <xsl:when test="@units">
+        <xsl:text> (</xsl:text><i><xsl:value-of select="@units"/></i><xsl:text>)</xsl:text>
+      </xsl:when>
+      <xsl:when test="child::*/@units">
+        <xsl:text> (</xsl:text><i><xsl:value-of select="child::*/@units"/></i><xsl:text>)</xsl:text>
+      </xsl:when>
+    </xsl:choose>       
+  </xsl:template>
+
+
+  <xsl:template match="@units">
+    <xsl:text> (</xsl:text><i><xsl:value-of select="."/></i><xsl:text>)</xsl:text>
+  </xsl:template>
+  
+</xsl:stylesheet>
+EOF
+$XSLTPROC -o $1.xhtml $TMPDIR/ccViz.xsl $1

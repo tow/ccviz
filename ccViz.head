@@ -1,0 +1,5 @@
+#!/bin/sh
+
+XSLTPROC=/usr/bin/xsltproc
+
+TMPDIR=$(mktemp -p /tmp)
