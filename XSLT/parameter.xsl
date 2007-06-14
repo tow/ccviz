@@ -26,23 +26,49 @@
       </xsl:when>
 
     <!-- If parameter list then place all properties in a single table -->
+
       <xsl:otherwise>
         <tr>
-	  <xsl:if test="@name"><td align="left" class="paramname"><xsl:value-of select="@name"/></td></xsl:if>
-          <xsl:if test="@value"><td align="right" class="paramvalue">
-	    <xsl:choose>
-	      <xsl:when test="string(number(@value)) != 'NaN'">
-	        <xsl:value-of select="format-number(@value, '0.0000')"/>
-	      </xsl:when>
-	      <xsl:otherwise>
-	        <xsl:value-of select="@value"/>
-	      </xsl:otherwise>
-	    </xsl:choose>
-	    </td>
-	  </xsl:if>
-          <xsl:if test="cml:scalar"><xsl:apply-templates select="cml:scalar"/></xsl:if>
-          <xsl:if test="cml:array"><xsl:apply-templates select="cml:array"/></xsl:if>
-          <xsl:if test="cml:matrix"><xsl:apply-templates select="cml:matrix"/></xsl:if>
+
+    <!-- The parameter name *should* be in a name attribute - I think
+         sometimes it may come out in title, so we check below. That
+         option will be removed later on, since FoX never does that. -->
+
+          <td align="left" class="paramname">
+            <xsl:choose>
+              <xsl:when test="@name">
+	        <xsl:value-of select="@name"/>
+              </xsl:when>
+              <xsl:when test="@title">
+	        <xsl:value-of select="@title"/>
+              </xsl:when>
+            </xsl:choose> 
+          </td>
+
+    <!-- The parameter value *should* be in a scalar/array/matrix child.
+         Sometimes it is in the value attribue though, so we check below
+         That option will be removed later on since FoX never does that. -->
+
+          <td align="right" class="paramvalue">
+            <xsl:choose>
+              <xsl:when test="@value">
+              <!-- When it is in @value, we can't tell the datatype unless we try: -->
+                <xsl:choose>
+	          <xsl:when test="string(number(@value)) != 'NaN'">
+	            <xsl:value-of select="format-number(@value, '0.0000')"/>
+	          </xsl:when>
+	          <xsl:otherwise>
+	            <xsl:value-of select="@value"/>
+	          </xsl:otherwise>
+	        </xsl:choose>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:if test="cml:scalar"><xsl:apply-templates select="cml:scalar"/></xsl:if>
+                <xsl:if test="cml:array"><xsl:apply-templates select="cml:array"/></xsl:if>
+                <xsl:if test="cml:matrix"><xsl:apply-templates select="cml:matrix"/></xsl:if>
+              </xsl:otherwise>
+            </xsl:choose>
+          </td>
         </tr>
       </xsl:otherwise>
     </xsl:choose>

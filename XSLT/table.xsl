@@ -16,7 +16,7 @@
           <xsl:when test="position() = 1">
 	    <tr>
 	      <th>Atom</th>
-              <xsl:for-each select="str:tokenize(normalize-space(.),' ')">
+              <xsl:for-each select="str:tokenize(.)">
                 <th><xsl:value-of select="."/></th>
 	      </xsl:for-each>
 	    </tr>
@@ -24,7 +24,7 @@
 	  <xsl:otherwise>
             <tr>
 	      <td><xsl:value-of select="@ref"/></td>
-              <xsl:for-each select="str:tokenize(normalize-space(.),' ')">
+              <xsl:for-each select="str:tokenize(.)">
                 <td><xsl:value-of select="format-number(., ' 0.000')"/></td>
 	      </xsl:for-each>
 	    </tr>

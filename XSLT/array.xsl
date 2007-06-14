@@ -21,7 +21,7 @@
     <p><br/></p>
     <table class="prop2">
       <tr>
-        <xsl:for-each select="str:tokenize(normalize-space(text()),$delimiter)">
+        <xsl:for-each select="str:tokenize(text(),$delimiter)">
 	  <td>
 	    <xsl:choose>
               <xsl:when test="ceiling(.) = floor(.) and not(contains(.,'.'))">
