@@ -1,5 +1,16 @@
 #!/bin/sh
 
 XSLTPROC=/usr/bin/xsltproc
-
-TMPDIR=$(mktemp -p /tmp)
+MKTEMP=/usr/bin/mktemp
+if [ ! -x $XSLTPROC ]; then
+  echo "Error: could not find xsltproc"
+  exit 1
+elif [ ! -x $MKTEMP ]; then
+  echo "Error: could not find mktemp"
+  exit 1
+elif [ $# -ne 1 ]; then
+  echo "Error: need exactly one argument"
+  exit 1
+fi
+TMPXSLTDIR=$(mktemp -d)
+trap 'rm -rf $TMPXSLTDIR; exit' 0 1 2 3 15
