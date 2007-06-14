@@ -12,8 +12,9 @@ elif [ $# -ne 1 ]; then
   echo "Error: need exactly one argument"
   exit 1
 fi
-TMPXSLTDIR=$(mktemp -d)
+TMPXSLTDIR=
 trap 'rm -rf $TMPXSLTDIR; exit' 0 1 2 3 15
+TMPXSLTDIR=$(mktemp -d)
 cat > $TMPXSLTDIR/finishXML.py << "EOF"
 #!/usr/bin/env python
 
