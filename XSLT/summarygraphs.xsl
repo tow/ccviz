@@ -43,7 +43,7 @@ actually slower.
     <!-- for each of said properties ... -->
     <xsl:for-each select="exsl:node-set($properties)/cml:property">
       <!-- check dataType -->
-      <xsl:if test="cml:scalar/@dataType = 'xsd:integer' or cml:scalar/@dataType = 'xsd:decimal' or cml:scalar/@dataType = 'xsd:float' or cml:scalar/@dataType = 'xsd:double'">
+      <xsl:if test="cml:scalar/@dataType = 'xsd:integer' or cml:scalar/@dataType = 'xsd:decimal' or cml:scalar/@dataType = 'xsd:float' or cml:scalar/@dataType = 'xsd:double' or cml:scalar/@dataType = 'fpx:real'">
         <xsl:variable name="units" select="cml:scalar/@units"/>
         <!-- lookup units somewhere -->
         <xsl:variable name="dictName">

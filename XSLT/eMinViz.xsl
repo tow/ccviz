@@ -52,7 +52,7 @@
     <xsl:message> Three </xsl:message>
      <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
     </xsl:when> -->
-    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content = 'DL_POLY version 3.06 / March 2006'">
+    <xsl:when test="contains(/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content,'DL_POLY')">
       <xsl:text>DL_POLY</xsl:text>
     </xsl:when>
     <xsl:otherwise>
