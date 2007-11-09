@@ -629,7 +629,7 @@ cat > $TMPXSLTDIR/display.xsl << "EOF"
     <xsl:message> Three </xsl:message>
      <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
     </xsl:when> -->
-    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content = 'DL_POLY version 3.06 / March 2006'">
+    <xsl:when test="contains(/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content,'DL_POLY')">
       <xsl:text>DL_POLY</xsl:text>
     </xsl:when>
     <xsl:otherwise>
@@ -1049,7 +1049,7 @@ cat > $TMPXSLTDIR/eMinViz.xsl << "EOF"
     <xsl:message> Three </xsl:message>
      <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
     </xsl:when> -->
-    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content = 'DL_POLY version 3.06 / March 2006'">
+    <xsl:when test="contains(/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content,'DL_POLY')">
       <xsl:text>DL_POLY</xsl:text>
     </xsl:when>
     <xsl:otherwise>
@@ -2867,7 +2867,7 @@ actually slower.
     <!-- for each of said properties ... -->
     <xsl:for-each select="exsl:node-set($properties)/cml:property">
       <!-- check dataType -->
-      <xsl:if test="cml:scalar/@dataType = 'xsd:integer' or cml:scalar/@dataType = 'xsd:decimal' or cml:scalar/@dataType = 'xsd:float' or cml:scalar/@dataType = 'xsd:double'">
+      <xsl:if test="cml:scalar/@dataType = 'xsd:integer' or cml:scalar/@dataType = 'xsd:decimal' or cml:scalar/@dataType = 'xsd:float' or cml:scalar/@dataType = 'xsd:double' or cml:scalar/@dataType = 'fpx:real'">
         <xsl:variable name="units" select="cml:scalar/@units"/>
         <!-- lookup units somewhere -->
         <xsl:variable name="dictName">
