@@ -16,8 +16,14 @@
 	<p/>
         <table>
 	  <tr>
-	    <xsl:if test="@name"><td><xsl:value-of select="@name"/></td></xsl:if>
-	    <xsl:if test="@value"><td><xsl:value-of select="@value"/></td></xsl:if>
+            <td>
+              <xsl:if test="@name"><xsl:value-of select="@name"/></xsl:if>
+              <xsl:call-template name="get.dictionary.reference.html">
+                <xsl:with-param name="dictRef" select="@dictRef"/>
+                <xsl:with-param name="title" select="@name"/>
+              </xsl:call-template>
+            </td>
+            <td><xsl:if test="@value"><xsl:value-of select="@value"/></xsl:if></td>
             <xsl:if test="cml:scalar"><xsl:apply-templates select="cml:scalar"/></xsl:if>
             <xsl:if test="cml:array"><xsl:apply-templates select="cml:array"/></xsl:if>
 	    <xsl:if test="cml:matrix"><xsl:apply-templates select="cml:matrix"/></xsl:if>
@@ -34,16 +40,14 @@
          sometimes it may come out in title, so we check below. That
          option will be removed later on, since FoX never does that. -->
 
-          <td align="left" class="paramname">
-            <xsl:choose>
-              <xsl:when test="@name">
-	        <xsl:value-of select="@name"/>
-              </xsl:when>
-              <xsl:when test="@title">
-	        <xsl:value-of select="@title"/>
-              </xsl:when>
-            </xsl:choose> 
-          </td>
+        <td class="paramname" align="left">
+          <xsl:if test="@name"><xsl:value-of select="@name"/></xsl:if>
+          <xsl:text> : </xsl:text>
+          <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="title" select="@name"/>
+          </xsl:call-template>
+        </td>
 
     <!-- The parameter value *should* be in a scalar/array/matrix child.
          Sometimes it is in the value attribue though, so we check below

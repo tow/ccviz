@@ -88,8 +88,8 @@
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>  
-    <span>
-      <xsl:attribute name="onmouseover">document.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
+    <span class="dictRef">
+      <xsl:attribute name="onmouseover">window.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
       <xsl:value-of select="$dictTitle"/>
     </span>
   </xsl:template>

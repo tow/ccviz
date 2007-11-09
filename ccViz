@@ -500,8 +500,8 @@ cat > $TMPXSLTDIR/dictionary.xsl << "EOF"
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>  
-    <span>
-      <xsl:attribute name="onmouseover">document.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
+    <span class="dictRef">
+      <xsl:attribute name="onmouseover">window.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
       <xsl:value-of select="$dictTitle"/>
     </span>
   </xsl:template>
@@ -619,18 +619,20 @@ cat > $TMPXSLTDIR/display.xsl << "EOF"
 <!-- Global Variable holding the program name -->
 <xsl:param name="prog">
   <xsl:choose>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='eMinerals:Program']">
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='eMinerals:Program']/@content"/>
+    </xsl:when>
     <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']">
-     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
     </xsl:when>
     <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']">
-     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
     </xsl:when>
-    <!-- <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
-    <xsl:message> Three </xsl:message>
-     <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
-    </xsl:when> -->
     <xsl:when test="contains(/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content,'DL_POLY')">
       <xsl:text>DL_POLY</xsl:text>
+    </xsl:when>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']/@content"/>
     </xsl:when>
     <xsl:otherwise>
       <xsl:text>Program</xsl:text>
@@ -941,6 +943,9 @@ cat > $TMPXSLTDIR/display.xsl << "EOF"
                        font-size: small; 
                        font-style: italic;
                          }
+
+        .dictRef { font-size: small;
+                   font-style: italic; }
 
       ]]>
     </xsl:text>
@@ -1039,18 +1044,20 @@ cat > $TMPXSLTDIR/eMinViz.xsl << "EOF"
 <!-- Global Variable holding the program name -->
 <xsl:param name="prog">
   <xsl:choose>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='eMinerals:Program']">
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='eMinerals:Program']/@content"/>
+    </xsl:when>
     <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']">
-     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
     </xsl:when>
     <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']">
-     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
     </xsl:when>
-    <!-- <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
-    <xsl:message> Three </xsl:message>
-     <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
-    </xsl:when> -->
     <xsl:when test="contains(/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content,'DL_POLY')">
       <xsl:text>DL_POLY</xsl:text>
+    </xsl:when>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']/@content"/>
     </xsl:when>
     <xsl:otherwise>
       <xsl:text>Program</xsl:text>
@@ -1361,6 +1368,9 @@ cat > $TMPXSLTDIR/eMinViz.xsl << "EOF"
                        font-size: small; 
                        font-style: italic;
                          }
+
+        .dictRef { font-size: small;
+                   font-style: italic; }
 
       ]]>
     </xsl:text>
@@ -2310,8 +2320,14 @@ cat > $TMPXSLTDIR/parameter.xsl << "EOF"
 	<p/>
         <table>
 	  <tr>
-	    <xsl:if test="@name"><td><xsl:value-of select="@name"/></td></xsl:if>
-	    <xsl:if test="@value"><td><xsl:value-of select="@value"/></td></xsl:if>
+            <td>
+              <xsl:if test="@name"><xsl:value-of select="@name"/></xsl:if>
+              <xsl:call-template name="get.dictionary.reference.html">
+                <xsl:with-param name="dictRef" select="@dictRef"/>
+                <xsl:with-param name="title" select="@name"/>
+              </xsl:call-template>
+            </td>
+            <td><xsl:if test="@value"><xsl:value-of select="@value"/></xsl:if></td>
             <xsl:if test="cml:scalar"><xsl:apply-templates select="cml:scalar"/></xsl:if>
             <xsl:if test="cml:array"><xsl:apply-templates select="cml:array"/></xsl:if>
 	    <xsl:if test="cml:matrix"><xsl:apply-templates select="cml:matrix"/></xsl:if>
@@ -2328,16 +2344,14 @@ cat > $TMPXSLTDIR/parameter.xsl << "EOF"
          sometimes it may come out in title, so we check below. That
          option will be removed later on, since FoX never does that. -->
 
-          <td align="left" class="paramname">
-            <xsl:choose>
-              <xsl:when test="@name">
-	        <xsl:value-of select="@name"/>
-              </xsl:when>
-              <xsl:when test="@title">
-	        <xsl:value-of select="@title"/>
-              </xsl:when>
-            </xsl:choose> 
-          </td>
+        <td class="paramname" align="left">
+          <xsl:if test="@name"><xsl:value-of select="@name"/></xsl:if>
+          <xsl:text> : </xsl:text>
+          <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="title" select="@name"/>
+          </xsl:call-template>
+        </td>
 
     <!-- The parameter value *should* be in a scalar/array/matrix child.
          Sometimes it is in the value attribue though, so we check below

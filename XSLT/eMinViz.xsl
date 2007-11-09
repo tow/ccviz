@@ -42,18 +42,20 @@
 <!-- Global Variable holding the program name -->
 <xsl:param name="prog">
   <xsl:choose>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='eMinerals:Program']">
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='eMinerals:Program']/@content"/>
+    </xsl:when>
     <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']">
-     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='siesta:Program']/@content"/>
     </xsl:when>
     <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']">
-     <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dl_poly:Program']/@content"/>
     </xsl:when>
-    <!-- <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
-    <xsl:message> Three </xsl:message>
-     <xsl:value-of select="/cml:cml/cml:metadata[@name='dc:creator']/@content"/>
-    </xsl:when> -->
     <xsl:when test="contains(/cml:cml/cml:metadataList/cml:metadata[@name='dc:identifier']/@content,'DL_POLY')">
       <xsl:text>DL_POLY</xsl:text>
+    </xsl:when>
+    <xsl:when test="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']">
+      <xsl:value-of select="/cml:cml/cml:metadataList/cml:metadata[@name='dc:creator']/@content"/>
     </xsl:when>
     <xsl:otherwise>
       <xsl:text>Program</xsl:text>
@@ -364,6 +366,9 @@
                        font-size: small; 
                        font-style: italic;
                          }
+
+        .dictRef { font-size: small;
+                   font-style: italic; }
 
       ]]>
     </xsl:text>
