@@ -27,6 +27,84 @@ actually slower.
 
   <xsl:template name="summaryGraphs">
     <div class="listTitle">Graphs by timestep</div>
+
+    <div style="float:left">
+      <div id="placeholder" style="width:500px;height:300px"></div>
+    </div>
+    
+    <div id="miniature" style="float:left;margin-left:20px;margin-top:50px">
+      <div id="overview" style="width:166px;height:100px"></div>
+
+      <p id="overviewLegend" style="margin-left:10px"></p>
+    </div>
+
+<script id="source" language="javascript" type="text/javascript">
+<xsl:text disable-output-escaping="yes">// &lt;![CDATA[
+<![CDATA[
+$(function () {
+    // setup plot
+    function getData(x1, x2) {
+        var d = [];
+        for (var i = x1; i < x2; i += (x2 - x1) / 100)
+            d.push([i, Math.sin(i * Math.sin(i))]);
+
+        return [
+            { label: "sin(x sin(x))", data: d }
+        ];
+    }
+
+    var options = {
+        legend: { show: false },
+        lines: { show: true },
+        points: { show: true },
+        yaxis: { noTicks: 10 },
+        selection: { mode: "xy" }
+    };
+
+    var startData = getData(0, 3 * Math.PI);
+    
+    var plot = $.plot($("#placeholder"), startData, options);
+
+    // setup overview
+    var overview = $.plot($("#overview"), startData, {
+        legend: { show: true, container: $("#overviewLegend") },
+        lines: { show: true, lineWidth: 1 },
+        shadowSize: 0,
+        xaxis: { noTicks: 4 },
+        yaxis: { noTicks: 3, min: -2, max: 2 },
+        grid: { color: "#999" },
+        selection: { mode: "xy" }
+    });
+
+    // now connect the two
+    var internalSelection = false;
+    
+    $("#placeholder").bind("selected", function (event, area) {
+        // do the zooming
+        plot = $.plot($("#placeholder"), getData(area.x1, area.x2),
+                      $.extend(true, {}, options, {
+                          xaxis: { min: area.x1, max: area.x2 },
+                          yaxis: { min: area.y1, max: area.y2 }
+                      }));
+        
+        if (internalSelection)
+            return; // prevent eternal loop
+        internalSelection = true;
+        overview.setSelection(area);
+        internalSelection = false;
+    });
+    $("#overview").bind("selected", function (event, area) {
+        if (internalSelection)
+            return;
+        internalSelection = true;
+        plot.setSelection(area);
+        internalSelection = false;
+    });
+});
+// ]]]]></xsl:text>
+<xsl:text disable-output-escaping="yes">></xsl:text>
+</script>
+
     <table class="graph">
     <xsl:variable name="steps" select="/cml:cml/cml:module[@role='step']"/>
 
