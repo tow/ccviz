@@ -94,22 +94,7 @@
 <!-- MAIN TEMPLATE -->
   <xsl:template match="/">
     <html>
-      <head>
-	<title>
-	  <xsl:value-of select="$prog"/>
-	  <xsl:text> Output</xsl:text>
-	</title>
-        <style type="text/css">
-          <xsl:call-template name="css-style"/>
-        </style>
-        <xsl:if test="$Jmol!='false'">
-          <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
-        </xsl:if>
-
-        <script type="text/javascript">
-          <xsl:call-template name="mainJavascript"/>
-        </script>
-      </head>
+      <xsl:call-template name="head"/>
 
       <body>
         <xsl:if test="$Jmol!='false'">
