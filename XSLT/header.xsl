@@ -16,21 +16,30 @@
       <style type="text/css">
         <xsl:call-template name="css-style"/>
       </style>
+<xsl:text>
+</xsl:text>
       <xsl:if test="$Jmol!='false'">
         <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
+<xsl:text>
+</xsl:text>
       </xsl:if>
 
       <script type="text/javascript">
         <xsl:call-template name="mainJavascript"/>
       </script>
-      <script type="text/javascript">
-        <xsl:call-template name="flot"/>
-      </script><xsl:text>
-</xsl:text><xsl:comment><xsl:text>[if IE]</xsl:text>
+<xsl:text>
+</xsl:text>
+<xsl:comment><xsl:text>[if IE]</xsl:text>
 <![CDATA[<script type="text/javascript">]]>
         <xsl:call-template name="exCanvas"/>
 <![CDATA[</script>]]>
-      <xsl:text>[endif]</xsl:text></xsl:comment><xsl:text>
+      <xsl:text>[endif]</xsl:text></xsl:comment>
+<xsl:text>
+</xsl:text>
+      <script type="text/javascript">
+        <xsl:call-template name="flot"/>
+      </script>
+<xsl:text>
 </xsl:text>
     </head>
   </xsl:template>

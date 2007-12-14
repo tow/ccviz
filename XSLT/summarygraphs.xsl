@@ -32,7 +32,9 @@ actually slower.
 <script id="source" language="javascript" type="text/javascript">
 <xsl:text disable-output-escaping="yes">// &lt;![CDATA[
 <![CDATA[
-function graph(id) {
+var propertyArrays = [];
+
+function graph(id, name) {
 
   var p = $(id);
 
@@ -40,11 +42,11 @@ function graph(id) {
     p.width(500);
     p.height(300);
     // setup plot
+
     function getData(x1, x2) {
         var d = [];
         for (var i = x1; i < x2; i += (x2 - x1) / 100)
             d.push([i, Math.sin(i * Math.sin(i))]);
-
         return [
             { label: "sin(x sin(x))", data: d }
         ];
@@ -59,8 +61,10 @@ function graph(id) {
     };
 
     var startData = getData(0, 3 * Math.PI);
-    
-    var plot = $.plot(p, startData, options);
+
+    d = [ { label: name, data: propertyArrays[name] } ];
+
+    var plot = $.plot(p, d, options);
 
     p.bind("selected", function (event, area) {
         // do the zooming
@@ -80,27 +84,31 @@ function graph(id) {
     <xsl:variable name="steps" select="/cml:cml/cml:module[@role='step']"/>
 
     <!-- find all scalar numerical properties that are output in both first and last steps: -->
-   <xsl:variable name="properties">
+
       <xsl:for-each select="$steps[position()=1]/cml:module[@title='SCF Finalization']/cml:propertyList/cml:property">
         <xsl:if test="cml:scalar/@dataType = 'xsd:integer' or cml:scalar/@dataType = 'xsd:decimal' or cml:scalar/@dataType = 'xsd:float' or cml:scalar/@dataType = 'xsd:double' or cml:scalar/@dataType = 'fpx:real'">
           <xsl:variable name="dictRef" select="@dictRef"/>
           <xsl:if test="$steps[position()=last()]/cml:module[@title='SCF Finalization']/cml:propertyList/cml:property[@dictRef=$dictRef]">
-            <xsl:copy-of select="."/>
+            <script language="javascript" type="text/javascript">
+              <xsl:text>propertyArrays["</xsl:text><xsl:value-of select="@dictRef"/><xsl:text>"] = [</xsl:text> 
+              <xsl:for-each select="$steps/cml:module[@title='SCF Finalization']/cml:propertyList/cml:property[@dictRef=$dictRef]">
+                <xsl:text>[</xsl:text><xsl:value-of select="position()"/><xsl:text>,</xsl:text><xsl:value-of select="normalize-space(./cml:scalar/text())"/><xsl:text>]</xsl:text>
+                <xsl:if test="position()!=last()"><xsl:text>,</xsl:text></xsl:if>
+<!--                 <property><xsl:value-of select="./cml:scalar/text()"/></property> -->
+<!--                <xsl:copy-of select="."/> -->
+              </xsl:for-each>
+              <xsl:text>];</xsl:text> 
+            </script>
+            <xsl:variable name="graphId" select="generate-id()"/>
+            <tr class="graph">
+              <td class="graph"><xsl:value-of select="@dictRef"/>:</td>
+              <td class="graph"><input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;); graph(&quot;#{$graphId}&quot;, &quot;{@dictRef}&quot;)"/></td><br/>
+              <div style="display:none;" id="{$graphId}"><!-- <xsl:copy-of select="$graph"/> --></div>
+            </tr>
           </xsl:if>
 	</xsl:if>
       </xsl:for-each>
-    </xsl:variable>
 
-    <!-- for each of said properties ... -->
-    <xsl:for-each select="exsl:node-set($properties)/cml:property">
-      <xsl:variable name="units" select="cml:scalar/@units"/>
-      <!-- lookup units somewhere -->
-      <xsl:variable name="dictName">
-        <xsl:call-template name="get.dictionary.reference.html">
-          <xsl:with-param name="dictRef" select="@dictRef"/>
-          <xsl:with-param name="title" select="@title"/>
-        </xsl:call-template>
-      </xsl:variable>
       <!-- pull out all the x & y values -->
       <!-- <xsl:variable name="graphNodeSet">
            <xsl:call-template name="selectNestedGraphNodes">
@@ -109,22 +117,7 @@ function graph(id) {
            </xsl:call-template>
            </xsl:variable> -->
       <!-- draw the graph -->
-      <!-- <xsl:variable name="graph">
-           <xsl:call-template name="drawGraph">
-           <xsl:with-param name="graphTitle" select="$dictName"/>
-           <xsl:with-param name="xAxisTitle" select="'Step'"/>
-           <xsl:with-param name="yAxisTitle" select="$units"/>
-           <xsl:with-param name="pointSet" select="exsl:node-set($graphNodeSet)"/>
-           </xsl:call-template> 
-           </xsl:variable> -->
-      <!-- output the graph -->
-      <xsl:variable name="graphId" select="generate-id()"/>
-      <tr class="graph">
-        <td class="graph"><xsl:value-of select="$dictName"/>:</td>
-        <td class="graph"><input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;); graph(&quot;#{$graphId}&quot;)"/></td><br/>
-        <div style="display:none;" id="{$graphId}"><!-- <xsl:copy-of select="$graph"/> --></div>
-      </tr>
-    </xsl:for-each>
+
     </table>
   </xsl:template>
 
