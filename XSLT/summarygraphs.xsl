@@ -26,22 +26,24 @@ actually slower.
 -->
 
   <xsl:template name="summaryGraphs">
+
     <div class="listTitle">Graphs by timestep</div>
 
-    <div style="float:left">
-      <div id="placeholder" style="width:500px;height:300px"></div>
-    </div>
+          <span><input type="button" value="Show" onclick="js:toggleButton(this, &quot;placeholder&quot;); graph();"/></span>
+          <div style="float:left">
+            <div id="placeholder" style="display=none;"></div>
+          </div>
     
-    <div id="miniature" style="float:left;margin-left:20px;margin-top:50px">
-      <div id="overview" style="width:166px;height:100px"></div>
-
-      <p id="overviewLegend" style="margin-left:10px"></p>
-    </div>
-
 <script id="source" language="javascript" type="text/javascript">
 <xsl:text disable-output-escaping="yes">// &lt;![CDATA[
 <![CDATA[
-$(function () {
+function graph() {
+
+  var p = $("#placeholder");
+
+  if (p.css("display")!="none") {
+    p.width(500);
+    p.height(300);
     // setup plot
     function getData(x1, x2) {
         var d = [];
@@ -63,44 +65,18 @@ $(function () {
 
     var startData = getData(0, 3 * Math.PI);
     
-    var plot = $.plot($("#placeholder"), startData, options);
+    var plot = $.plot(p, startData, options);
 
-    // setup overview
-    var overview = $.plot($("#overview"), startData, {
-        legend: { show: true, container: $("#overviewLegend") },
-        lines: { show: true, lineWidth: 1 },
-        shadowSize: 0,
-        xaxis: { noTicks: 4 },
-        yaxis: { noTicks: 3, min: -2, max: 2 },
-        grid: { color: "#999" },
-        selection: { mode: "xy" }
-    });
-
-    // now connect the two
-    var internalSelection = false;
-    
-    $("#placeholder").bind("selected", function (event, area) {
+    p.bind("selected", function (event, area) {
         // do the zooming
-        plot = $.plot($("#placeholder"), getData(area.x1, area.x2),
+        plot = $.plot(p, getData(area.x1, area.x2),
                       $.extend(true, {}, options, {
                           xaxis: { min: area.x1, max: area.x2 },
                           yaxis: { min: area.y1, max: area.y2 }
                       }));
-        
-        if (internalSelection)
-            return; // prevent eternal loop
-        internalSelection = true;
-        overview.setSelection(area);
-        internalSelection = false;
     });
-    $("#overview").bind("selected", function (event, area) {
-        if (internalSelection)
-            return;
-        internalSelection = true;
-        plot.setSelection(area);
-        internalSelection = false;
-    });
-});
+  };
+};
 // ]]]]></xsl:text>
 <xsl:text disable-output-escaping="yes">></xsl:text>
 </script>
