@@ -43,26 +43,15 @@ function graph(id, name) {
     p.height(300);
     // setup plot
 
-    function getData(x1, x2) {
-        var d = [];
-        for (var i = x1; i < x2; i += (x2 - x1) / 100)
-            d.push([i, Math.sin(i * Math.sin(i))]);
-        return [
-            { label: "sin(x sin(x))", data: d }
-        ];
-    }
-
     var options = {
-        legend: { show: false },
+        legend: { show: true },
         lines: { show: true },
         points: { show: true },
         yaxis: { noTicks: 10 },
         selection: { mode: "xy" }
     };
 
-    var startData = getData(0, 3 * Math.PI);
-
-    d = [ { label: name, data: propertyArrays[name] } ];
+    d = [ { label: name+"/"+propertyArrays[name]["units"], data: propertyArrays[name]["data"] } ];
 
     var plot = $.plot(p, d, options);
 
@@ -90,14 +79,14 @@ function graph(id, name) {
           <xsl:variable name="dictRef" select="@dictRef"/>
           <xsl:if test="$steps[position()=last()]/cml:module[@title='SCF Finalization']/cml:propertyList/cml:property[@dictRef=$dictRef]">
             <script language="javascript" type="text/javascript">
-              <xsl:text>propertyArrays["</xsl:text><xsl:value-of select="@dictRef"/><xsl:text>"] = [</xsl:text> 
+              <xsl:text>propertyArrays["</xsl:text><xsl:value-of select="@dictRef"/><xsl:text>"] = { units: "</xsl:text><xsl:value-of select="cml:scalar/@units"/><xsl:text>", data: [</xsl:text> 
               <xsl:for-each select="$steps/cml:module[@title='SCF Finalization']/cml:propertyList/cml:property[@dictRef=$dictRef]">
                 <xsl:text>[</xsl:text><xsl:value-of select="position()"/><xsl:text>,</xsl:text><xsl:value-of select="normalize-space(./cml:scalar/text())"/><xsl:text>]</xsl:text>
                 <xsl:if test="position()!=last()"><xsl:text>,</xsl:text></xsl:if>
 <!--                 <property><xsl:value-of select="./cml:scalar/text()"/></property> -->
 <!--                <xsl:copy-of select="."/> -->
               </xsl:for-each>
-              <xsl:text>];</xsl:text> 
+              <xsl:text>] };</xsl:text> 
             </script>
             <xsl:variable name="graphId" select="generate-id()"/>
             <tr class="graph">
