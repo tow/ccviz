@@ -19,7 +19,7 @@
 <xsl:text>
 </xsl:text>
       <xsl:if test="$Jmol!='false'">
-        <script type="text/javascript" src="http://www.eminerals.org/jmol/JmolX.js"/>
+        <script type="text/javascript" src="https://data.eminerals.org/jmol/Jmol.js"/>
 <xsl:text>
 </xsl:text>
       </xsl:if>
@@ -240,44 +240,90 @@
   <xsl:template name="mainJavascript">
     <xsl:text>
       //<![CDATA[
-      function togglemenu(submenu) { 
-        if (document.getElementById(submenu).style.display == "none") {
-          document.getElementById(submenu).style.display = "block";
-        }
-        else {
-          document.getElementById(submenu).style.display = "none";
-         }
-      }
+function escapeEntities(S)  
+{  
+  return S.replace(/&/g, "&amp;").
+    replace(/</g, "&lt;").
+    replace(/>/g, "&gt;").
+    replace(/\'/, "&apos;").
+    replace(/\"/, "&quot;");
+};
 
-      function toggleButton(button, submenu) { 
-        if (document.getElementById(submenu).style.display == "none") {
-          document.getElementById(submenu).style.display = "block";
-          button.setAttribute('value', 'Hide');
-        }
-        else {
-          document.getElementById(submenu).style.display = "none";
-          button.setAttribute('value', 'Show');
-         }
-      }
+function getCMLNodeById(id) {
+  var nl = document.getElementsByTagNameNS("http://www.xml-cml.org/schema", "cml");
+  for (i = 0; i<nl.length; i++) {
+    if (nl.item(i).getAttribute("id")==id) {
+      return nl.item(i);
+    }
+  }
+  return null;
+};
 
-      function toggleJmol(sz, inputNode, thisId, parentId) {
-        // Grab object node to be created.
-        var appNode = document.getElementById(parentId);
-
-        if (appNode.hasChildNodes()) {
-          var newAppNode = document.createElementNS('http://www.w3.org/1999/xhtml','object');
-          newAppNode.setAttribute('style', "display:none;");
-          newAppNode.setAttribute('id', parentId);
-          var newMessage = 'Activate Jmol viewer';
-        }
-        else {
-          var newAppNode = jmolXAppletNodeId(sz, thisId, "background white", nameSuffix=thisId);
-          newAppNode.setAttribute('id', parentId);
-          var newMessage = 'Deactivate Jmol viewer';
-        }
-        appNode.parentNode.replaceChild(newAppNode, appNode);
-        inputNode.setAttribute('value', newMessage);
+function serializeDomNode(node, nsURI) {
+  switch(node.nodeType) {
+  case 1:
+    if (node.namespaceURI==nsURI) {
+      var s = ["<"+node.localName];
+      for (var i = 0; i<node.attributes.length; i++) {
+	var a = node.attributes.item(i);
+	if (!a.namespaceURI) {
+	  s.push(" "+a.nodeName+"=\""+escapeEntities(a.value)+"\"");
+	  }
+	}
+      s.push(">");
+      for (var i = 0; i<node.childNodes.length; i++) {
+	var n = node.childNodes.item(i);
+	s.push(serializeDomNode(n, nsURI));
       }
+      s.push("</"+node.localName+">");
+      return s.join("");
+    }
+    break;
+  case 3:
+    return escapeEntities(node.value);
+  }
+};
+
+function togglemenu(submenu) { 
+  if (document.getElementById(submenu).style.display == "none") {
+    document.getElementById(submenu).style.display = "block";
+  }
+  else {
+    document.getElementById(submenu).style.display = "none";
+  }
+};
+
+function toggleButton(button, submenu) { 
+  if (document.getElementById(submenu).style.display == "none") {
+    document.getElementById(submenu).style.display = "block";
+    button.setAttribute('value', 'Hide');
+  }
+  else {
+    document.getElementById(submenu).style.display = "none";
+    button.setAttribute('value', 'Show');
+  }
+};
+
+function toggleJmol(sz, inputNode, thisId, parentId) {
+  // Grab object node to be created.
+  var divNode = document.getElementById(parentId);
+  
+  if (inputNode.getAttribute('value')=="Deactivate Jmol viewer") {
+    s = "<object style=\"display:none\"/>"
+      divNode.innerHTML = s;
+    divNode.style.display = "none";
+    var newMessage = 'Activate Jmol viewer';
+  }
+  else {
+    var cmlS = serializeDomNode(getCMLNodeById(thisId), "http://www.xml-cml.org/schema");
+    _jmolDocumentWrite = function (t) { return t; };
+    var s = jmolAppletInline(sz, escapeEntities(cmlS), script="background white", nameSuffix=thisId);
+    divNode.innerHTML = s;
+    divNode.style.display = "block";
+    var newMessage = 'Deactivate Jmol viewer';
+  }
+  inputNode.setAttribute('value', newMessage);
+}
 
       //]]>
     </xsl:text>

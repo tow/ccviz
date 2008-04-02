@@ -16,15 +16,6 @@
     <xsl:param name="num">  
       <xsl:number level="any"/>
     </xsl:param>
-<!--    <xsl:param name="moleculePosition">
-      <xsl:value-of select="count(ancestor::cml:step[//cml:molecule]/preceding-sibling::cml:step[//cml:molecule])+1"/>
-    </xsl:param> -->
-
-    <!-- Output an image of the crystal structure for the first step
-	with image coordinates -->
-<!--     <xsl:if test="$moleculePosition = 1">
-    </xsl:if> -->
-
     <div class="listTitle">Structure</div>
     <xsl:call-template name="makejmol">
       <xsl:with-param name="natoms" select="$natoms"/>
@@ -72,25 +63,20 @@
     <div>
       <div style="display:none;">
         <cml:cml id="{$thisId}">
-          <cml:molecule>
-            <!-- <xsl:if test="not(cml:crystal)">
-              <xsl:if test="count(../cml:crystal) = 1">
-                <xsl:copy-of select="../cml:crystal"/>
-              </xsl:if>
-            </xsl:if> -->
-            <xsl:copy-of select="./cml:atomArray"/>
-          </cml:molecule>
+	  <xsl:copy-of select="./cml:molecule"/>
+	  <!-- <xsl:copy-of select="./cml:crystal"/>
+	  <xsl:copy-of select="./cml:lattice"/> -->
         </cml:cml>
       </div>
       <input type="button" value="Activate Jmol viewer" onclick="javascript:toggleJmol([{$width},{$height}], this, &quot;{$thisId}&quot;, &quot;{$parentId}&quot;)"/>
-      <object id="{$parentId}" style="display:none;"/>
+      <div id="{$parentId}" class="jmol" style="display:none;"/>
     </div>
   </xsl:template>
 
 
   <!-- JMOL MOVIE -->
   <xsl:template name="movie">
-    <xsl:param name="natoms" select="count(cml:molecule[position()=1]/cml:atomArray/cml:atom)"/>
+    <xsl:param name="natoms" select="count(//cml:molecule[position()=1]/cml:atomArray/cml:atom)"/>
     <xsl:param name="height">
       <xsl:choose>
         <xsl:when test="$natoms &lt; 10">
@@ -124,11 +110,6 @@
           <cml:list convention="JMOL-ANIMATION">
             <xsl:for-each select="//cml:molecule">
               <cml:molecule id="FRAME{position()}">
-	        <!-- <xsl:if test="not(cml:crystal)">
-	          <xsl:if test="count(../cml:crystal) = 1">
-                    <xsl:copy-of select="../cml:crystal"/>
-                  </xsl:if>
-	        </xsl:if> -->
                 <xsl:copy-of select="./cml:atomArray"/>
 	      </cml:molecule>
             </xsl:for-each>
@@ -136,7 +117,7 @@
         </cml:cml>
       </div>
       <input type="button" value="Activate Jmol viewer" onclick="javascript:toggleJmol([{$width},{$height}], this, &quot;animation&quot;, &quot;parentAnim&quot;)"/>
-      <object id="parentAnim" style="display:none;"/>
+      <object id="parentAnim" class="jmol" style="display:none;"/>
    </div>
   </xsl:template>
 
