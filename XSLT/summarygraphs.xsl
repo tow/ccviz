@@ -91,15 +91,6 @@ function graph(id, name) {
 	</xsl:for-each>
       </xsl:for-each>
 
-      <!-- pull out all the x & y values -->
-      <!-- <xsl:variable name="graphNodeSet">
-           <xsl:call-template name="selectNestedGraphNodes">
-           <xsl:with-param name="nodes" select="exsl:node-set($steps)"/>
-           <xsl:with-param name="propertyName" select="@dictRef"/>
-           </xsl:call-template>
-           </xsl:variable> -->
-      <!-- draw the graph -->
-
     </table>
   </xsl:template>
 
