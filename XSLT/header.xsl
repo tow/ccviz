@@ -19,7 +19,7 @@
 <xsl:text>
 </xsl:text>
       <xsl:if test="$Jmol!='false'">
-        <script type="text/javascript" src="https://data.eminerals.org/jmol/Jmol.js"/>
+        <script type="text/javascript" src="http://cmlcomp.org/ccViz/jmol/Jmol.js"/>
 <xsl:text>
 </xsl:text>
       </xsl:if>

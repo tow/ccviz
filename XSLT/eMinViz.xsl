@@ -99,7 +99,7 @@
       <body>
         <xsl:if test="$Jmol!='false'">
          <xsl:attribute name="onload">
-           <xsl:text>jmolInitialize(&quot; https://data.eminerals.org/jmol&quot;)</xsl:text>
+           <xsl:text>jmolInitialize(&quot; http://cmlcomp.org/ccViz/jmol&quot;)</xsl:text>
          </xsl:attribute>
         </xsl:if>
  
