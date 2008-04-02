@@ -63,7 +63,7 @@
     <div>
       <div style="display:none;">
         <cml:cml id="{$thisId}">
-	  <xsl:copy-of select="./cml:molecule"/>
+	  <xsl:copy-of select="."/>
 	  <!-- <xsl:copy-of select="./cml:crystal"/>
 	  <xsl:copy-of select="./cml:lattice"/> -->
         </cml:cml>
