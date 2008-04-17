@@ -115,6 +115,7 @@
         </xsl:for-each>
       </table>
     </div>
+    <xsl:apply-templates mode="structure"/>
   </xsl:template>
 
 </xsl:stylesheet>

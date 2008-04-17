@@ -30,7 +30,6 @@
 	     <xsl:apply-templates select="*"/>
 	     <xsl:if test="cml:molecule">
 	       <xsl:call-template name="makejmol"/>
-	       <xsl:apply-templates mode="structure"/>
 	     </xsl:if>
            </div>
 	</div>
@@ -138,7 +137,6 @@
 	  </xsl:if> -->
 	   <xsl:if test="cml:molecule">
 	     <xsl:call-template name="makejmol"/>
-	     <xsl:apply-templates mode="structure"/>
 	   </xsl:if>
           </div>
         </div>
