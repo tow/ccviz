@@ -320,7 +320,7 @@ function toggleJmolAnimation(sz, inputNode) {
   // Grab object node to be created.
   var divNode = document.getElementById("jmolanimation");
   
-  if (inputNode.getAttribute('value')=="Deactivate Jmol animation") {
+  if (inputNode.getAttribute('value')=="Deactivate Jmol viewer") {
     o = "<object style=\"display:none\"/>";
     divNode.innerHTML = o;
     divNode.style.display = "none";
@@ -340,7 +340,7 @@ function toggleJmolAnimation(sz, inputNode) {
     var o = jmolAppletInline(sz, escapeEntities(s.join("")), script="background white", nameSuffix="anim");
     divNode.innerHTML = o;
     divNode.style.display = "block";
-    var newMessage = 'Deactivate Jmol animation';
+    var newMessage = 'Deactivate Jmol viewer';
   }
   inputNode.setAttribute('value', newMessage);
 };
@@ -349,8 +349,13 @@ jQuery(document).ready(function(){
   $(".clickableDiv").append(" ▸");
   $(".clickableDiv").click(function() {
 // We need to kill all Java objects when we do this, or Safari
-// will hang. Doesn't matter if we're opening or closing.
-    $(this).next().find("object").remove();
+// will hang.
+    jmols = $(this).next().find(".togglejmol").get();
+    for (j in jmols) {
+      if (jmols[j].getAttribute("value")=="Deactivate Jmol viewer") {
+        jmols[j].onclick();
+      };
+    };
     $(this).text($(this).text().replace("▾","▴"));
     $(this).text($(this).text().replace("▸","▾"));
     $(this).next().toggle("slow");

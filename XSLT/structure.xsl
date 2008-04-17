@@ -41,7 +41,7 @@
     <xsl:param name="height" select="600"/>
     <xsl:param name="width" select="600"/>
     <div>
-      <input type="button" value="Activate Jmol viewer" onclick="javascript:toggleJmol([{$width},{$height}], this, &quot;{$molId}&quot;, &quot;{$parentId}&quot;)"/>
+      <input class="togglejmol" type="button" value="Activate Jmol viewer" onclick="toggleJmol([{$width},{$height}], this, &quot;{$molId}&quot;, &quot;{$parentId}&quot;)"/>
       <div id="{$parentId}" class="jmol" style="display:none;"/>
     </div>
   </xsl:template>
@@ -52,9 +52,9 @@
     <xsl:param name="height" select="600"/>
     <xsl:param name="width" select="600"/>
     <div class="listTitle">Animation</div>
-    <div>
-      <input type="button" value="Activate Jmol animation" onclick="javascript:toggleJmolAnimation([{$width},{$height}], this)"/>
-      <object id="jmolanimation" style="display:none;"/>
+    <input class="togglejmol" type="button" value="Activate Jmol animation" onclick="toggleJmolAnimation([{$width},{$height}], this)"/>
+    <div id="jmolanimation">
+      <object style="display:none;"/>
    </div>
   </xsl:template>
 
