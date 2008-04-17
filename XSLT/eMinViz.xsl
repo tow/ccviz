@@ -41,6 +41,8 @@
 <xsl:strip-space elements="*"/>
 
 <xsl:template match="text()"/>
+<xsl:template match="text()" mode="jmol"/>
+<xsl:template match="text()" mode="structure"/>
 
 <!-- Global Variable holding the program name -->
 <xsl:param name="prog">
