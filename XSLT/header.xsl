@@ -318,6 +318,9 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
 jQuery(document).ready(function(){
   $(".clickableDiv").append(" ▸");
   $(".clickableDiv").click(function() {
+// We need to kill all Java objects when we do this, or Safari
+// will hang. Doesn't matter if we're opening or closing.
+    $(this).find("object").replaceWith('<object style="display:none;">');
     $(this).text($(this).text().replace("▾","▴"));
     $(this).text($(this).text().replace("▸","▾"));
     $(this).next().toggle("slow");
