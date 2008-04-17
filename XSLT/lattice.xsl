@@ -1,5 +1,3 @@
-<!--===================== LATTICE =========================-->
-
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:cml="http://www.xml-cml.org/schema"
@@ -11,7 +9,7 @@
 <!-- cmlCore:crystal -->  
   <xsl:template match="cml:crystal">
     <p/>
-    <div class="listTitle">Lattice Parameters: <xsl:value-of select="@title"/></div>
+    <div class="listTitle">Crystal Parameters: <xsl:value-of select="@title"/></div>
     <xsl:variable name="lenUnits">
       <xsl:choose>
         <xsl:when test="cml:scalar">Ang</xsl:when>
@@ -41,7 +39,7 @@
                
     <table>
       <tr> 
-        <th colspan="3">Lattice Modules (<xsl:value-of select="$lenUnits"/>)</th>
+        <th colspan="3">Crystal lengths (<xsl:value-of select="$lenUnits"/>)</th>
       </tr>
       <tr>
         <xsl:choose>
@@ -59,7 +57,7 @@
         </xsl:choose>
       </tr>  
       <tr>
-        <th colspan="3">Lattice Angles (<xsl:value-of select="$angUnits"/>)</th>
+        <th colspan="3">Crystal angles (<xsl:value-of select="$angUnits"/>)</th>
       </tr>
       <tr>
         <xsl:choose>
