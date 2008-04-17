@@ -112,7 +112,7 @@
         <div id="maindisplay">
           <div class="innerMain">
 
-            <br/><div class="divisionTitle clickableDiv">
+            <br/><div id="initialmetadata" class="divisionTitle clickableDiv">
               <xsl:text>Initial Metadata</xsl:text>
             </div>
             <div class="sublevel">

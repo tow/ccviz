@@ -361,6 +361,8 @@ jQuery(document).ready(function(){
     $(this).next().toggle("slow");
     $(this).text($(this).text().replace("▴","▸"));
   }).next().hide();
+  $("#initialmetadata").text($("#initialmetadata").text().replace("▸","▾"));
+  $("#initialmetadata").next().show();
 });
 
 
