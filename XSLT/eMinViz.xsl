@@ -112,44 +112,52 @@
         <div id="maindisplay">
           <div class="innerMain">
 
-            <br/><div onclick="js:togglemenu(&quot;initialMetadata&quot;)" class="divisionTitle clickableDiv">
-              <xsl:value-of select="'Initial Metadata'"/>
+            <br/><div onclick="js:togglemenu(&quot;initialMetadata&quot;)" class="divisionTitle clickableDiv" id="metadata">
+              <xsl:text>Initial Metadata</xsl:text>
             </div>
             <div class="sublevel" id="initialMetadata">
               <xsl:apply-templates select="/cml:cml/cml:metadataList[position()=1]"/>
             </div><br/>
 
-            <br/><div onclick="js:togglemenu(&quot;inputParams&quot;)" class="divisionTitle clickableDiv">
-              <xsl:value-of select="'Input Parameters'"/>
+            <br/><div onclick="js:togglemenu(&quot;inputParams&quot;)" class="divisionTitle clickableDiv" id="parameters">
+              <xsl:text>Input Parameters</xsl:text>
             </div>
             <div class="sublevel" id="inputParams">
               <xsl:apply-templates select="/cml:cml/cml:parameterList"/>
             <!--   <xsl:apply-templates select="/cml:cml/cml:parameterList[position()=1]"/> -->
             </div><br/>
 
-            <br/><div onclick="js:togglemenu(&quot;initialState&quot;)" class="divisionTitle clickableDiv">
-              <xsl:value-of select="'Input State of System'"/>
-            </div>
-            <div class="sublevel" id="initialState">
-              <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']" mode="noTitle"/>
-            </div><br/>
+	    <xsl:if test="/cml:cml/cml:module[@title='Initial System']">
+              <br/>
+              <div onclick="js:togglemenu(&quot;initialState&quot;)" class="divisionTitle clickableDiv" id="initialSystem">
+                <xsl:text>Input State of System</xsl:text>
+              </div>
+              <div class="sublevel" id="initialState">
+                <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']" mode="noTitle"/>
+              </div>
+	    </xsl:if>
 
-            <br/><div onclick="js:togglemenu(&quot;mainBody&quot;)" class="divisionTitle clickableDiv">
-              <xsl:value-of select="'Main Body of Simulation'"/>
+            <br/>
+            <div onclick="js:togglemenu(&quot;mainBody&quot;)" class="divisionTitle clickableDiv">
+              <xsl:text>Main Body of Simulation</xsl:text>
             </div>
             <div class="sublevel" id="mainBody">
               <xsl:apply-templates select="/cml:cml/cml:module[(@title!='Initial System' and @title!='Finalization') or not(@title)]"/>
-            </div><br/>
-
-            <br/><div onclick="js:togglemenu(&quot;finalState&quot;)" class="divisionTitle clickableDiv">
-              <xsl:value-of select="'Final State of System'"/>
             </div>
-            <div class="sublevel" id="finalState">
-              <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']" mode="noTitle"/>
-            </div><br/>
+            <br/>
+
+	    <xsl:if test="/cml:cml/cml:module[@title='Initial System']">
+              <br/>
+              <div onclick="js:togglemenu(&quot;finalState&quot;)" class="divisionTitle clickableDiv" id="finalSystem">
+                <xsl:text>Final State of System</xsl:text>
+              </div>
+              <div class="sublevel" id="finalState">
+                <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']" mode="noTitle"/>
+              </div>
+	    </xsl:if>
 
             <br/>
-            <div onclick="js:togglemenu(&quot;summaryInfo&quot;)" class="divisionTitle clickableDiv">
+            <div onclick="js:togglemenu(&quot;summaryInfo&quot;)" class="divisionTitle clickableDiv" id="summary">
               <xsl:text>Summary Information</xsl:text>
             </div>
             <div class="sublevel" id="summaryInfo">
