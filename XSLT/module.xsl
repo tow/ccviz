@@ -22,14 +22,14 @@
          <xsl:call-template name="step"/>
       </xsl:when>
       <xsl:otherwise>
-         <div>
-           <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="moduletitle clickableDiv">
+        <div>
+           <div class="moduletitle clickableDiv">
              <xsl:value-of select="@title"/>
            </div>
-         </div>
-         <div class="sublevel" id="{$uid}">
-           <xsl:apply-templates select="*"/>
-         </div>
+           <div class="sublevel" id="{$uid}">
+             <xsl:apply-templates select="*"/>
+           </div>
+	</div>
        </xsl:otherwise>
      </xsl:choose>
   </xsl:template>
@@ -108,12 +108,11 @@
       <xsl:otherwise>
         <xsl:if test="(count(preceding-sibling::cml:module[@role='step'])+1) mod $stepinterval = 0">
         <div>
-          <div onclick="js:togglemenu(&quot;{$uid}&quot;)" class="steptitle clickableDiv">
+          <div class="steptitle clickableDiv">
             <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
           </div>
-        </div>
-        <div class="sublevel" id="{$uid}">
-          <xsl:apply-templates select="*"/>
+          <div class="sublevel" id="{$uid}">
+            <xsl:apply-templates select="*"/>
 	  <!-- here put graphs of substeps ... -->
 	  <!-- <xsl:if test="@dictRef = 'CG' or dictRef = 'MD'">
 	    <xsl:variable name="SCFnodeSet1">
@@ -133,6 +132,7 @@
 	    </xsl:variable>
 	    <div><xsl:copy-of select="$SCFgraph1"/></div>
 	  </xsl:if> -->
+          </div>
         </div>
         </xsl:if>
       </xsl:otherwise>

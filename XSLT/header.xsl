@@ -23,10 +23,6 @@
 <xsl:text>
 </xsl:text>
       </xsl:if>
-
-      <script type="text/javascript">
-        <xsl:call-template name="mainJavascript"/>
-      </script>
 <xsl:text>
 </xsl:text>
 <xsl:comment><xsl:text>[if IE]</xsl:text>
@@ -41,6 +37,9 @@
       </script>
 <xsl:text>
 </xsl:text>
+      <script type="text/javascript">
+        <xsl:call-template name="mainJavascript"/>
+      </script>
     </head>
   </xsl:template>
 
@@ -284,15 +283,6 @@ function serializeDomNode(node, nsURI) {
   }
 };
 
-function togglemenu(submenu) { 
-  if (document.getElementById(submenu).style.display == "none") {
-    document.getElementById(submenu).style.display = "block";
-  }
-  else {
-    document.getElementById(submenu).style.display = "none";
-  }
-};
-
 function toggleButton(button, submenu) { 
   if (document.getElementById(submenu).style.display == "none") {
     document.getElementById(submenu).style.display = "block";
@@ -323,7 +313,18 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
     var newMessage = 'Deactivate Jmol viewer';
   }
   inputNode.setAttribute('value', newMessage);
-}
+};
+
+jQuery(document).ready(function(){
+  $(".clickableDiv").append(" ▸");
+  $(".clickableDiv").click(function() {
+    $(this).text($(this).text().replace("▾","▴"));
+    $(this).text($(this).text().replace("▸","▾"));
+    $(this).next().toggle("slow");
+    $(this).text($(this).text().replace("▴","▸"));
+  }).next().hide();
+});
+
 
       //]]>
     </xsl:text>
