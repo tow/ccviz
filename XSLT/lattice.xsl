@@ -7,7 +7,7 @@
         >
 
 <!-- cmlCore:crystal -->  
-  <xsl:template match="cml:crystal">
+  <xsl:template match="cml:crystal" mode="structure">
     <p/>
     <div class="listTitle">Crystal Parameters: <xsl:value-of select="@title"/></div>
     <xsl:variable name="lenUnits">
@@ -76,7 +76,7 @@
     </table>
   </xsl:template>
 
-  <xsl:template match="cml:lattice">
+  <xsl:template match="cml:lattice" mode="structure">
     <p/>
     <div class="listTitle">Lattice Parameters</div>
     <table>

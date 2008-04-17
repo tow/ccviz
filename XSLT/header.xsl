@@ -258,9 +258,10 @@ function getCMLNodeById(id) {
   return null;
 };
 
-function serializeDomNode(node, nsURI) {
+function serializeDomNode(node) {
   switch(node.nodeType) {
   case 1:
+    nsURI = node.namespaceURI;
     if (node.namespaceURI==nsURI) {
       var s = ["<"+node.localName];
       for (var i = 0; i<node.attributes.length; i++) {
@@ -272,14 +273,14 @@ function serializeDomNode(node, nsURI) {
       s.push(">");
       for (var i = 0; i<node.childNodes.length; i++) {
 	var n = node.childNodes.item(i);
-	s.push(serializeDomNode(n, nsURI));
+	s.push(serializeDomNode(n));
       }
       s.push("</"+node.localName+">");
       return s.join("");
     }
-    break;
+    return "";
   case 3:
-    return escapeEntities(node.value);
+    return escapeEntities(node.data);
   }
 };
 
@@ -305,7 +306,7 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
     var newMessage = 'Activate Jmol viewer';
   }
   else {
-    var cmlS = serializeDomNode(getCMLNodeById(thisId), "http://www.xml-cml.org/schema");
+    var cmlS = serializeDomNode(getCMLNodeById(thisId));
     _jmolDocumentWrite = function (t) { return t; };
     var s = jmolAppletInline(sz, escapeEntities(cmlS), script="background white", nameSuffix=thisId);
     divNode.innerHTML = s;
@@ -315,12 +316,41 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
   inputNode.setAttribute('value', newMessage);
 };
 
+function toggleJmolAnimation(sz, inputNode) {
+  // Grab object node to be created.
+  var divNode = document.getElementById("jmolanimation");
+  
+  if (inputNode.getAttribute('value')=="Deactivate Jmol animation") {
+    o = "<object style=\"display:none\"/>";
+    divNode.innerHTML = o;
+    divNode.style.display = "none";
+    var newMessage = 'Activate Jmol viewer';
+  }
+  else {
+    cmlSteps = $(".stepcontents").get();
+    var s = ['<cml:cml xmlns:cml="http://www.xml-cml.org/schema">'];
+    for (c in cmlSteps) {
+      cmlStep = cmlSteps[c].getElementsByTagNameNS("http://www.xml-cml.org/schema", "cml")[0];
+      if (cmlStep) {
+        s.push(serializeDomNode(cmlStep));
+      };
+    }
+    s.push('</cml:cml>');
+    _jmolDocumentWrite = function (t) { return t; };
+    var o = jmolAppletInline(sz, escapeEntities(s.join("")), script="background white", nameSuffix="anim");
+    divNode.innerHTML = o;
+    divNode.style.display = "block";
+    var newMessage = 'Deactivate Jmol animation';
+  }
+  inputNode.setAttribute('value', newMessage);
+};
+
 jQuery(document).ready(function(){
   $(".clickableDiv").append(" ▸");
   $(".clickableDiv").click(function() {
 // We need to kill all Java objects when we do this, or Safari
 // will hang. Doesn't matter if we're opening or closing.
-    $(this).find("object").replaceWith('<object style="display:none;">');
+    $(this).next().find("object").remove();
     $(this).text($(this).text().replace("▾","▴"));
     $(this).text($(this).text().replace("▸","▾"));
     $(this).next().toggle("slow");

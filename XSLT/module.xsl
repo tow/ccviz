@@ -27,11 +27,15 @@
              <xsl:value-of select="@title"/>
            </div>
            <div class="sublevel" id="{$uid}">
-             <xsl:apply-templates select="*"/>
+	     <xsl:apply-templates select="*"/>
+	     <xsl:if test="cml:molecule">
+	       <xsl:call-template name="makejmol"/>
+	       <xsl:apply-templates mode="structure"/>
+	     </xsl:if>
            </div>
 	</div>
        </xsl:otherwise>
-     </xsl:choose>
+    </xsl:choose>
   </xsl:template>
 
 <!-- Match Any Step -->
@@ -111,7 +115,7 @@
           <div class="steptitle clickableDiv">
             <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
           </div>
-          <div class="sublevel" id="{$uid}">
+          <div class="sublevel stepcontents" id="{$uid}">
             <xsl:apply-templates select="*"/>
 	  <!-- here put graphs of substeps ... -->
 	  <!-- <xsl:if test="@dictRef = 'CG' or dictRef = 'MD'">
@@ -133,6 +137,10 @@
 	    <div><xsl:copy-of select="$SCFgraph1"/></div>
 	  </xsl:if> -->
           </div>
+	   <xsl:if test="cml:molecule">
+	     <xsl:call-template name="makejmol"/>
+	     <xsl:apply-templates mode="structure"/>
+	   </xsl:if>
         </div>
         </xsl:if>
       </xsl:otherwise>
