@@ -136,11 +136,11 @@
 	    </xsl:variable>
 	    <div><xsl:copy-of select="$SCFgraph1"/></div>
 	  </xsl:if> -->
-          </div>
 	   <xsl:if test="cml:molecule">
 	     <xsl:call-template name="makejmol"/>
 	     <xsl:apply-templates mode="structure"/>
 	   </xsl:if>
+          </div>
         </div>
         </xsl:if>
       </xsl:otherwise>
