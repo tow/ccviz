@@ -24,6 +24,8 @@
     </div>
   </xsl:template>
 
+  <xsl:template match="cml:molecule"/>
+
   <xsl:template match="cml:molecule" mode="jmol">
     <xsl:copy-of select="."/>
   </xsl:template>
@@ -62,32 +64,32 @@
   <!-- COORDINATES FILE -->
   <xsl:template name="coords">  
     <xsl:variable name="uid" select="generate-id()"/>
-    <div class="clickableDiv">View coordinates</div>
+    <input type="button" value="View coordinates" class="clickableDiv"/>
     <div class="sublevel" id="{$uid}">
       <table class="coords">
         <tr class="coords">
           <th class="coords">Atom #</th>
-          <xsl:if test="//cml:atom/@elementType"><th class="coords">Element</th></xsl:if>
-          <xsl:if test="//cml:atom/@x3"><th class="coords">x / &#x00C5;ng</th></xsl:if>
-          <xsl:if test="//cml:atom/@y3"><th class="coords">y / &#x00C5;ng</th></xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@z3"><th class="coords">z / &#x00C5;ng</th></xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@xyz3">
+          <xsl:if test=".//cml:atom/@elementType"><th class="coords">Element</th></xsl:if>
+          <xsl:if test=".//cml:atom/@x3"><th class="coords">x / &#x00C5;ng</th></xsl:if>
+          <xsl:if test=".//cml:atom/@y3"><th class="coords">y / &#x00C5;ng</th></xsl:if>
+          <xsl:if test=".//cml:atom/@z3"><th class="coords">z / &#x00C5;ng</th></xsl:if>
+          <xsl:if test=".//cml:atom/@xyz3">
             <th class="coords">x / &#x00C5;ng</th>
 	    <th class="coords">y / &#x00C5;ng</th>
 	    <th class="coords">z / &#x00C5;ng</th>
           </xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@xFract"><th class="coords">x (Frac)</th></xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@yFract"><th class="coords">y (Frac)</th></xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@zFract"><th class="coords">z (Frac)</th></xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@xyzFract">
+          <xsl:if test=".//cml:atom/@xFract"><th class="coords">x (Frac)</th></xsl:if>
+          <xsl:if test=".//cml:atom/@yFract"><th class="coords">y (Frac)</th></xsl:if>
+          <xsl:if test=".//cml:atom/@zFract"><th class="coords">z (Frac)</th></xsl:if>
+          <xsl:if test=".//cml:atom/@xyzFract">
             <th class="coords">x (Frac)</th>
             <th class="coords">y (Frac)</th>
 	    <th class="coords">z (Frac)</th>
           </xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@occupancy"><th class="coords">Occ.</th></xsl:if>
-          <xsl:if test="//cml:atomArray/cml:atom/@formalCharge"><th class="coords">Charge</th></xsl:if>
+          <xsl:if test=".//cml:atom/@occupancy"><th class="coords">Occ.</th></xsl:if>
+          <xsl:if test=".//cml:atom/@formalCharge"><th class="coords">Charge</th></xsl:if>
         </tr>
-        <xsl:for-each select="//cml:atomArray/cml:atom">
+        <xsl:for-each select=".//cml:atom">
 	  <tr class="coords">
 	    <td class="coords"><xsl:value-of select="position()"/></td>
             <xsl:if test="@elementType"><td class="coords"><xsl:value-of select="@elementType"/></td></xsl:if>
