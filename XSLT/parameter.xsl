@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!--===================== PARAMETERS =========================-->
-
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:cml="http://www.xml-cml.org/schema"
@@ -17,7 +15,7 @@
         <table>
 	  <tr>
             <td>
-              <xsl:if test="@name"><xsl:value-of select="@name"/></xsl:if>
+
               <xsl:call-template name="get.dictionary.reference.html">
                 <xsl:with-param name="dictRef" select="@dictRef"/>
                 <xsl:with-param name="title" select="@name"/>
@@ -34,26 +32,19 @@
     <!-- If parameter list then place all properties in a single table -->
 
       <xsl:otherwise>
-        <tr>
-
-    <!-- The parameter name *should* be in a name attribute - I think
-         sometimes it may come out in title, so we check below. That
-         option will be removed later on, since FoX never does that. -->
-
-        <td class="paramname" align="left">
-          <xsl:if test="@name"><xsl:value-of select="@name"/></xsl:if>
-          <xsl:text> : </xsl:text>
-          <xsl:call-template name="get.dictionary.reference.html">
-            <xsl:with-param name="dictRef" select="@dictRef"/>
-            <xsl:with-param name="title" select="@name"/>
-          </xsl:call-template>
-        </td>
+	<tr>
+	  <td class="paramname">
+	    <xsl:call-template name="get.dictionary.reference.html">
+	      <xsl:with-param name="dictRef" select="@dictRef"/>
+	      <xsl:with-param name="title" select="@name"/>
+	    </xsl:call-template>
+	  </td>
 
     <!-- The parameter value *should* be in a scalar/array/matrix child.
-         Sometimes it is in the value attribue though, so we check below
+         Sometimes it is in the value attribute though, so we check below
          That option will be removed later on since FoX never does that. -->
 
-          <td align="right" class="paramvalue">
+          <td class="paramvalue">
             <xsl:choose>
               <xsl:when test="@value">
               <!-- When it is in @value, we can't tell the datatype unless we try: -->

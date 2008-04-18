@@ -181,7 +181,7 @@
 <!-- -->
 
         <div id="foot">
-          <i>Created by Toby White, Jon Wakelin,  &amp; Richard Bruin </i>
+          <i>Created using <a href="http://cmlcomp.org/ccViz/">ccViz</a>, by Toby White <a href="mailto://tow@uszla.me.uk">&lt;tow@uszla.me.uk&gt;</a>. See <a href="http://cmlcomp.org">CMLComp</a> for more information</i>
         </div>
 
       </body>

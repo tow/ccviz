@@ -2,13 +2,13 @@
 
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:stm="http://www.xml-cml.org/schema/stmml"
+	xmlns:cml="http://www.xml-cml.org/schema"
         xmlns="http://www.w3.org/1999/xhtml"
-        exclude-result-prefixes="xsl stm"
+        exclude-result-prefixes="xsl cml"
         >
 
   <!-- For each entry in the dictionary -->
-  <xsl:template match="stm:entry">
+  <xsl:template match="cml:entry">
     <div class="dictAnchor">
       <a>
 	<xsl:attribute name="name">
@@ -16,19 +16,28 @@
 	</xsl:attribute>
       </a>
     </div>
-    <div class="dictEntry"><xsl:value-of select="@term"/><xsl:text>:</xsl:text></div>
-    <xsl:if test="stm:definition">
+    <div class="dictEntry">
       <xsl:choose>
-	<xsl:when test="//text()='definition to be supplied'">
-	  <p><font color="blue"><xsl:value-of select="stm:definition"/></font></p>
+	<xsl:when test="@term and @term!=''">
+	  <xsl:value-of select="@term"/>
 	</xsl:when>
 	<xsl:otherwise>
-	  <div class="dictDefinition"><xsl:value-of select="stm:definition"/></div>
+	  <xsl:value-of select="@id"/>
+	</xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>:</xsl:text></div>
+    <xsl:if test="cml:definition">
+      <xsl:choose>
+	<xsl:when test="//text()='definition to be supplied'">
+	  <p><font color="blue"><xsl:value-of select="cml:definition"/></font></p>
+	</xsl:when>
+	<xsl:otherwise>
+	  <div class="dictDefinition"><xsl:value-of select="cml:definition"/></div>
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
-    <xsl:if test="stm:description">
-      <xsl:copy-of select="stm:description/node()"/>
+    <xsl:if test="cml:description">
+      <xsl:copy-of select="cml:description/node()"/>
     </xsl:if>
     <hr/>
   </xsl:template>
