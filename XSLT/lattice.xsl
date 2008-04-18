@@ -11,7 +11,7 @@
 <!-- cmlCore:crystal -->  
   <xsl:template match="cml:crystal" mode="structure">
     <p/>
-    <div class="listTitle">Crystal Parameters: <xsl:value-of select="@title"/></div>
+    <div class="listTitle">Crystal Parameters</div>
     <xsl:variable name="lenUnits">
       <xsl:choose>
         <xsl:when test="cml:scalar">Ang</xsl:when>

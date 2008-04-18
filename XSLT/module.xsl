@@ -26,11 +26,14 @@
            <div class="moduletitle clickable moduleDiv">
              <xsl:value-of select="@title"/>
            </div>
-           <div class="sublevel" id="{$uid}">
+           <div class="sublevel clickable" id="{$uid}">
 	     <xsl:apply-templates select="*"/>
-	     <xsl:if test="cml:molecule">
-	       <xsl:call-template name="makejmol"/>
-	     </xsl:if>
+             <div class="listTitle clickable">Structure</div>
+             <div>
+               <xsl:if test="cml:molecule">
+	         <xsl:call-template name="makejmol"/>
+	       </xsl:if>
+	     </div>
            </div>
 	</div>
        </xsl:otherwise>
@@ -135,9 +138,12 @@
 	    </xsl:variable>
 	    <div><xsl:copy-of select="$SCFgraph1"/></div>
 	  </xsl:if> -->
-	   <xsl:if test="cml:molecule">
-	     <xsl:call-template name="makejmol"/>
-	   </xsl:if>
+           <div class="listTitle clickable">Structure</div>
+           <div>
+             <xsl:if test="cml:molecule">
+	       <xsl:call-template name="makejmol"/>
+	     </xsl:if>
+	   </div>
           </div>
         </div>
         </xsl:if>

@@ -10,7 +10,6 @@
 
   <xsl:template name="makejmol">
     <xsl:param name="uid" select="generate-id()"/>
-    <div class="listTitle">Structure</div>
     <xsl:call-template name="makejmolobject">
       <xsl:with-param name="natoms" select="count(.//cml:atom)"/>
       <xsl:with-param name="uid" select="$uid"/>
