@@ -63,7 +63,7 @@
   <!-- COORDINATES FILE -->
   <xsl:template name="coords">  
     <xsl:variable name="uid" select="generate-id()"/>
-    <input type="button" value="View coordinates" class="clickableDiv"/>
+    <input type="button" value="View coordinates" class="clickable"/>
     <div class="sublevel" id="{$uid}">
       <table class="coords">
         <tr class="coords">
