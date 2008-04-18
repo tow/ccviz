@@ -6,6 +6,8 @@
         extension-element-prefixes="str"
         >
 
+  <xsl:template match="cml:crystal"/>
+  <xsl:template match="cml:lattice"/>
 <!-- cmlCore:crystal -->  
   <xsl:template match="cml:crystal" mode="structure">
     <p/>

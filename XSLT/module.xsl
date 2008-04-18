@@ -23,7 +23,7 @@
       </xsl:when>
       <xsl:otherwise>
         <div>
-           <div class="moduletitle clickableDiv">
+           <div class="moduletitle clickable moduleDiv">
              <xsl:value-of select="@title"/>
            </div>
            <div class="sublevel" id="{$uid}">
@@ -111,7 +111,7 @@
       <xsl:otherwise>
         <xsl:if test="(count(preceding-sibling::cml:module[@role='step'])+1) mod $stepinterval = 0">
         <div>
-          <div class="steptitle clickableDiv">
+          <div class="steptitle clickable moduleDiv">
             <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
           </div>
           <div class="sublevel stepcontents" id="{$uid}">

@@ -114,14 +114,14 @@
         <div id="maindisplay">
           <div class="innerMain">
 
-            <br/><div id="initialmetadata" class="divisionTitle clickableDiv">
+            <br/><div id="initialmetadata" class="divisionTitle clickable moduleDiv">
               <xsl:text>Initial Metadata</xsl:text>
             </div>
             <div class="sublevel">
               <xsl:apply-templates select="/cml:cml/cml:metadataList[position()=1]"/>
             </div><br/>
 
-            <br/><div class="divisionTitle clickableDiv">
+            <br/><div class="divisionTitle clickable moduleDiv">
               <xsl:text>Input Parameters</xsl:text>
             </div>
             <div class="sublevel">
@@ -131,7 +131,7 @@
 
 	    <xsl:if test="/cml:cml/cml:module[@title='Initial System']">
               <br/>
-              <div class="divisionTitle clickableDiv">
+              <div class="divisionTitle clickable moduleDiv">
                 <xsl:text>Input State of System</xsl:text>
               </div>
               <div class="sublevel">
@@ -140,7 +140,7 @@
 	    </xsl:if>
 
             <br/>
-            <div class="divisionTitle clickableDiv">
+            <div class="divisionTitle clickable moduleDiv">
               <xsl:text>Main Body of Simulation</xsl:text>
             </div>
             <div class="sublevel">
@@ -150,7 +150,7 @@
 
 	    <xsl:if test="/cml:cml/cml:module[@title='Initial System']">
               <br/>
-              <div class="divisionTitle clickableDiv">
+              <div class="divisionTitle clickable moduleDiv">
                 <xsl:text>Final State of System</xsl:text>
               </div>
               <div class="sublevel">
@@ -159,7 +159,7 @@
 	    </xsl:if>
 
             <br/>
-            <div class="divisionTitle clickableDiv">
+            <div class="divisionTitle clickable moduleDiv">
               <xsl:text>Summary Information</xsl:text>
             </div>
             <div class="sublevel">

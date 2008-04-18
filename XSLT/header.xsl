@@ -130,16 +130,10 @@
                     margin-top: 2.5ex;
                     margin-bottom: 2.5ex;
                   }
-	.clickable { 
-                    text-decoration: underline;
-                    color: #ffffff; 
-                    background: #4682B4; 
-                    cursor: pointer; 
-                   }
 	.eigen    { text-align: right; padding-left: 7px; padding-right: 7px; }
 	.band     { vertical-align: text-top; }
 	.toplevel { display: block; font-weight: 400; margin-bottom: 0; }
-        .clickableDiv {color: #ffffff;
+        .moduleDiv {color: #ffffff;
                     background: #4682B4;
                     font-weight: bold;
                     font-size: x-large;
@@ -346,8 +340,8 @@ function toggleJmolAnimation(sz, inputNode) {
 };
 
 jQuery(document).ready(function(){
-  $(".clickableDiv").append(" ▸");
-  $(".clickableDiv").click(function() {
+  $(".clickable").append(" ▸");
+  $(".clickable").click(function() {
 // We need to kill all Java objects when we do this, or Safari
 // will hang.
     jmols = $(this).next().find(".togglejmol").get();
