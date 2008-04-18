@@ -22,14 +22,14 @@
 	       <xsl:value-of select="@title"/>
 	     </div>
 	   </xsl:if>
-	   <div class="clickable" id="{$uid}">
+	   <div>
 	     <xsl:apply-templates select="*"/>
-	     <div class="listTitle clickable">Structure</div>
-	     <div>
-	       <xsl:if test="cml:molecule">
-		 <xsl:call-template name="makejmol"/>
-	       </xsl:if>
-	     </div>
+	   </div>
+	   <div class="listTitle clickable">Structure</div>
+	   <div>
+	     <xsl:if test="cml:molecule">
+	       <xsl:call-template name="makejmol"/>
+	     </xsl:if>
 	   </div>
 	</div>
        </xsl:otherwise>
