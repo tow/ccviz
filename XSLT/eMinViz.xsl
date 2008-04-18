@@ -130,13 +130,14 @@
             </div><br/>
 
 	    <xsl:if test="/cml:cml/cml:module[@title='Initial System']">
-              <br/>
               <div class="divisionTitle clickable moduleDiv">
-                <xsl:text>Input State of System</xsl:text>
+                <xsl:text>Initial System</xsl:text>
               </div>
               <div class="sublevel">
-                <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']" mode="noTitle"/>
-              </div>
+                <xsl:apply-templates select="/cml:cml/cml:module[@title='Initial System']">
+		  <xsl:with-param name="title" select="false"/>
+		</xsl:apply-templates>
+	      </div>
 	    </xsl:if>
 
             <br/>
@@ -148,14 +149,15 @@
             </div>
             <br/>
 
-	    <xsl:if test="/cml:cml/cml:module[@title='Initial System']">
-              <br/>
+	    <xsl:if test="/cml:cml/cml:module[@title='Finalization']">
               <div class="divisionTitle clickable moduleDiv">
-                <xsl:text>Final State of System</xsl:text>
+                <xsl:text>Final System</xsl:text>
               </div>
               <div class="sublevel">
-                <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']" mode="noTitle"/>
-              </div>
+                <xsl:apply-templates select="/cml:cml/cml:module[@title='Finalization']">
+		  <xsl:with-param name="title" select="false"/>
+		</xsl:apply-templates>
+	      </div>
 	    </xsl:if>
 
             <br/>

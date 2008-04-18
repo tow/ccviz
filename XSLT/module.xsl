@@ -8,14 +8,8 @@
 
   <xsl:import href="toby_graph.xsl"/>
 
-  <xsl:template match="cml:module" mode="noTitle">
-    <xsl:variable name="uid" select="generate-id()"/>
-    <div>
-      <xsl:apply-templates select="*"/>
-    </div>
-  </xsl:template>
-
   <xsl:template match="cml:module">
+    <xsl:param name="title" select="true"/>
     <xsl:variable name="uid" select="generate-id()"/>
     <xsl:choose>
       <xsl:when test="@role='step'">
@@ -23,18 +17,20 @@
       </xsl:when>
       <xsl:otherwise>
         <div>
-           <div class="moduletitle clickable moduleDiv">
-             <xsl:value-of select="@title"/>
-           </div>
-           <div class="sublevel clickable" id="{$uid}">
+           <xsl:if test="$title">
+	     <div class="moduletitle clickable moduleDiv">
+	       <xsl:value-of select="@title"/>
+	     </div>
+	   </xsl:if>
+	   <div class="clickable" id="{$uid}">
 	     <xsl:apply-templates select="*"/>
-             <div class="listTitle clickable">Structure</div>
-             <div>
-               <xsl:if test="cml:molecule">
-	         <xsl:call-template name="makejmol"/>
+	     <div class="listTitle clickable">Structure</div>
+	     <div>
+	       <xsl:if test="cml:molecule">
+		 <xsl:call-template name="makejmol"/>
 	       </xsl:if>
 	     </div>
-           </div>
+	   </div>
 	</div>
        </xsl:otherwise>
     </xsl:choose>

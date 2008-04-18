@@ -163,7 +163,7 @@
                        cursor: pointer;
                        display: inline;
                        font-size: medium; }
-	.sublevel { display: none; font-weight: normal; margin-left: 20px; margin-top: 0; line-height: 14px; }
+	.sublevel { font-weight: normal; margin-left: 20px; margin-top: 0; line-height: 14px; }
         .paramname {color: #0000ff; }
         .paramvalue {color: #ff0000; }
         #head        {
