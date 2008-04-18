@@ -16,7 +16,7 @@
          <xsl:call-template name="step"/>
       </xsl:when>
       <xsl:otherwise>
-        <div>
+        <div class="module">
            <xsl:if test="$title">
 	     <div class="moduletitle clickable moduleDiv">
 	       <xsl:value-of select="@title"/>
@@ -25,12 +25,13 @@
 	   <div>
 	     <xsl:apply-templates select="*"/>
 	   </div>
-	   <div class="listTitle clickable">Structure</div>
-	   <div>
-	     <xsl:if test="cml:molecule">
+	   <xsl:if test="cml:molecule">
+	     <div class="foldout clickable">Structure</div>
+	     <div>
 	       <xsl:call-template name="makejmol"/>
-	     </xsl:if>
-	   </div>
+	     </div>
+	     <hr/>
+	   </xsl:if>
 	</div>
        </xsl:otherwise>
     </xsl:choose>
@@ -109,7 +110,7 @@
       </xsl:when> <!-- child step -->
       <xsl:otherwise>
         <xsl:if test="(count(preceding-sibling::cml:module[@role='step'])+1) mod $stepinterval = 0">
-        <div>
+        <div class="module">
           <div class="steptitle clickable moduleDiv">
             <a><xsl:value-of select="@dictRef"/> Step <xsl:value-of select="$num"/></a>
           </div>
@@ -134,13 +135,14 @@
 	    </xsl:variable>
 	    <div><xsl:copy-of select="$SCFgraph1"/></div>
 	  </xsl:if> -->
-           <div class="listTitle clickable">Structure</div>
-           <div>
-             <xsl:if test="cml:molecule">
-	       <xsl:call-template name="makejmol"/>
-	     </xsl:if>
-	   </div>
-          </div>
+	  <xsl:if test="cml:molecule">	    
+	    <div class="foldout clickable">Structure</div>
+	    <div>
+	      <xsl:call-template name="makejmol"/>
+	    </div>
+	    <hr/>
+	  </xsl:if>
+	  </div>
         </div>
         </xsl:if>
       </xsl:otherwise>

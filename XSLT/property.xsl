@@ -59,9 +59,10 @@
    <xsl:apply-templates select="@title"/>
    <table class="propertyList">
     <xsl:for-each select="*">
-     <tr><xsl:apply-templates select="."/></tr>
+     <xsl:apply-templates select="."/>
     </xsl:for-each>
    </table>
+   <hr/>
   </xsl:template>
   
 <!-- @title List -->

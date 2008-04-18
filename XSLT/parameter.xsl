@@ -80,7 +80,7 @@
     
   <xsl:template match="cml:parameterList">
     <xsl:apply-templates select="@title"/>
-    <table><xsl:apply-templates select="*"/></table>
+    <table><xsl:apply-templates select="*"/></table><hr/>
   </xsl:template>
   
 <!-- @title List -->

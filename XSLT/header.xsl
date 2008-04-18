@@ -79,7 +79,7 @@
                      margin:0;
                      border:0;
                    }
-        table      { text-align: center; 
+        table      { 
 		     border-collapse: collapse; 
 		     }
 	table.prop { 
@@ -130,6 +130,13 @@
                     margin-top: 2.5ex;
                     margin-bottom: 2.5ex;
                   }
+        .foldout
+                  {
+                    font-weight: 900;
+                    font-size: x-large;
+                    margin-top: 2.5ex;
+                    margin-bottom: 2.5ex;
+		    }
 	.eigen    { text-align: right; padding-left: 7px; padding-right: 7px; }
 	.band     { vertical-align: text-top; }
 	.toplevel { display: block; font-weight: 400; margin-bottom: 0; }
@@ -144,14 +151,12 @@
                     border-color: #7dB7FF;
                     border-style: solid;
                     }
-        .clickableDiv:hover {
-                    color: #9999ff; 
-                    }
         .moduletitle {
                     padding: 5px;
                     margin-top: 10px;
                     margin-bottom: 10px;
                      }
+        .module { text-align:left;}
         .steptitle   {
                     padding: 5px;
                     margin-top: 10px;
@@ -350,12 +355,12 @@ jQuery(document).ready(function(){
         jmols[j].onclick();
       };
     };
-    $(this).text($(this).text().replace("▾","▴"));
-    $(this).text($(this).text().replace("▸","▾"));
+    $(this).text($(this).text().replace("v",">"));
+    $(this).text($(this).text().replace(">","^"));
     $(this).next().toggle("slow");
-    $(this).text($(this).text().replace("▴","▸"));
+    $(this).text($(this).text().replace("^",">"));
   }).next().hide();
-  $("#initialmetadata").text($("#initialmetadata").text().replace("▸","▾"));
+  $("#initialmetadata").text($("#initialmetadata").text().replace(">","v"));
   $("#initialmetadata").next().show();
 });
 
