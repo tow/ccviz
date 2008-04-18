@@ -53,7 +53,7 @@
     <xsl:param name="height" select="600"/>
     <xsl:param name="width" select="600"/>
     <div class="listTitle">Animation</div>
-    <input class="togglejmol" type="button" value="Activate Jmol animation" onclick="toggleJmolAnimation([{$width},{$height}], this)"/>
+    <input class="togglejmol" type="button" value="Activate Jmol viewer" onclick="toggleJmolAnimation([{$width},{$height}], this)"/>
     <div id="jmolanimation">
       <object style="display:none;"/>
    </div>
