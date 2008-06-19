@@ -29,7 +29,7 @@
     
    <xsl:template match="cml:entry" mode="htmlOutput">
     <xsl:param name="title"/>
-    <xsl:message><xsl:value-of select="concat('entry: ',@id)"/></xsl:message>
+<!--    <xsl:message><xsl:value-of select="concat('entry: ',@id)"/></xsl:message> -->
     <xsl:variable name="dictTitle">
       <xsl:choose>
 	<xsl:when test="$title">
