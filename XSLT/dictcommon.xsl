@@ -47,7 +47,7 @@
   <xsl:template name="empty-entry">
     <xsl:param name="id"/>
     <div class="dictAnchor">
-      <a name="${id}"/>
+      <a name="{$id}"/>
     </div>
     <div class="dictEntry">
       <xsl:value-of select="$id"/>

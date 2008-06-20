@@ -7,6 +7,16 @@
         exclude-result-prefixes="xsl cml"
 	>
 
+
+  <xsl:template name="empty-entry-link">
+    <xsl:param name="id"/>
+    <span class="dictRef dotted">
+      <xsl:attribute name="onmouseover">window.location.href='#<xsl:value-of select="$id"/>';</xsl:attribute>
+      <xsl:value-of select="$id"/>
+    </span>
+  </xsl:template>
+  
+
   <xsl:template name="get.dictionary.reference.html">
     <xsl:param name="dictRef"/>
     <xsl:param name="title"/>
@@ -22,15 +32,15 @@
 	    </xsl:apply-templates>
 	  </xsl:when>
 	  <xsl:otherwise>
-	    <span class="dictRef">
-	      <xsl:value-of select="$dictEntry"/>
-	    </span>
+	    <xsl:call-template name="empty-entry-link">
+	      <xsl:with-param name="id" select="$dictEntry"/>
+	    </xsl:call-template>
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:when>
       <xsl:when test="not($dictRef) and $title">
-	<span>
-	  <i><xsl:value-of select="$title"/></i>
+	<span class="dictRef">
+	  <xsl:value-of select="$title"/>
 	</span>
       </xsl:when>
     </xsl:choose>
@@ -56,10 +66,7 @@
       <xsl:value-of select="$dictTitle"/>
     </span>
   </xsl:template>
-  
-  
-  
-  
+
 <!-- GRAPH -->
   <!-- GET DICTIONARY REFERENCE FOR USE WITHIN THE GRAPH OUTPUT -->	
   <xsl:template name="get.dictionary.reference.graph">
