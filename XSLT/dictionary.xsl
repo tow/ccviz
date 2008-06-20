@@ -15,9 +15,18 @@
 	<xsl:variable name="dictURI"
 		      select="namespace::*[name()=substring-before($dictRef,':')]"/>
 	<xsl:variable name="dictEntry" select="substring-after(@dictRef, ':')"/>
-	<xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]" mode="htmlOutput">
-	  <xsl:with-param name="title" select="$title"/>
-	</xsl:apply-templates>
+	<xsl:choose>
+	  <xsl:when test="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]">
+	    <xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]" mode="htmlOutput">
+	      <xsl:with-param name="title" select="$title"/>
+	    </xsl:apply-templates>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <span class="dictRef">
+	      <xsl:value-of select="$dictEntry"/>
+	    </span>
+	  </xsl:otherwise>
+	</xsl:choose>
       </xsl:when>
       <xsl:when test="not($dictRef) and $title">
 	<span>
@@ -29,7 +38,6 @@
     
    <xsl:template match="cml:entry" mode="htmlOutput">
     <xsl:param name="title"/>
-    <xsl:message><xsl:value-of select="concat('entry: ',@id)"/></xsl:message>
     <xsl:variable name="dictTitle">
       <xsl:choose>
 	<xsl:when test="$title">
@@ -43,7 +51,7 @@
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>  
-    <span class="dictRef">
+    <span class="dictRef dotted">
       <xsl:attribute name="onmouseover">window.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
       <xsl:value-of select="$dictTitle"/>
     </span>

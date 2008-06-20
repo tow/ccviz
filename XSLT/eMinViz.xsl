@@ -40,6 +40,9 @@
 
 <xsl:strip-space elements="*"/>
 
+<xsl:key name="dictRef-keys" match="//cml:*[@dictRef]"
+  use="concat(namespace::*[name()=substring-before(../@dictRef,':')], '#', substring-after(@dictRef, ':'))"/>
+
 <xsl:template match="text()"/>
 <xsl:template match="text()" mode="jmol"/>
 <xsl:template match="text()" mode="structure"/>

@@ -1714,7 +1714,7 @@ function jmolResize(w,h) {
 
         .dictRef { font-size: small;
                    font-style: italic; }
-
+        .dotted { border-bottom:dotted 1px #000000; }
       ]]>
     </xsl:text>
   </xsl:template>

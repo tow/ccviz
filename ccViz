@@ -283,14 +283,25 @@ cat > $TMPXSLTDIR/dict2frag.xsl << "EOF"
         >
 
   <xsl:template name="addDict">
-    <xsl:for-each select="//cml:*[@dictRef]">
+    <xsl:variable name="unique-dictRefs" select="//cml:*[@dictRef and (generate-id(.)=generate-id(key('dictRef-keys',  concat(namespace::*[name()=substring-before(../@dictRef,':')], '#', substring-after(@dictRef, ':')))[1]))]"/>
+    <!-- Muenchian grouping -->
+
+    <xsl:for-each select="$unique-dictRefs">
       <xsl:sort select="translate(substring-after(@dictRef, ':'), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
       <xsl:variable name="dictRef" select="@dictRef"/>
       <xsl:variable name="dictURI"
 		    select="namespace::*[name()=substring-before($dictRef,':')]"/>
-      <xsl:variable name="dictEntry" select="substring-after(@dictRef, ':')"/>
-      <xsl:message><xsl:value-of select="concat($dictURI,' ',$dictEntry)"/></xsl:message>
-      <xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]"/> 
+      <xsl:variable name="dictEntry" select="substring-after($dictRef, ':')"/>
+      <xsl:choose>
+	<xsl:when test="$dictURI!='' and document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]">
+	  <xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]"/> 
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:call-template name="empty-entry">
+	    <xsl:with-param name="id" select="$dictEntry"/>
+	  </xsl:call-template>
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:for-each>
   </xsl:template>
 
@@ -376,6 +387,8 @@ cat > $TMPXSLTDIR/dictcommon.xsl << "EOF"
 
   <!-- For each entry in the dictionary -->
   <xsl:template match="cml:entry">
+    <xsl:message><xsl:value-of select="concat('entry: ',@id)"/></xsl:message>
+
     <div class="dictAnchor">
       <a>
 	<xsl:attribute name="name">
@@ -408,7 +421,20 @@ cat > $TMPXSLTDIR/dictcommon.xsl << "EOF"
     </xsl:if>
     <hr/>
   </xsl:template>
+
+  <!-- An empty entry -->
   
+  <xsl:template name="empty-entry">
+    <xsl:param name="id"/>
+    <div class="dictAnchor">
+      <a name="${id}"/>
+    </div>
+    <div class="dictEntry">
+      <xsl:value-of select="$id"/>
+    <xsl:text>:</xsl:text></div>
+    <p><font color="blue">definition to be supplied</font></p>
+    <hr/>
+  </xsl:template>
   
   <!-- for each description just copy everything -->
   <!-- REM do the same for MathML stuff          -->
@@ -440,9 +466,18 @@ cat > $TMPXSLTDIR/dictionary.xsl << "EOF"
 	<xsl:variable name="dictURI"
 		      select="namespace::*[name()=substring-before($dictRef,':')]"/>
 	<xsl:variable name="dictEntry" select="substring-after(@dictRef, ':')"/>
-	<xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]" mode="htmlOutput">
-	  <xsl:with-param name="title" select="$title"/>
-	</xsl:apply-templates>
+	<xsl:choose>
+	  <xsl:when test="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]">
+	    <xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]" mode="htmlOutput">
+	      <xsl:with-param name="title" select="$title"/>
+	    </xsl:apply-templates>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <span class="dictRef">
+	      <xsl:value-of select="$dictEntry"/>
+	    </span>
+	  </xsl:otherwise>
+	</xsl:choose>
       </xsl:when>
       <xsl:when test="not($dictRef) and $title">
 	<span>
@@ -454,7 +489,6 @@ cat > $TMPXSLTDIR/dictionary.xsl << "EOF"
     
    <xsl:template match="cml:entry" mode="htmlOutput">
     <xsl:param name="title"/>
-    <xsl:message><xsl:value-of select="concat('entry: ',@id)"/></xsl:message>
     <xsl:variable name="dictTitle">
       <xsl:choose>
 	<xsl:when test="$title">
@@ -468,7 +502,7 @@ cat > $TMPXSLTDIR/dictionary.xsl << "EOF"
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>  
-    <span class="dictRef">
+    <span class="dictRef dotted">
       <xsl:attribute name="onmouseover">window.location.href='#<xsl:value-of select="@id"/>';</xsl:attribute>
       <xsl:value-of select="$dictTitle"/>
     </span>
@@ -584,6 +618,9 @@ cat > $TMPXSLTDIR/display.xsl << "EOF"
 <xsl:import href="rdf.xsl"/>
 
 <xsl:strip-space elements="*"/>
+
+<xsl:key name="dictRef-keys" match="//cml:*[@dictRef]"
+  use="concat(namespace::*[name()=substring-before(../@dictRef,':')], '#', substring-after(@dictRef, ':'))"/>
 
 <xsl:template match="text()"/>
 <xsl:template match="text()" mode="jmol"/>
@@ -784,6 +821,9 @@ cat > $TMPXSLTDIR/eMinViz.xsl << "EOF"
 <xsl:import href="rdf.xsl"/>
 
 <xsl:strip-space elements="*"/>
+
+<xsl:key name="dictRef-keys" match="//cml:*[@dictRef]"
+  use="concat(namespace::*[name()=substring-before(../@dictRef,':')], '#', substring-after(@dictRef, ':'))"/>
 
 <xsl:template match="text()"/>
 <xsl:template match="text()" mode="jmol"/>
@@ -3105,7 +3145,7 @@ function jmolResize(w,h) {
 
         .dictRef { font-size: small;
                    font-style: italic; }
-
+        .dotted { border-bottom:dotted 1px #000000; }
       ]]>
     </xsl:text>
   </xsl:template>
@@ -3797,44 +3837,46 @@ cat > $TMPXSLTDIR/property.xsl << "EOF"
   
   
   <xsl:template name="addProperty">
-   <td align="left">
-     <b>
-       <xsl:call-template name="get.dictionary.reference.html">
-         <xsl:with-param name="dictRef" select="@dictRef"/>
-         <xsl:with-param name="title" select="@title"/>
-       </xsl:call-template>
-     </b>
-   </td>
-   <xsl:choose>
-    <!-- Must special-case scalar because units are treated differently -->
-    <xsl:when test="cml:scalar">
-     <xsl:apply-templates select="cml:scalar"/>
-    </xsl:when>
-    <xsl:otherwise>
-     <td align="right">
-      <xsl:choose>
-       <xsl:when test="cml:array">
-        <xsl:apply-templates select="cml:array"/>
-       </xsl:when>
-       <xsl:when test="cml:matrix">
-        <xsl:apply-templates select="cml:matrix"/>
-       </xsl:when>
-       <xsl:when test="cml:table">
-        <xsl:apply-templates select="cml:table"/>
-       </xsl:when>
-      </xsl:choose>
+   <tr>
+     <td align="left">
+       <b>
+	 <xsl:call-template name="get.dictionary.reference.html">
+	   <xsl:with-param name="dictRef" select="@dictRef"/>
+	   <xsl:with-param name="title" select="@title"/>
+	 </xsl:call-template>
+       </b>
      </td>
-     <td align="left"><xsl:call-template name="add.units"/><p><br/></p></td>
-    </xsl:otherwise>
-   </xsl:choose>
+     <xsl:choose>
+       <!-- Must special-case scalar because units are treated differently -->
+       <xsl:when test="cml:scalar">
+	 <xsl:apply-templates select="cml:scalar"/>
+       </xsl:when>
+       <xsl:otherwise>
+	 <td align="right">
+	   <xsl:choose>
+	     <xsl:when test="cml:array">
+	       <xsl:apply-templates select="cml:array"/>
+	     </xsl:when>
+	     <xsl:when test="cml:matrix">
+	       <xsl:apply-templates select="cml:matrix"/>
+	     </xsl:when>
+	     <xsl:when test="cml:table">
+	       <xsl:apply-templates select="cml:table"/>
+	     </xsl:when>
+	   </xsl:choose>
+	 </td>
+	 <td align="left"><xsl:call-template name="add.units"/><p><br/></p></td>
+       </xsl:otherwise>
+     </xsl:choose>
+   </tr>
   </xsl:template>
 
   <xsl:template match="cml:propertyList">
    <xsl:apply-templates select="@title"/>
    <table class="propertyList">
-    <xsl:for-each select="*">
-     <xsl:apply-templates select="."/>
-    </xsl:for-each>
+     <xsl:for-each select="*">
+       <xsl:apply-templates select="."/>
+     </xsl:for-each>
    </table>
    <hr/>
   </xsl:template>
@@ -5029,7 +5071,7 @@ cat > $TMPXSLTDIR/DL_POLYDict.xml << "EOF"
 EOF
 cat > $TMPXSLTDIR/dictionaries.xml << "EOF"
 <cml xmlns="http://www.xml-cml.org/schema">
-<dictionary dictRef="siesta" title="Siesta dictionary" xmlns="http://www.xml-cml.org/schema">
+<dictionary dictRef="siesta" title="Siesta dictionary" xmlns="http://www.xml-cml.org/schema" namespace="http://www.uam.es/siesta/namespace">
 
   <entry id="Eions" term="Eions">
     <annotation>

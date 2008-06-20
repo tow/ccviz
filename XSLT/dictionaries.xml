@@ -1,5 +1,5 @@
 <cml xmlns="http://www.xml-cml.org/schema">
-<dictionary dictRef="siesta" title="Siesta dictionary" xmlns="http://www.xml-cml.org/schema">
+<dictionary dictRef="siesta" title="Siesta dictionary" xmlns="http://www.xml-cml.org/schema" namespace="http://www.uam.es/siesta/namespace">
 
   <entry id="Eions" term="Eions">
     <annotation>
