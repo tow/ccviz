@@ -4258,7 +4258,12 @@ function graph(id, name) {
 	      </script>
 	      <xsl:variable name="graphId" select="generate-id()"/>
 	      <tr class="graph">
-		<td class="graph"><xsl:value-of select="@dictRef"/>:</td>
+		<td class="graph">
+		  <xsl:call-template name="get.dictionary.reference.html">
+		    <xsl:with-param name="dictRef" select="@dictRef"/>
+		    <xsl:with-param name="title" select="@title"/>
+		  </xsl:call-template>
+		</td>
 		<td class="graph"><input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;); graph(&quot;#{$graphId}&quot;, &quot;{@dictRef}&quot;)"/></td><br/>
 		<div style="display:none;" id="{$graphId}"><!-- <xsl:copy-of select="$graph"/> --></div>
 	      </tr>
