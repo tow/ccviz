@@ -1715,6 +1715,7 @@ function jmolResize(w,h) {
         .dictRef { font-size: small;
                    font-style: italic; }
         .dotted { border-bottom:dotted 1px #000000; }
+        .togglejmolsource { font-size: small; font-style: italic; }
       ]]>
     </xsl:text>
   </xsl:template>
@@ -1799,20 +1800,34 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
   inputNode.setAttribute('value', newMessage);
 };
 
-function toggleLocalJmol(n) {
-  if (_jmol.codebase==" file:///usr/local/jmol/") {
-    _jmol.codebase = " https://data.eminerals.org/ccViz/jmol/";
-    n.value = "Use local Jmol";
-  } else {
-    _jmol.codebase = " file:///usr/local/jmol/";
-    n.value = "Use remote Jmol";
+function reloadApplet(p) {
+  if (p.getAttribute("value")=="Deactivate Jmol viewer") {
+    p.onclick();
+    p.onclick();
   };
-  p = n.previousSibling;
-  if (p.value=="Deactivate Jmol viewer") {
-    n.previousSibling.onclick();
-    n.previousSibling.onclick();
+};
+
+function makeJmolLocal(n) {
+  _jmol.codebase = " file:///usr/local/jmol/";
+  fs = $(".togglejmolsource").get();
+  for (f in fs) {
+    fs[f].source[0].checked = true;
+    fs[f].source[1].checked = false;
+    p = fs[f].previousSibling;
+    reloadApplet(p);
   };
-}
+};
+
+function makeJmolRemote(n) {
+  _jmol.codebase = " https://data.eminerals.org/ccViz/jmol/";
+  fs = $(".togglejmolsource").get();
+  for (f in fs) {
+    fs[f].source[0].checked = false;
+    fs[f].source[1].checked = true;
+    p = fs[f].previousSibling;
+    reloadApplet(p);
+  };
+};
 
 function toggleJmolAnimation(sz, inputNode) {
   // Grab object node to be created.

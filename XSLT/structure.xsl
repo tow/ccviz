@@ -43,7 +43,11 @@
     <xsl:param name="width" select="600"/>
     <div>
       <input class="togglejmol" type="button" value="Activate Jmol viewer" onclick="toggleJmol([{$width},{$height}], this, &quot;{$molId}&quot;, &quot;{$parentId}&quot;)"/>
-      <input type="button" value="Use local Jmol" onclick="toggleLocalJmol(this)"/>
+      <form class="togglejmolsource">
+	<span>applet source:</span>
+	<input type="radio" name="source" value="local" onclick="makeJmolLocal(this)"/>local
+	<input type="radio" name="source" value="remote" checked="checked" onclick="makeJmolRemote(this)"/>remote
+      </form>
       <div id="{$parentId}" class="jmol" style="display:none;"/>
     </div>
   </xsl:template>
@@ -55,7 +59,11 @@
     <xsl:param name="width" select="600"/>
     <div class="listTitle">Animation</div>
     <input class="togglejmol" type="button" value="Activate Jmol viewer" onclick="toggleJmolAnimation([{$width},{$height}], this)"/>
-    <input type="button" value="Use local Jmol" onclick="toggleLocalJmol(this)"/>
+    <form class="togglejmolsource">
+      <span><xsl:text>applet source:</xsl:text></span>
+      <input type="radio" name="source" value="local" onclick="makeJmolLocal(this)"/><xsl:text>local</xsl:text>
+      <input type="radio" name="source" value="remote" checked="checked" onclick="makeJmolRemote(this)"/><xsl:text>remote</xsl:text>
+    </form>
     <div id="jmolanimation">
       <object style="display:none;"/>
    </div>
