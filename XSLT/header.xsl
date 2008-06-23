@@ -1799,6 +1799,21 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
   inputNode.setAttribute('value', newMessage);
 };
 
+function toggleLocalJmol(n) {
+  if (_jmol.codebase==" file:///usr/local/jmol/") {
+    _jmol.codebase = " https://data.eminerals.org/ccViz/jmol/";
+    n.value = "Use local Jmol";
+  } else {
+    _jmol.codebase = " file:///usr/local/jmol/";
+    n.value = "Use remote Jmol";
+  };
+  p = n.previousSibling;
+  if (p.value=="Deactivate Jmol viewer") {
+    n.previousSibling.onclick();
+    n.previousSibling.onclick();
+  };
+}
+
 function toggleJmolAnimation(sz, inputNode) {
   // Grab object node to be created.
   var divNode = document.getElementById("jmolanimation");
@@ -1847,7 +1862,6 @@ jQuery(document).ready(function(){
   $("#initialmetadata").text($("#initialmetadata").text().replace(" ▸"," ▾"));
   $("#initialmetadata").next().show();
 });
-
 
       //]]>
     </xsl:text>

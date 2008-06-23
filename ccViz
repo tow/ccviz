@@ -688,7 +688,7 @@ cat > $TMPXSLTDIR/display.xsl << "EOF"
       <body>
         <xsl:if test="$Jmol!='false'">
          <xsl:attribute name="onload">
-           <xsl:text>jmolInitialize(&quot; http://cmlcomp.org/ccViz/jmol&quot;)</xsl:text>
+           <xsl:text>jmolInitialize(" https://data.eminerals.org/ccViz/jmol/", true);</xsl:text>
          </xsl:attribute>
         </xsl:if>
  
@@ -891,7 +891,7 @@ cat > $TMPXSLTDIR/eMinViz.xsl << "EOF"
       <body>
         <xsl:if test="$Jmol!='false'">
          <xsl:attribute name="onload">
-           <xsl:text>jmolInitialize(&quot; http://cmlcomp.org/ccViz/jmol&quot;)</xsl:text>
+           <xsl:text>jmolInitialize(" https://data.eminerals.org/ccViz/jmol/", true);</xsl:text>
          </xsl:attribute>
         </xsl:if>
  
@@ -3235,6 +3235,21 @@ function toggleJmol(sz, inputNode, thisId, parentId) {
   inputNode.setAttribute('value', newMessage);
 };
 
+function toggleLocalJmol(n) {
+  if (_jmol.codebase==" file:///usr/local/jmol/") {
+    _jmol.codebase = " https://data.eminerals.org/ccViz/jmol/";
+    n.value = "Use local Jmol";
+  } else {
+    _jmol.codebase = " file:///usr/local/jmol/";
+    n.value = "Use remote Jmol";
+  };
+  p = n.previousSibling;
+  if (p.value=="Deactivate Jmol viewer") {
+    n.previousSibling.onclick();
+    n.previousSibling.onclick();
+  };
+}
+
 function toggleJmolAnimation(sz, inputNode) {
   // Grab object node to be created.
   var divNode = document.getElementById("jmolanimation");
@@ -3283,7 +3298,6 @@ jQuery(document).ready(function(){
   $("#initialmetadata").text($("#initialmetadata").text().replace(" ▸"," ▾"));
   $("#initialmetadata").next().show();
 });
-
 
       //]]>
     </xsl:text>
@@ -4063,6 +4077,7 @@ cat > $TMPXSLTDIR/structure.xsl << "EOF"
     <xsl:param name="width" select="600"/>
     <div>
       <input class="togglejmol" type="button" value="Activate Jmol viewer" onclick="toggleJmol([{$width},{$height}], this, &quot;{$molId}&quot;, &quot;{$parentId}&quot;)"/>
+      <input type="button" value="Use local Jmol" onclick="toggleLocalJmol(this)"/>
       <div id="{$parentId}" class="jmol" style="display:none;"/>
     </div>
   </xsl:template>
@@ -4074,6 +4089,7 @@ cat > $TMPXSLTDIR/structure.xsl << "EOF"
     <xsl:param name="width" select="600"/>
     <div class="listTitle">Animation</div>
     <input class="togglejmol" type="button" value="Activate Jmol viewer" onclick="toggleJmolAnimation([{$width},{$height}], this)"/>
+    <input type="button" value="Use local Jmol" onclick="toggleLocalJmol(this)"/>
     <div id="jmolanimation">
       <object style="display:none;"/>
    </div>
