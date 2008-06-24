@@ -107,17 +107,15 @@
             <xsl:if test="@z3"><td class="coords"><xsl:value-of select="format-number(@z3, '###0.000')"/></td></xsl:if>
 	    <xsl:if test="@xyz3">
 	      <xsl:for-each select="str:tokenize(@xyz3,' ')">
-	        <!--  <TD><xsl:value-of select="format-number(., '###0.000')"/></TD> -->
-                <td class="coords"><xsl:value-of select="."/> </td>
+                <td class="coords"><xsl:value-of select="format-number(., '###0.000')"/></td>
 	      </xsl:for-each>
 	    </xsl:if>
 	    <xsl:if test="@xFract"><td class="coords"><xsl:value-of select="format-number(@xFract, '###0.000')"/></td></xsl:if>
 	    <xsl:if test="@yFract"><td class="coords"><xsl:value-of select="format-number(@yFract, '###0.000')"/></td></xsl:if>
 	    <xsl:if test="@zFract"><td class="coords"><xsl:value-of select="format-number(@zFract, '###0.000')"/></td></xsl:if>
 	    <xsl:if test="@xyzFract">
-	      <xsl:for-each select="str:tokenize(@xyz3,' ')">
-	        <!-- <TD><xsl:value-of select="format-number(., '###0.000')"/></TD> -->
-                <td class="coords"><xsl:value-of select="."/> </td>
+	      <xsl:for-each select="str:tokenize(@xyzFract,' ')">
+                <td class="coords"><xsl:value-of select="format-number(., '###0.000')"/></td>
 	      </xsl:for-each>
 	    </xsl:if>
 	    <xsl:if test="@formalCharge"><td class="coords"><xsl:value-of select="format-number(@formalCharge, ' ##;-##')"/></td></xsl:if>
