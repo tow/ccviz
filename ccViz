@@ -121,14 +121,38 @@ if __name__ == '__main__':
     finishXMLFile(sys.argv[1])
 EOF
 cat > $TMPXSLTDIR/array.xsl << "EOF"
-<!--===================== ARRAY =========================-->
-
+<?xml version="1.0"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:str="http://exslt.org/strings"
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:cml="http://www.xml-cml.org/schema"
         extension-element-prefixes="str">
+
+  <xsl:import href="loop.xsl"/>
+
+  <xsl:template match="cml:kpoint" mode="eigen">
+    <div><i><xsl:text>k</xsl:text></i><xsl:text>-point at: (</xsl:text>
+    <xsl:for-each select="str:tokenize(@coords)">
+      <xsl:value-of select="format-number(., '0.0000')"/>
+      <xsl:if test="position()!=last()">
+	<xsl:text>,</xsl:text>
+      </xsl:if>
+    </xsl:for-each>
+    <xsl:text>) with weight </xsl:text><xsl:value-of select="@weight"/></div>
+  </xsl:template>
+
+  <xsl:template match="cml:property" mode="eigen">
+    <table><tr>
+      <xsl:call-template name="rows-for-loop">
+	<xsl:with-param name="i" select="1"/>
+	<xsl:with-param name="increment" select="1"/>
+	<xsl:with-param name="testValue" select="ceiling(cml:array/@size div 8)"/>
+	<xsl:with-param name="innerTestValue" select="8"/>
+	<xsl:with-param name="outputString" select="concat(normalize-space(cml:array/text()),' ')"/>
+      </xsl:call-template>
+      </tr></table>
+  </xsl:template>
 
   <xsl:template match="cml:array">
     <xsl:variable name="delimiter">
@@ -3418,46 +3442,13 @@ cat > $TMPXSLTDIR/lattice.xsl << "EOF"
   
 </xsl:stylesheet>
 EOF
-cat > $TMPXSLTDIR/matrix.xsl << "EOF"
+cat > $TMPXSLTDIR/loop.xsl << "EOF"
+<?xml version="1.0"?>
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:cml="http://www.xml-cml.org/schema"
         xmlns="http://www.w3.org/1999/xhtml"
 	>
-
-<!-- TOHW rewrite this tou just use str:tokenize -->
-
-  <xsl:template match="cml:matrix">
-    <xsl:param name="rows">
-      <xsl:value-of select="@rows"/>
-    </xsl:param>
-    <xsl:param name="cols">
-      <xsl:value-of select="@columns"/>
-    </xsl:param>
-    <xsl:variable name="dataString" select="concat(normalize-space(.),' ')"/>
-    <table class="prop">
-      <tr>
-	<th colspan="{$cols}">
-	  <xsl:call-template name="get.dictionary.reference.html">
-            <xsl:with-param name="dictRef" select="@dictRef"/>
-            <xsl:with-param name="value" select="@value"/>
-          </xsl:call-template>
-	  <xsl:text> (</xsl:text>
-	  <xsl:value-of select="@units"/>
-	  <xsl:text>) </xsl:text>
-  	</th>
-      </tr>
-
-      <xsl:call-template name="rows-for-loop">
-        <xsl:with-param name="i" select="1"/>
-        <xsl:with-param name="increment" select="1"/>
-        <xsl:with-param name="testValue" select="$rows"/>
-        <xsl:with-param name="innerTestValue" select="$cols"/>
-        <xsl:with-param name="outputString" select="$dataString"/>
-      </xsl:call-template>
-    </table>
-  </xsl:template>
-
 
   <xsl:template name="rows-for-loop">
     <!--This template handles the rows of matrices-->
@@ -3483,9 +3474,8 @@ cat > $TMPXSLTDIR/matrix.xsl << "EOF"
 	<xsl:with-param name="colsNumber" select="$innerTestValue"/>
       </xsl:call-template>
     </xsl:variable>
-
     <xsl:if test="$testPassed = 'true'">
-      <tr>
+      <tr class="eigen">
 	<xsl:call-template name="cols-for-loop">
 	  <xsl:with-param name="i" select="1"/>
 	  <xsl:with-param name="increment" select="1"/>
@@ -3524,7 +3514,9 @@ cat > $TMPXSLTDIR/matrix.xsl << "EOF"
 
     <xsl:if test="$testPassed = 'true'">
       <td>
-	<xsl:value-of select="format-number(substring-before($outputString, ' '), '0.0000')"/>
+	<xsl:if test="string-length($outputString)>1">
+	  <xsl:value-of select="format-number(substring-before($outputString, ' '), '0.0000')"/>
+	</xsl:if>
       </td>
 
       <xsl:call-template name="cols-for-loop">
@@ -3569,6 +3561,47 @@ cat > $TMPXSLTDIR/matrix.xsl << "EOF"
 
   </xsl:template>
 
+</xsl:stylesheet>
+EOF
+cat > $TMPXSLTDIR/matrix.xsl << "EOF"
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns="http://www.w3.org/1999/xhtml"
+	>
+
+  <xsl:import href="loop.xsl"/>
+
+  <xsl:template match="cml:matrix">
+    <xsl:param name="rows">
+      <xsl:value-of select="@rows"/>
+    </xsl:param>
+    <xsl:param name="cols">
+      <xsl:value-of select="@columns"/>
+    </xsl:param>
+    <xsl:variable name="dataString" select="concat(normalize-space(.),' ')"/>
+    <table class="prop">
+      <tr>
+	<th colspan="{$cols}">
+	  <xsl:call-template name="get.dictionary.reference.html">
+            <xsl:with-param name="dictRef" select="@dictRef"/>
+            <xsl:with-param name="value" select="@value"/>
+          </xsl:call-template>
+	  <xsl:text> (</xsl:text>
+	  <xsl:value-of select="@units"/>
+	  <xsl:text>) </xsl:text>
+  	</th>
+      </tr>
+
+      <xsl:call-template name="rows-for-loop">
+        <xsl:with-param name="i" select="1"/>
+        <xsl:with-param name="increment" select="1"/>
+        <xsl:with-param name="testValue" select="$rows"/>
+        <xsl:with-param name="innerTestValue" select="$cols"/>
+        <xsl:with-param name="outputString" select="$dataString"/>
+      </xsl:call-template>
+    </table>
+  </xsl:template>
 </xsl:stylesheet>
 EOF
 cat > $TMPXSLTDIR/metadata.xsl << "EOF"
@@ -3906,13 +3939,20 @@ cat > $TMPXSLTDIR/property.xsl << "EOF"
   </xsl:template>
 
   <xsl:template match="cml:propertyList">
-   <xsl:apply-templates select="@title"/>
-   <table class="propertyList">
-     <xsl:for-each select="*">
-       <xsl:apply-templates select="."/>
-     </xsl:for-each>
-   </table>
-   <hr/>
+    <xsl:choose>
+      <xsl:when test="cml:kpoint">
+	<xsl:apply-templates select="*" mode="eigen"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:apply-templates select="@title"/>
+	<table class="propertyList">
+	  <xsl:for-each select="*">
+	    <xsl:apply-templates select="."/>
+	  </xsl:for-each>
+	</table>
+	<hr/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 <!-- @title List -->

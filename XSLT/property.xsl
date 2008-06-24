@@ -58,13 +58,20 @@
   </xsl:template>
 
   <xsl:template match="cml:propertyList">
-   <xsl:apply-templates select="@title"/>
-   <table class="propertyList">
-     <xsl:for-each select="*">
-       <xsl:apply-templates select="."/>
-     </xsl:for-each>
-   </table>
-   <hr/>
+    <xsl:choose>
+      <xsl:when test="cml:kpoint">
+	<xsl:apply-templates select="*" mode="eigen"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:apply-templates select="@title"/>
+	<table class="propertyList">
+	  <xsl:for-each select="*">
+	    <xsl:apply-templates select="."/>
+	  </xsl:for-each>
+	</table>
+	<hr/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 <!-- @title List -->
