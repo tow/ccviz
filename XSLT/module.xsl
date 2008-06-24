@@ -25,7 +25,7 @@
 	   <div>
 	     <xsl:apply-templates select="*"/>
 	   </div>
-	   <xsl:if test="cml:molecule">
+	   <xsl:if test="//cml:molecule">
 	     <div class="foldout clickable">Structure</div>
 	     <div>
 	       <xsl:call-template name="makejmol"/>

@@ -8,14 +8,25 @@
         >
 
   <xsl:template name="addDict">
-    <xsl:for-each select="//cml:*[@dictRef]">
+    <xsl:variable name="unique-dictRefs" select="//cml:*[@dictRef and (generate-id(.)=generate-id(key('dictRef-keys',  concat(namespace::*[name()=substring-before(../@dictRef,':')], '#', substring-after(@dictRef, ':')))[1]))]"/>
+    <!-- Muenchian grouping -->
+
+    <xsl:for-each select="$unique-dictRefs">
       <xsl:sort select="translate(substring-after(@dictRef, ':'), 'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
       <xsl:variable name="dictRef" select="@dictRef"/>
       <xsl:variable name="dictURI"
 		    select="namespace::*[name()=substring-before($dictRef,':')]"/>
-      <xsl:variable name="dictEntry" select="substring-after(@dictRef, ':')"/>
-<!--      <xsl:message><xsl:value-of select="concat($dictURI,' ',$dictEntry)"/></xsl:message> -->
-      <xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]"/> 
+      <xsl:variable name="dictEntry" select="substring-after($dictRef, ':')"/>
+      <xsl:choose>
+	<xsl:when test="$dictURI!='' and document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]">
+	  <xsl:apply-templates select="document('dictionaries.xml')//cml:dictionary[@namespace=$dictURI]/cml:entry[@id=$dictEntry]"/> 
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:call-template name="empty-entry">
+	    <xsl:with-param name="id" select="$dictEntry"/>
+	  </xsl:call-template>
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:for-each>
   </xsl:template>
 

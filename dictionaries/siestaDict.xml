@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="dict2html.xsl" type="text/xsl"?>
-
-<dictionary dictRef="siesta" title="Siesta dictionary" xmlns="http://www.xml-cml.org/schema/stmml">
+<dictionary xmlns="http://www.xml-cml.org/schema" namespace="http://www.uam.es/siesta/namespace" title="Siesta dictionary">
 
   <entry id="Eions" term="Eions">
     <annotation>

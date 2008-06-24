@@ -41,7 +41,20 @@
     </xsl:if>
     <hr/>
   </xsl:template>
+
+  <!-- An empty entry -->
   
+  <xsl:template name="empty-entry">
+    <xsl:param name="id"/>
+    <div class="dictAnchor">
+      <a name="{$id}"/>
+    </div>
+    <div class="dictEntry">
+      <xsl:value-of select="$id"/>
+    <xsl:text>:</xsl:text></div>
+    <p><font color="blue">definition to be supplied</font></p>
+    <hr/>
+  </xsl:template>
   
   <!-- for each description just copy everything -->
   <!-- REM do the same for MathML stuff          -->
