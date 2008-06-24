@@ -12609,11 +12609,1388 @@ cat > $TMPXSLTDIR/dictionaries.xml << "EOF"
     <golem:seealso>gwtsystem</golem:seealso>
   </entry>
 </dictionary>
+<dictionary 
+  namespace="http://www.esc.cam.ac.uk/ossia"
+  title="OSSIA dictionary"
+  xmlns="http://www.xml-cml.org/schema"
+  xmlns:h="http://www.w3.org/1999/xhtml/"
+  xmlns:cml="http://www.xml-cml.org/schema"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:golem="http://www.lexical.org.uk/golem"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <metadataList>
+    <metadata name="dc:creator" content="golem-kiln" />
+  </metadataList>
+
+  <entry id="gwtsystem" term="INTERNAL ENTRY for golem web tool use">
+    <definition/>
+    <description/>
+    <metadataList/>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="absolute" term="Absolutely-positioned concept">
+    <definition>Concept which only occurs once in a document</definition>
+    <description>
+      <h:p>Absolutely-positioned concepts occur exactly once in a document,
+           and therefore do not need to be located by specifying a given 
+           grouping concept (or chain of grouping concepts).
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="relative" term="Relatively-positioned concept">
+    <definition>Concept which may occur many times in a document</definition>
+    <description>
+      <h:p>Relatively-positioned concepts can occur more than once in a 
+           document, and therefore need to be located by specifying a given 
+           grouping concept (or chain of grouping concepts).
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="grouping" term="Grouping concept">
+    <definition>Concept acting as a container for other concepts</definition>
+    <description>
+      <h:p>
+      Grouping concepts do not directly contain values; instead, they contain
+      other, relatively positioned, concepts, which themselves may or may not
+      contain values.
+      </h:p>
+    </description>          
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="value" term="Value-bearing concept">
+    <definition>Concept with a direct payload of data</definition>
+    <description>
+      <h:p>
+        Value-bearing concepts directly contain observables -
+        data with a value we can extract and evaluate.
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="parameterInInput" term="Input parameter">
+    <definition>User-specified input parameters for the simulation.</definition>
+    <description>
+      <h:p>
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="inFinalProperties" term="Final property">
+    <definition>A concept appearing the final properties of a task.</definition>
+    <description>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="matrix" term="Matrix default call">
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+	
+	<xsl:template match="cml:matrix">
+	  <xsl:param name="rowlength">
+	    <xsl:value-of select="@columns" />
+	  </xsl:param>
+	  <xsl:text>[</xsl:text>
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:if test="position() mod $rowlength = 1">
+	      <xsl:text>[</xsl:text>
+	    </xsl:if>
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	    <xsl:if test="position() mod $rowlength = 0">
+	      <xsl:text>],</xsl:text>
+	    </xsl:if>
+	  </xsl:for-each>
+	  <xsl:text>]</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="cellParameter" term="Cell parameter default call">
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+
+	<xsl:template match="cml:cellParameter[@parameterType='length']">
+	  <xsl:text>[[</xsl:text>
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	  </xsl:for-each>
+	  <xsl:text>],[</xsl:text>
+	</xsl:template>
+	<xsl:template match="cml:cellParameter[@parameterType='angle']">
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	  </xsl:for-each>
+	  <xsl:text>]]</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="array" term="Array default call">
+    <!-- DANGER ASSUMES WHITESPACE SEPARATION - ONLY SAFE FOR FOX -->
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+
+	<xsl:template match="cml:array">
+	  <xsl:text>[</xsl:text>
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	  </xsl:for-each>
+	  <xsl:text>]</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="scalar" term="Scalar string default call">
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+
+	<xsl:template match="cml:scalar">
+	  <xsl:text>"</xsl:text><xsl:value-of select="." /><xsl:text>"</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+
+    <golem:template role="defaultoutput">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	<xsl:param name="name" />
+	<xsl:param name="value" />
+	<xsl:template match="/">
+	  <xsl:value-of select='$name' /><xsl:value-of select='$value' />
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="HeatCapacity" term="Heat capacity">
+    <annotation />
+    <definition>Heat capacity</definition>
+    <description>
+      <h:p>The value of the heat capacity obtained from the variance
+      of the energy divided by the square of the temperature, as per
+      the usual definition for the canonical ensemble. Units are set
+      to be dimensionless because we have defined temperature in units
+      of energy, and we set Boltzmann's constant to equal 1 with no
+      units.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:HeatCapacity']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="ColdPattern" term="Cold start configuration">
+    <annotation />
+    <definition>Cold start configuration</definition>
+    <description>
+    <h:p>An array of length Number of Sites, with an element for each site. For a cold
+    start, the value of each element of this array specifies the number of the type of
+    atom (ranging from 1 to the Number of Species).</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:initialModule']/cml:parameterList/cml:parameter[@dictRef='ossia:ColdPattern']</golem:xpath>
+    <golem:template call="array" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSpecies" term="Number of species">
+    <annotation />
+    <definition>Number of atomic species</definition>
+    <description>
+    <h:p>Number of different type of atomic species involved in the ordering processes. 
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSpecies']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="temperature" term="Configuration temperature">
+    <annotation />
+    <definition>Configuration temperature</definition>
+    <description>
+    <h:p>The set temperature is used to control the Metropolis Monte
+    Carlo algorithm. Denoting <h:i>E</h:i> as the change in energy
+    associated with a proposed change in the configuration, the change
+    is accepted if <h:i>E</h:i> is negative. Otherwisee the proposed
+    change is accepted with probability given by
+    exp(-<h:i>E</h:i>/<h:i>T</h:i>), where <h:i>T</h:i> is the set temperature.
+    The units of temperature are the same as the units of the exchange
+    parameters, and OSSIA has no units-specific dependency.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:temperature']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="emin:initialModule" term="Initial System">
+    <annotation />
+    <definition>Module for initial system</definition>
+    <description>
+    <h:p>Module to contain information about the state of the initial system.</h:p>
+    </description>    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:initialModule']</golem:xpath>
+    <golem:implements>grouping</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="energy" term="Energy">
+    <annotation />
+    <definition>Instantaneous value of the energy of the configuration</definition>
+    <description>
+    <h:p>The energy of the configuration, with units as specified for the exchange interaction
+    (eV by default).</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:propertyList/cml:property[@dictRef='ossia:energy']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSpins" term="Number of spins">
+    <annotation />
+    <definition>Number of spins</definition>
+    <description>
+    <h:p>Total number of ordering sites (called spins) in the sample. 
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSpins']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="SampleRate" term="Sampling rate">
+    <annotation />
+    <definition>Rate of sampling configurations for average quantities</definition>
+    <description>
+    <h:p>Because there is a cost associated with computing average quantities, and because
+    sequential configurations are correlated, OSSIA samples configurations for average
+    quantities over pre-set intervals, as set by this parameter.
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:SampleRate']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Jmax" term="Exchange interaction energies">
+    <annotation />
+    <definition>Exchange interaction energies</definition>
+    <description>
+    <h:p>The exchange energy is defined according to the relation that an energy associated
+    with two neighbouring sites is given as <h:i>E</h:i> = <h:i>JS(1)S(2)</h:i>, where <h:i>J</h:i>
+    is the exchange energy, and <h:i>S(1)</h:i> and <h:i>S(2)</h:i> are variables that describe the
+    occupancy of two atomic sites. Typically <h:i>S</h:i> will have value of 0 or 1. We arbitrarily
+    associate the units of eV, although since everything is defined in the same unit terms
+    (including temperature) this is not important for the running of the simulation.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:Jmax']</golem:xpath>
+    <golem:template call="matrix" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="emin:finalModule" term="Finalization">
+    <annotation />
+    <definition>Module for final properties and configuration</definition>
+    <description>
+    <h:p>Module to hold the final properties and configuration.</h:p>
+    </description>    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']</golem:xpath>
+    <golem:implements>grouping</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="PDF1" term="First PDF value for first atom types">
+    <annotation />
+    <definition>First-neighbour PDF value for first atom types</definition>
+    <description>
+    <h:p>First-neighbour pair distribution function value for first atom types.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:PDF1']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="runtime" term="Time taken">
+    <annotation />
+    <definition>Time taken for the simulation</definition>
+    <description>
+    <h:p>Time taken for the simulation, units of seconds.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:runtime']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="PDF" term="Pair distribution function">
+    <annotation />
+    <definition>Near-neighbour pair distribution function</definition>
+    <description>
+    <h:p>A matrix giving the partial pair distribution function for all neighbours
+    that interact in the sample Hamiltonian.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:PDF']</golem:xpath>
+    <golem:template call="matrix" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSites" term="Number of sites">
+    <annotation />
+    <definition>Number of sites</definition>
+    <description>
+    <h:p>Number of atomic sites in the repeating unit.
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSites']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Stiffness" term="Inverse of the susceptibility">
+    <annotation />
+    <definition>Inverse of the susceptibility</definition>
+    <description>
+    <h:p>Inverse of the susceptibility.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:Stiffness']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="EnergySquared" term="Energy squared">
+    <annotation />
+    <definition>Mean value of the energy squared.</definition>
+    <description>
+    <h:p>Mean value of the square of the energy of the system, averaged over all analysis
+    configurations.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:EnergySquared']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="Jtype" term="Exchange interaction type">
+    <annotation />
+    <definition>Exchange interaction type</definition>
+    <description>
+    <h:p>Ossia works with two models for the interactions between
+    atoms, and thus should have either of the following two
+    value:</h:p>
+    <h:ol>
+      <h:li> This model associates an exchange energy defined so that that
+      atoms of the same type are associated with an energy of
+      +<h:i>J</h:i> and atoms of the opposite type are associated with
+      an energy -<h:i>J</h:i>; </h:li>
+      
+      <h:li> This model associates an exchange
+      energy defined so that if both atoms are of one particular type
+      the energy is +<h:i>J</h:i>, and zero otherwise.</h:li>
+    </h:ol>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:Jtype']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="SpeciesFractions" term="Fractions of atomic species">
+    <annotation />
+    <definition>Relative atomic fractions</definition>
+    <description>
+    <h:p>An array giving the fractional content of each of the type of atom; the number of
+    elements is equal to the number of species, and the sum of all elements is equal to 1.
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:SpeciesFractions']</golem:xpath>
+    <golem:template call="array" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="OrderParameterSquared" term="Order parameter squared">
+    <annotation />
+    <definition>Mean value of the square of the order parameter</definition>
+    <description>
+      <h:p>Mean value of the square of the order parameter, averaged
+      over all analysis configurations.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:OrderParameterSquared']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="RNGseed" term="Initial random number seed">
+    <annotation />
+    <definition>Value of the initial seed for the random number generator</definition>
+    <description>
+    <h:p>Value of the initial seed for the random number generator. 
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:RNGseed']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Susceptibility" term="Susceptibility">
+    <annotation />
+    <definition>Susceptibility of the order parameter</definition>
+    <description>
+    <h:p>The suseceptibility defined as the variance of the order parameter divided by the
+    temperature, as per the usual definition for the canonical ensemble.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:Susceptibility']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSteps" term="Number of Monte Carlo steps">
+    <annotation />
+    <definition>Number of configurations generated by the Monte Carlo simulation</definition>
+    <description>
+    <h:p>This parameter sets the number of Monte Carlo steps, or equivalently the number of
+    configurations generated by the Monte Carlo simulation. Sequential configurations that are
+    identical are treated as independent.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSteps']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="OrderParameter" term="Order Parameter">
+    <annotation />
+    <definition>Order Parameter</definition>
+    <description>
+    <h:p>The value of the parameter that describes the degree of long-range atomic ordering.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:propertyList/cml:property[@dictRef='ossia:OrderParameter']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="analysis" term="Module containing analysis for a single step">
+    <annotation />
+    <definition>Module containing the analysis for a single Monte Carlo step</definition>
+    <description>
+    <h:p>Modules contain groups of information. The analysis module contains a set of analyses
+    for a single step through the Monte Carlo simulation.</h:p>
+    </description>    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='ossia:analysis']</golem:xpath>
+    <golem:implements>grouping</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="startType" term="Configuration start type">
+    <annotation />
+    <definition>Configuration start type</definition>
+    <description>
+      <h:p>There are three possible ways to define the initital
+      configuration in ossia:</h:p>
+      <h:ol>
+	<h:li> <h:b>Cold start</h:b>: The initial configuration has
+	complete long-range site order as defined by the keyword
+	<h:i>cold</h:i>. The positions of the different types of atoms are
+	read in the input file as a list; </h:li>
+
+	<h:li> <h:b>Hot start</h:b>: The
+	initial configuration is completely disordered as defined by
+	the keyword <h:i>hot</h:i>. The positions of atoms are chosen at
+	random; </h:li>
+
+	<h:li> <h:b>Warm start</h:b>: The initial configuration is
+	ordered with respect to some atoms and disordered with respect
+	to other, as defined by the keyword <h:i>warm</h:i>.</h:li>
+      </h:ol>
+    </description>
+        <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:startType']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Energy" term="Energy">
+    <annotation />
+    <definition />
+    <description />    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:Energy']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+</dictionary>
 </cml>
 EOF
 cat > $TMPXSLTDIR/dl_polyDict.xml << "EOF"
 <?xml version="1.0"?>
 <dictionary dictRef="dlpoly" title="DLPOLY dictionary" xmlns="http://www.xml-cml.org/schema/stmml"/>
+EOF
+cat > $TMPXSLTDIR/ossiaDict.xml << "EOF"
+<dictionary 
+  namespace="http://www.esc.cam.ac.uk/ossia"
+  title="OSSIA dictionary"
+  xmlns="http://www.xml-cml.org/schema"
+  xmlns:h="http://www.w3.org/1999/xhtml/"
+  xmlns:cml="http://www.xml-cml.org/schema"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:golem="http://www.lexical.org.uk/golem"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <metadataList>
+    <metadata name="dc:creator" content="golem-kiln" />
+  </metadataList>
+
+  <entry id="gwtsystem" term="INTERNAL ENTRY for golem web tool use">
+    <definition/>
+    <description/>
+    <metadataList/>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="absolute" term="Absolutely-positioned concept">
+    <definition>Concept which only occurs once in a document</definition>
+    <description>
+      <h:p>Absolutely-positioned concepts occur exactly once in a document,
+           and therefore do not need to be located by specifying a given 
+           grouping concept (or chain of grouping concepts).
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="relative" term="Relatively-positioned concept">
+    <definition>Concept which may occur many times in a document</definition>
+    <description>
+      <h:p>Relatively-positioned concepts can occur more than once in a 
+           document, and therefore need to be located by specifying a given 
+           grouping concept (or chain of grouping concepts).
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="grouping" term="Grouping concept">
+    <definition>Concept acting as a container for other concepts</definition>
+    <description>
+      <h:p>
+      Grouping concepts do not directly contain values; instead, they contain
+      other, relatively positioned, concepts, which themselves may or may not
+      contain values.
+      </h:p>
+    </description>          
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="value" term="Value-bearing concept">
+    <definition>Concept with a direct payload of data</definition>
+    <description>
+      <h:p>
+        Value-bearing concepts directly contain observables -
+        data with a value we can extract and evaluate.
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="parameterInInput" term="Input parameter">
+    <definition>User-specified input parameters for the simulation.</definition>
+    <description>
+      <h:p>
+      </h:p>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="inFinalProperties" term="Final property">
+    <definition>A concept appearing the final properties of a task.</definition>
+    <description>
+    </description>
+    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="matrix" term="Matrix default call">
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+	
+	<xsl:template match="cml:matrix">
+	  <xsl:param name="rowlength">
+	    <xsl:value-of select="@columns" />
+	  </xsl:param>
+	  <xsl:text>[</xsl:text>
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:if test="position() mod $rowlength = 1">
+	      <xsl:text>[</xsl:text>
+	    </xsl:if>
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	    <xsl:if test="position() mod $rowlength = 0">
+	      <xsl:text>],</xsl:text>
+	    </xsl:if>
+	  </xsl:for-each>
+	  <xsl:text>]</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="cellParameter" term="Cell parameter default call">
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+
+	<xsl:template match="cml:cellParameter[@parameterType='length']">
+	  <xsl:text>[[</xsl:text>
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	  </xsl:for-each>
+	  <xsl:text>],[</xsl:text>
+	</xsl:template>
+	<xsl:template match="cml:cellParameter[@parameterType='angle']">
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	  </xsl:for-each>
+	  <xsl:text>]]</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="array" term="Array default call">
+    <!-- DANGER ASSUMES WHITESPACE SEPARATION - ONLY SAFE FOR FOX -->
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+
+	<xsl:template match="cml:array">
+	  <xsl:text>[</xsl:text>
+	  <xsl:for-each select="str:tokenize(string(.), ' ')" >
+	    <xsl:value-of select="." /><xsl:text>,</xsl:text>
+	  </xsl:for-each>
+	  <xsl:text>]</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="scalar" term="Scalar string default call">
+    <annotation />
+    <definition />
+    <description />
+    <metadataList />
+    <golem:template role="getvalue" binding="pygolem_serialization">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	
+	<xsl:template match="/">
+	  <xsl:apply-templates />
+	</xsl:template>
+
+	<xsl:template match="cml:scalar">
+	  <xsl:text>"</xsl:text><xsl:value-of select="." /><xsl:text>"</xsl:text>
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+
+    <golem:template role="defaultoutput">
+      <xsl:stylesheet version='1.0' 
+		      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+		      xmlns:cml='http://www.xml-cml.org/schema'
+		      xmlns:str="http://exslt.org/strings"
+		      extension-element-prefixes="str"
+		      >
+	<xsl:output method="text" />
+	<xsl:param name="name" />
+	<xsl:param name="value" />
+	<xsl:template match="/">
+	  <xsl:value-of select='$name' /><xsl:value-of select='$value' />
+	</xsl:template>
+      </xsl:stylesheet>
+    </golem:template>
+    <golem:seealso>gwtsystem</golem:seealso>
+  </entry>
+
+  <entry id="HeatCapacity" term="Heat capacity">
+    <annotation />
+    <definition>Heat capacity</definition>
+    <description>
+      <h:p>The value of the heat capacity obtained from the variance
+      of the energy divided by the square of the temperature, as per
+      the usual definition for the canonical ensemble. Units are set
+      to be dimensionless because we have defined temperature in units
+      of energy, and we set Boltzmann's constant to equal 1 with no
+      units.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:HeatCapacity']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="ColdPattern" term="Cold start configuration">
+    <annotation />
+    <definition>Cold start configuration</definition>
+    <description>
+    <h:p>An array of length Number of Sites, with an element for each site. For a cold
+    start, the value of each element of this array specifies the number of the type of
+    atom (ranging from 1 to the Number of Species).</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:initialModule']/cml:parameterList/cml:parameter[@dictRef='ossia:ColdPattern']</golem:xpath>
+    <golem:template call="array" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSpecies" term="Number of species">
+    <annotation />
+    <definition>Number of atomic species</definition>
+    <description>
+    <h:p>Number of different type of atomic species involved in the ordering processes. 
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSpecies']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="temperature" term="Configuration temperature">
+    <annotation />
+    <definition>Configuration temperature</definition>
+    <description>
+    <h:p>The set temperature is used to control the Metropolis Monte
+    Carlo algorithm. Denoting <h:i>E</h:i> as the change in energy
+    associated with a proposed change in the configuration, the change
+    is accepted if <h:i>E</h:i> is negative. Otherwisee the proposed
+    change is accepted with probability given by
+    exp(-<h:i>E</h:i>/<h:i>T</h:i>), where <h:i>T</h:i> is the set temperature.
+    The units of temperature are the same as the units of the exchange
+    parameters, and OSSIA has no units-specific dependency.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:temperature']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="emin:initialModule" term="Initial System">
+    <annotation />
+    <definition>Module for initial system</definition>
+    <description>
+    <h:p>Module to contain information about the state of the initial system.</h:p>
+    </description>    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:initialModule']</golem:xpath>
+    <golem:implements>grouping</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="energy" term="Energy">
+    <annotation />
+    <definition>Instantaneous value of the energy of the configuration</definition>
+    <description>
+    <h:p>The energy of the configuration, with units as specified for the exchange interaction
+    (eV by default).</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:propertyList/cml:property[@dictRef='ossia:energy']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSpins" term="Number of spins">
+    <annotation />
+    <definition>Number of spins</definition>
+    <description>
+    <h:p>Total number of ordering sites (called spins) in the sample. 
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSpins']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="SampleRate" term="Sampling rate">
+    <annotation />
+    <definition>Rate of sampling configurations for average quantities</definition>
+    <description>
+    <h:p>Because there is a cost associated with computing average quantities, and because
+    sequential configurations are correlated, OSSIA samples configurations for average
+    quantities over pre-set intervals, as set by this parameter.
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:SampleRate']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Jmax" term="Exchange interaction energies">
+    <annotation />
+    <definition>Exchange interaction energies</definition>
+    <description>
+    <h:p>The exchange energy is defined according to the relation that an energy associated
+    with two neighbouring sites is given as <h:i>E</h:i> = <h:i>JS(1)S(2)</h:i>, where <h:i>J</h:i>
+    is the exchange energy, and <h:i>S(1)</h:i> and <h:i>S(2)</h:i> are variables that describe the
+    occupancy of two atomic sites. Typically <h:i>S</h:i> will have value of 0 or 1. We arbitrarily
+    associate the units of eV, although since everything is defined in the same unit terms
+    (including temperature) this is not important for the running of the simulation.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:Jmax']</golem:xpath>
+    <golem:template call="matrix" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="emin:finalModule" term="Finalization">
+    <annotation />
+    <definition>Module for final properties and configuration</definition>
+    <description>
+    <h:p>Module to hold the final properties and configuration.</h:p>
+    </description>    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']</golem:xpath>
+    <golem:implements>grouping</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="PDF1" term="First PDF value for first atom types">
+    <annotation />
+    <definition>First-neighbour PDF value for first atom types</definition>
+    <description>
+    <h:p>First-neighbour pair distribution function value for first atom types.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:PDF1']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="runtime" term="Time taken">
+    <annotation />
+    <definition>Time taken for the simulation</definition>
+    <description>
+    <h:p>Time taken for the simulation, units of seconds.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:runtime']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="PDF" term="Pair distribution function">
+    <annotation />
+    <definition>Near-neighbour pair distribution function</definition>
+    <description>
+    <h:p>A matrix giving the partial pair distribution function for all neighbours
+    that interact in the sample Hamiltonian.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:PDF']</golem:xpath>
+    <golem:template call="matrix" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSites" term="Number of sites">
+    <annotation />
+    <definition>Number of sites</definition>
+    <description>
+    <h:p>Number of atomic sites in the repeating unit.
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSites']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Stiffness" term="Inverse of the susceptibility">
+    <annotation />
+    <definition>Inverse of the susceptibility</definition>
+    <description>
+    <h:p>Inverse of the susceptibility.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:Stiffness']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="EnergySquared" term="Energy squared">
+    <annotation />
+    <definition>Mean value of the energy squared.</definition>
+    <description>
+    <h:p>Mean value of the square of the energy of the system, averaged over all analysis
+    configurations.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:EnergySquared']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="Jtype" term="Exchange interaction type">
+    <annotation />
+    <definition>Exchange interaction type</definition>
+    <description>
+    <h:p>Ossia works with two models for the interactions between
+    atoms, and thus should have either of the following two
+    value:</h:p>
+    <h:ol>
+      <h:li> This model associates an exchange energy defined so that that
+      atoms of the same type are associated with an energy of
+      +<h:i>J</h:i> and atoms of the opposite type are associated with
+      an energy -<h:i>J</h:i>; </h:li>
+      
+      <h:li> This model associates an exchange
+      energy defined so that if both atoms are of one particular type
+      the energy is +<h:i>J</h:i>, and zero otherwise.</h:li>
+    </h:ol>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:Jtype']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="SpeciesFractions" term="Fractions of atomic species">
+    <annotation />
+    <definition>Relative atomic fractions</definition>
+    <description>
+    <h:p>An array giving the fractional content of each of the type of atom; the number of
+    elements is equal to the number of species, and the sum of all elements is equal to 1.
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:SpeciesFractions']</golem:xpath>
+    <golem:template call="array" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="OrderParameterSquared" term="Order parameter squared">
+    <annotation />
+    <definition>Mean value of the square of the order parameter</definition>
+    <description>
+      <h:p>Mean value of the square of the order parameter, averaged
+      over all analysis configurations.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:OrderParameterSquared']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="RNGseed" term="Initial random number seed">
+    <annotation />
+    <definition>Value of the initial seed for the random number generator</definition>
+    <description>
+    <h:p>Value of the initial seed for the random number generator. 
+    </h:p></description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:RNGseed']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Susceptibility" term="Susceptibility">
+    <annotation />
+    <definition>Susceptibility of the order parameter</definition>
+    <description>
+    <h:p>The suseceptibility defined as the variance of the order parameter divided by the
+    temperature, as per the usual definition for the canonical ensemble.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:Susceptibility']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="NumberOfSteps" term="Number of Monte Carlo steps">
+    <annotation />
+    <definition>Number of configurations generated by the Monte Carlo simulation</definition>
+    <description>
+    <h:p>This parameter sets the number of Monte Carlo steps, or equivalently the number of
+    configurations generated by the Monte Carlo simulation. Sequential configurations that are
+    identical are treated as independent.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:NumberOfSteps']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="OrderParameter" term="Order Parameter">
+    <annotation />
+    <definition>Order Parameter</definition>
+    <description>
+    <h:p>The value of the parameter that describes the degree of long-range atomic ordering.</h:p>
+    </description>
+       <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:propertyList/cml:property[@dictRef='ossia:OrderParameter']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="analysis" term="Module containing analysis for a single step">
+    <annotation />
+    <definition>Module containing the analysis for a single Monte Carlo step</definition>
+    <description>
+    <h:p>Modules contain groups of information. The analysis module contains a set of analyses
+    for a single step through the Monte Carlo simulation.</h:p>
+    </description>    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='ossia:analysis']</golem:xpath>
+    <golem:implements>grouping</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+
+  <entry id="startType" term="Configuration start type">
+    <annotation />
+    <definition>Configuration start type</definition>
+    <description>
+      <h:p>There are three possible ways to define the initital
+      configuration in ossia:</h:p>
+      <h:ol>
+	<h:li> <h:b>Cold start</h:b>: The initial configuration has
+	complete long-range site order as defined by the keyword
+	<h:i>cold</h:i>. The positions of the different types of atoms are
+	read in the input file as a list; </h:li>
+
+	<h:li> <h:b>Hot start</h:b>: The
+	initial configuration is completely disordered as defined by
+	the keyword <h:i>hot</h:i>. The positions of atoms are chosen at
+	random; </h:li>
+
+	<h:li> <h:b>Warm start</h:b>: The initial configuration is
+	ordered with respect to some atoms and disordered with respect
+	to other, as defined by the keyword <h:i>warm</h:i>.</h:li>
+      </h:ol>
+    </description>
+        <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>.//cml:parameterList/cml:parameter[@dictRef='ossia:startType']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>relative</golem:implements>
+  </entry>
+
+  <entry id="Energy" term="Energy">
+    <annotation />
+    <definition />
+    <description />    <metadataList>
+      <metadata name="dc:author" content="golem-kiln" />
+    </metadataList>
+    <golem:xpath>/cml:cml/cml:module[@dictRef='emin:finalModule']/cml:propertyList/cml:property[@dictRef='ossia:Energy']</golem:xpath>
+    <golem:template call="scalar" role="getvalue" binding="pygolem_serialization" />
+    <golem:implements>value</golem:implements>
+    <golem:implements>absolute</golem:implements>
+  </entry>
+</dictionary>
+
 EOF
 cat > $TMPXSLTDIR/siestaDict.xml << "EOF"
 <?xml version="1.0"?>
