@@ -22,6 +22,7 @@
 
 <!-- CMLComp -->
 <xsl:import href="module.xsl"/>
+<xsl:import href="plottable.xsl"/>
 <xsl:import href="lattice.xsl"/>
 
 <!-- STMML -->

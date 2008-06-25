@@ -630,6 +630,7 @@ cat > $TMPXSLTDIR/display.xsl << "EOF"
 
 <!-- CMLComp -->
 <xsl:import href="module.xsl"/>
+<xsl:import href="plottable.xsl"/>
 <xsl:import href="lattice.xsl"/>
 
 <!-- STMML -->
@@ -833,6 +834,7 @@ cat > $TMPXSLTDIR/eMinViz.xsl << "EOF"
 
 <!-- CMLComp -->
 <xsl:import href="module.xsl"/>
+<xsl:import href="plottable.xsl"/>
 <xsl:import href="lattice.xsl"/>
 
 <!-- STMML -->
@@ -3176,6 +3178,7 @@ function jmolResize(w,h) {
                    font-style: italic; }
         .dotted { border-bottom:dotted 1px #000000; }
         .togglejmolsource { font-size: small; font-style: italic; }
+	.graph .label { font-style: italic; }
       ]]>
     </xsl:text>
   </xsl:template>
@@ -3337,6 +3340,41 @@ jQuery(document).ready(function(){
   $("#initialmetadata").text($("#initialmetadata").text().replace(" ▸"," ▾"));
   $("#initialmetadata").next().show();
 });
+
+function plottable(id, xAxis, yAxis) {
+
+  var d_ = [];
+  for (j in xAxis) {
+    d_.push([xAxis[j], yAxis[j]]);
+  }
+  data = [ { data:d_ } ]
+  var p = $(id);
+
+  if (p.css("display")!="none") {
+    p.width(500);
+    p.height(300);
+    // setup plot
+
+    var options = {
+        legend: { show: true },
+        lines: { show: true },
+        points: { show: true },
+        yaxis: { noTicks: 10 },
+        selection: { mode: "xy" }
+    };
+
+    var plot = $.plot(p, data, options);
+
+    p.bind("selected", function (event, area) {
+        // do the zooming
+        plot = $.plot(p, data,
+                      $.extend(true, {}, options, {
+                          xaxis: { min: area.x1, max: area.x2 },
+                          yaxis: { min: area.y1, max: area.y2 }
+                      }));
+    });
+  };
+};
 
       //]]>
     </xsl:text>
@@ -3565,20 +3603,20 @@ cat > $TMPXSLTDIR/loop.xsl << "EOF"
 EOF
 cat > $TMPXSLTDIR/matrix.xsl << "EOF"
 <xsl:stylesheet version="1.0"
+        xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
         xmlns:cml="http://www.xml-cml.org/schema"
-        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:str="http://exslt.org/strings"
+        extension-element-prefixes="str"
 	>
 
   <xsl:import href="loop.xsl"/>
 
   <xsl:template match="cml:matrix">
-    <xsl:param name="rows">
-      <xsl:value-of select="@rows"/>
-    </xsl:param>
-    <xsl:param name="cols">
-      <xsl:value-of select="@columns"/>
-    </xsl:param>
+    <xsl:param name="rows" select="@rows"/>
+    <xsl:param name="cols" select="@columns"/>
+    <xsl:param name="plottable" select="@role='plottable'"/>
+
     <xsl:variable name="dataString" select="concat(normalize-space(.),' ')"/>
     <table class="prop">
       <tr>
@@ -3602,6 +3640,7 @@ cat > $TMPXSLTDIR/matrix.xsl << "EOF"
       </xsl:call-template>
     </table>
   </xsl:template>
+
 </xsl:stylesheet>
 EOF
 cat > $TMPXSLTDIR/metadata.xsl << "EOF"
@@ -3651,7 +3690,7 @@ cat > $TMPXSLTDIR/module.xsl << "EOF"
 
   <xsl:import href="toby_graph.xsl"/>
 
-  <xsl:template match="cml:module">
+  <xsl:template match="cml:module[not(@role) or @role!='plottable']">
     <xsl:param name="title" select="true"/>
     <xsl:variable name="uid" select="generate-id()"/>
     <xsl:choose>
@@ -3668,7 +3707,7 @@ cat > $TMPXSLTDIR/module.xsl << "EOF"
 	   <div>
 	     <xsl:apply-templates select="*"/>
 	   </div>
-	   <xsl:if test="//cml:molecule">
+	   <xsl:if test=".//cml:molecule">
 	     <div class="foldout clickable">Structure</div>
 	     <div>
 	       <xsl:call-template name="makejmol"/>
@@ -3874,6 +3913,79 @@ cat > $TMPXSLTDIR/parameter.xsl << "EOF"
 <!-- @title List -->
   <xsl:template match="@title">
     <div class="listTitle"><xsl:value-of select="."/></div>
+  </xsl:template>
+
+</xsl:stylesheet>
+EOF
+cat > $TMPXSLTDIR/plottable.xsl << "EOF"
+<?xml version="1.0"?>
+<xsl:stylesheet version="1.0"
+        xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:cml="http://www.xml-cml.org/schema"
+        xmlns:str="http://exslt.org/strings"
+        extension-element-prefixes="str"
+	>
+
+  <xsl:template match="cml:module[@role='plottable']">
+    <!-- We expect there to be multiple arrays in here.
+    The first is a list of x values; the others are all
+    sets of y-values to be independently plotted. -->
+    <xsl:variable name="x-values">
+      <xsl:call-template name="get-array-as-javascript-array">
+        <xsl:with-param name="text-input" select="cml:property[1]/cml:array/text()"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <div class="graph">
+      <span class="label">
+	<xsl:text>Plots: abscissa is </xsl:text>
+	<xsl:value-of select="cml:property[1]/@dictRef"/>
+	<xsl:text>/</xsl:text>
+	<xsl:value-of select="cml:property[1]/cml:array/@units"/>
+      </span>
+      <xsl:for-each select="cml:property[position()!=1]/cml:array">
+	<div>
+	  <span>
+	    <xsl:value-of select="../@dictRef"/>
+	    <xsl:text>/</xsl:text>
+	    <xsl:value-of select="@units"/>
+	  </span>
+	  <xsl:variable name="y-values">
+	    <xsl:call-template name="get-array-as-javascript-array">
+	      <xsl:with-param name="text-input" select="text()"/>
+	    </xsl:call-template>
+	  </xsl:variable>
+	  <xsl:call-template name="draw-graph">
+	    <xsl:with-param name="graphId" select="generate-id()"/>
+	    <xsl:with-param name="x-values" select="$x-values"/>
+	    <xsl:with-param name="y-values" select="$y-values"/>
+	  </xsl:call-template>
+	</div>
+      </xsl:for-each>
+    </div>
+  </xsl:template>
+
+
+  <xsl:template name="get-array-as-javascript-array">
+    <xsl:param name="text-input"/>
+    <xsl:text>[</xsl:text>
+    <xsl:for-each select="str:tokenize($text-input)">
+      <xsl:value-of select="."/>
+      <xsl:if test="position()!=last()">
+	<xsl:text>,</xsl:text>
+      </xsl:if>
+    </xsl:for-each>
+    <xsl:text>]</xsl:text>
+  </xsl:template>
+
+
+  <xsl:template name="draw-graph">
+    <xsl:param name="graphId"/>
+    <xsl:param name="x-values"/>
+    <xsl:param name="y-values"/>
+    <input type="button" value="Show" onclick="js:toggleButton(this, &quot;{$graphId}&quot;); plottable(&quot;#{$graphId}&quot;, {$x-values}, {$y-values})"/><br/>
+    <div style="display:none;" id="{$graphId}"/>
   </xsl:template>
 
 </xsl:stylesheet>
@@ -4241,7 +4353,7 @@ cat > $TMPXSLTDIR/summary.xsl << "EOF"
     <xsl:call-template name="summaryGraphs"/>
     
     <!-- Finally, add animation -->
-    <xsl:if test="count(//cml:molecule) &gt; 0">
+    <xsl:if test="count(//cml:module[@role='step']//cml:molecule) &gt; 0">
       <xsl:call-template name="movie"/>
     </xsl:if>    
     

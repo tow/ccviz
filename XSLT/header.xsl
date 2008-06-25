@@ -1716,6 +1716,7 @@ function jmolResize(w,h) {
                    font-style: italic; }
         .dotted { border-bottom:dotted 1px #000000; }
         .togglejmolsource { font-size: small; font-style: italic; }
+	.graph .label { font-style: italic; }
       ]]>
     </xsl:text>
   </xsl:template>
@@ -1877,6 +1878,41 @@ jQuery(document).ready(function(){
   $("#initialmetadata").text($("#initialmetadata").text().replace(" ▸"," ▾"));
   $("#initialmetadata").next().show();
 });
+
+function plottable(id, xAxis, yAxis) {
+
+  var d_ = [];
+  for (j in xAxis) {
+    d_.push([xAxis[j], yAxis[j]]);
+  }
+  data = [ { data:d_ } ]
+  var p = $(id);
+
+  if (p.css("display")!="none") {
+    p.width(500);
+    p.height(300);
+    // setup plot
+
+    var options = {
+        legend: { show: true },
+        lines: { show: true },
+        points: { show: true },
+        yaxis: { noTicks: 10 },
+        selection: { mode: "xy" }
+    };
+
+    var plot = $.plot(p, data, options);
+
+    p.bind("selected", function (event, area) {
+        // do the zooming
+        plot = $.plot(p, data,
+                      $.extend(true, {}, options, {
+                          xaxis: { min: area.x1, max: area.x2 },
+                          yaxis: { min: area.y1, max: area.y2 }
+                      }));
+    });
+  };
+};
 
       //]]>
     </xsl:text>

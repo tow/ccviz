@@ -8,7 +8,7 @@
 
   <xsl:import href="toby_graph.xsl"/>
 
-  <xsl:template match="cml:module">
+  <xsl:template match="cml:module[not(@role) or @role!='plottable']">
     <xsl:param name="title" select="true"/>
     <xsl:variable name="uid" select="generate-id()"/>
     <xsl:choose>
@@ -25,7 +25,7 @@
 	   <div>
 	     <xsl:apply-templates select="*"/>
 	   </div>
-	   <xsl:if test="//cml:molecule">
+	   <xsl:if test=".//cml:molecule">
 	     <div class="foldout clickable">Structure</div>
 	     <div>
 	       <xsl:call-template name="makejmol"/>

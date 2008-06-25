@@ -20,7 +20,7 @@
     <xsl:call-template name="summaryGraphs"/>
     
     <!-- Finally, add animation -->
-    <xsl:if test="count(//cml:molecule) &gt; 0">
+    <xsl:if test="count(//cml:module[@role='step']//cml:molecule) &gt; 0">
       <xsl:call-template name="movie"/>
     </xsl:if>    
     
