@@ -16,33 +16,32 @@
         <xsl:with-param name="text-input" select="cml:property[1]/cml:array/text()"/>
       </xsl:call-template>
     </xsl:variable>
-
+    <xsl:variable name="y-values">
+      <xsl:text>[</xsl:text>
+      <xsl:for-each select="cml:property[position()!=1]/cml:array">
+	<xsl:text>{ "name":"</xsl:text><xsl:value-of select="../@dictRef"/><xsl:text>", "units":"</xsl:text><xsl:value-of select="@units"/><xsl:text>", "data":</xsl:text>
+	<xsl:call-template name="get-array-as-javascript-array">
+	  <xsl:with-param name="text-input" select="text()"/>
+	</xsl:call-template>
+	<xsl:text>}</xsl:text>
+	<xsl:if test="position()!=last()"><xsl:text>,</xsl:text></xsl:if>
+      </xsl:for-each>
+      <xsl:text>]</xsl:text>
+    </xsl:variable>
     <div class="graph">
-      <span class="label">
-	<xsl:text>Plots: abscissa is </xsl:text>
+      <div>
+	<xsl:call-template name="draw-graph">
+	  <xsl:with-param name="graphId" select="generate-id()"/>
+	  <xsl:with-param name="x-values" select="$x-values"/>
+	  <xsl:with-param name="y-values" select="$y-values"/>
+	</xsl:call-template>
+      </div>
+      <div class="label">
+	<xsl:text>Abscissa: </xsl:text>
 	<xsl:value-of select="cml:property[1]/@dictRef"/>
 	<xsl:text>/</xsl:text>
 	<xsl:value-of select="cml:property[1]/cml:array/@units"/>
-      </span>
-      <xsl:for-each select="cml:property[position()!=1]/cml:array">
-	<div>
-	  <span>
-	    <xsl:value-of select="../@dictRef"/>
-	    <xsl:text>/</xsl:text>
-	    <xsl:value-of select="@units"/>
-	  </span>
-	  <xsl:variable name="y-values">
-	    <xsl:call-template name="get-array-as-javascript-array">
-	      <xsl:with-param name="text-input" select="text()"/>
-	    </xsl:call-template>
-	  </xsl:variable>
-	  <xsl:call-template name="draw-graph">
-	    <xsl:with-param name="graphId" select="generate-id()"/>
-	    <xsl:with-param name="x-values" select="$x-values"/>
-	    <xsl:with-param name="y-values" select="$y-values"/>
-	  </xsl:call-template>
-	</div>
-      </xsl:for-each>
+      </div>
     </div>
   </xsl:template>
 

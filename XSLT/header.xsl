@@ -1879,13 +1879,16 @@ jQuery(document).ready(function(){
   $("#initialmetadata").next().show();
 });
 
-function plottable(id, xAxis, yAxis) {
+function plottable(id, xAxis, yAxes) {
 
-  var d_ = [];
-  for (j in xAxis) {
-    d_.push([xAxis[j], yAxis[j]]);
+  data = [];
+  for (i in yAxes) {
+    var d_ = [];
+    for (j in xAxis) {
+      d_.push([xAxis[j], yAxes[i].data[j]]);
+    }
+    data.push( {label:yAxes[i].name+"/"+yAxes[i].units, data:d_} )
   }
-  data = [ { data:d_ } ]
   var p = $(id);
 
   if (p.css("display")!="none") {
