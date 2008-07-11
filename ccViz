@@ -3157,7 +3157,9 @@ function plottable(id, xAxis, yAxes) {
     var options = {
         legend: { show: true },
         lines: { show: true },
-        points: { show: true },
+        points: { show: false },
+        points: { show: false },
+        shadowSize: 0,
         yaxis: { noTicks: 10 },
         selection: { mode: "xy" }
     };
@@ -3748,6 +3750,7 @@ cat > $TMPXSLTDIR/plottable.xsl << "EOF"
       <xsl:text>]</xsl:text>
     </xsl:variable>
     <div class="graph">
+      <div class="title"><xsl:value-of select="@title"/></div>
       <div>
 	<xsl:call-template name="draw-graph">
 	  <xsl:with-param name="graphId" select="generate-id()"/>
@@ -3756,11 +3759,13 @@ cat > $TMPXSLTDIR/plottable.xsl << "EOF"
 	</xsl:call-template>
       </div>
       <div class="label">
+	<xsl:text>Abscissa: </xsl:text>
 	<xsl:value-of select="cml:property[1]/@dictRef"/>
 	<xsl:text>/</xsl:text>
 	<xsl:value-of select="cml:property[1]/cml:array/@units"/>
       </div>
     </div>
+    <hr/>
   </xsl:template>
 
 

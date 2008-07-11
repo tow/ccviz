@@ -29,6 +29,7 @@
       <xsl:text>]</xsl:text>
     </xsl:variable>
     <div class="graph">
+      <div class="title"><xsl:value-of select="@title"/></div>
       <div>
 	<xsl:call-template name="draw-graph">
 	  <xsl:with-param name="graphId" select="generate-id()"/>
@@ -43,6 +44,7 @@
 	<xsl:value-of select="cml:property[1]/cml:array/@units"/>
       </div>
     </div>
+    <hr/>
   </xsl:template>
 
 

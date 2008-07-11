@@ -1899,7 +1899,9 @@ function plottable(id, xAxis, yAxes) {
     var options = {
         legend: { show: true },
         lines: { show: true },
-        points: { show: true },
+        points: { show: false },
+        points: { show: false },
+        shadowSize: 0,
         yaxis: { noTicks: 10 },
         selection: { mode: "xy" }
     };
