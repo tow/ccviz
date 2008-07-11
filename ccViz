@@ -1264,7 +1264,6 @@ cat > $TMPXSLTDIR/header.xsl << "EOF"
         >
 
   <xsl:template name="head">
-    <xsl:param name="prog"/>
     <xsl:param name="Jmol"/>
     <head>  
       <title>

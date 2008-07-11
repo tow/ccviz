@@ -6,7 +6,6 @@
         >
 
   <xsl:template name="head">
-    <xsl:param name="prog"/>
     <xsl:param name="Jmol"/>
     <head>  
       <title>
