@@ -1900,10 +1900,13 @@ function plottable(id, xAxis, yAxes) {
         legend: { show: true },
         lines: { show: true },
         points: { show: false },
-        points: { show: false },
         shadowSize: 0,
         yaxis: { noTicks: 10 },
         selection: { mode: "xy" }
+    };
+
+    if (xAxis.length < 20) {
+      options["points"] = {show: true};
     };
 
     var plot = $.plot(p, data, options);
