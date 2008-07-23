@@ -1,0 +1,334 @@
+<?xml version="1.0"?>
+<dictionary 
+  title="RMCProfile dictionary"
+  xmlns="http://www.xml-cml.org/schema"
+  xmlns:h="http://www.w3.org/1999/xhtml/"
+  namespace="http://www.esc.cam.ac.uk/rmcprofile">
+
+  <entry id="number_of_species" term="Number of different atomic species">
+    <annotation />
+    <definition>Number of different atomic species in the RMC configuration.</definition>
+    <description>
+      <p>Number of different atomic species in the RMC configuration.</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="atoms" term="Atom types">
+    <annotation />
+    <definition>Labels for the different atoms types</definition>
+    <description>
+      <p>Labels for the different atom types, with order consistent with the order of atoms in the configuration file.</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="numbers_of_species" term="Numbers of species">
+    <annotation />
+    <definition>Numbers of atoms of each type</definition>
+    <description>
+      <p>Numbers of atoms of each type, in order of atoms in the configuration</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="ncoord" term="Number of coordination restraints">
+    <annotation />
+    <definition>Number of coordination restraints</definition>
+    <description>
+      <p>Number of coordination restraints</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="navcoord" term="Number of mean coordination restraints">
+    <annotation />
+    <definition>Number of mean coordination restraints</definition>
+    <description>
+      <p>Number of mean coordination restraints</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="ngr" term="Number of neutron real-space data sets">
+    <annotation />
+    <definition>Number of neutron real-space data sets</definition>
+    <description>
+      <p>Number of neutron pair distrubution function data sets, whether G(r), D(r) or T(r)</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="ngr" term="Number of neutron real-space data sets">
+    <annotation />
+    <definition>Number of neutron real-space data sets</definition>
+    <description>
+      <p>Number of neutron pair distrubution function data sets, whether G(r), D(r) or T(r)</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="nsq" term="Number of neutron reciprocal-space data sets">
+    <annotation />
+    <definition>Number of neutron reciprocal-space data sets</definition>
+    <description>
+      <p>Number of neutron total scattering intensity data sets, whether S(Q), i(Q) or Qi(Q)</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="nfq" term="Number of X-ray reciprocal-space data sets">
+    <annotation />
+    <definition>Number of X-ray reciprocal-space data sets</definition>
+    <description>
+      <p>Number of X-ray total scattering intensity data sets, whether S(Q), i(Q) or Qi(Q)</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="background_coefficients" term="Bragg profile background parameters">
+    <annotation />
+    <definition>Bragg profile background coefficients</definition>
+    <description>
+      <p>Coefficients used in Chebychev polynomial fitted to the Bragg profile background</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="bragg_ncell" term="Supercell multiple">
+    <annotation />
+    <definition>Integers that define how the RMC configuration is a multiple replication of the crystal unit cell</definition>
+    <description>
+      <p>Integers that define how the RMC configuration is a multiple replication of the crystal unit cell</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="bragg_chifac" term="Bragg weighting">
+    <annotation />
+    <definition>Parameter that gives the relative weighting of the Bragg profile data to the overall value of chi-squared</definition>
+    <description>
+      <p>Parameter that gives the relative weighting of the Bragg profile data to the overall value of chi-squared</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="bragg_calcfg" term="Recalculate hkl list">
+    <annotation />
+    <definition>Flag that determines whether or not to recalculate the hkl list</definition>
+    <description>
+      <p>Flag that determines whether or not to recalculate the hkl list or to take it from the .amp file</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="braggfit_ptype" term="Bragg profile type">
+    <annotation />
+    <definition>Bragg profile type</definition>
+    <description>
+      <p>Type of profile function to describe the shape of Bragg peaks in the Bragg profile data</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="constant" term="Data constant offset">
+    <annotation />
+    <definition>Value of constant offset</definition>
+    <description>
+      <p>Array of values of the constant offset to apply to scattering data</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="offset" term="Data offset flag">
+    <annotation />
+    <definition>Flag to determine whether or not to apply a data offset</definition>
+    <description>
+      <p>Array of flags that determine whether or not to apply offsets to the neutron scattering data</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="renorm" term="Data renormalisation flag">
+    <annotation />
+    <definition>Flag to determine whether or not to renormalise data</definition>
+    <description>
+      <p>Array of flags tha determine whether or not to apply data renormalisation</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+ 
+  <entry id="vectors" term="Matrix of lattice vectors">
+    <annotation />
+    <definition>Matrix of lattice vectors</definition>
+    <description>
+      <p>Matrix of lattice vectors that define the size and shape of the configuration, expressed in cartesian coordinates</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="rcut" term="Closest approach">
+    <annotation />
+    <definition>Array of neighbour atom closest approach distances</definition>
+    <description>
+      <p>Array of neighbour atom closest approach distances</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="delta" term="Maximum move distance">
+    <annotation />
+    <definition>Array of maximum atom move distances</definition>
+    <description>
+      <p>Array of maximum atom move distances</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="iprint" term="Printing period">
+    <annotation />
+    <definition>Number of RMC steps between printing steps</definition>
+    <description>
+      <p>Number of RMC steps between printing steps</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="timelim" term="Time limit">
+    <annotation />
+    <definition>Time limit for the job</definition>
+    <description>
+      <p>Time limit for the job</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="timesav" term="Save period">
+    <annotation />
+    <definition>Period of time between configuration saves</definition>
+    <description>
+      <p>Period of time between configuration saves</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="mindist" term="Minimum distances">
+    <annotation />
+    <definition>Minimum distances of approach for neighbouring atoms within the distance window restraint</definition>
+    <description>
+      <p>Array of minimum distances of approach for neighbouring atoms within the distance window restraint, one per atom pair</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+
+  <entry id="maxdist" term="Maximum distances">
+    <annotation />
+    <definition>Maximum distances of approach for neighbouring atoms within the distance window restraint</definition>
+    <description>
+      <p>Array of maximum distances of approach for neighbouring atoms within the distance window restraint, one per atom pair</p>
+    </description>
+   <metadataList>
+      <metadata name="dc:creator" content="Martin Dove"/>
+      <metadata name="dc:date" content="8-July-2008"/>
+      <metadata name="dc:source" content=""/>
+    </metadataList>
+  </entry>
+ 
+</dictionary>
+
